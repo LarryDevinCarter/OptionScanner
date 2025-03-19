@@ -42,6 +42,8 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         String[] tickers = {"AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"};
         System.out.println("Scanning market (api) at " + new Date());
         logger.info("Starting market scan for {} stocks", tickers.length);
+        putRepository.deleteAll();
+        topOpportunities.clear();
         
         for (String ticker : tickers) {
             try {
