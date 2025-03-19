@@ -36,6 +36,8 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
         String[] tickers = {"AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"};
         System.out.println("Scanning market at " + new Date());
         logger.info("Starting mock market scan for {} stocks", tickers.length);
+        putRepository.deleteAll();
+        topOpportunities.clear();
 
         for (String ticker : tickers) {
             try {
@@ -153,8 +155,8 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
 
     private String getMockPERatio(String ticker) {
         return switch (ticker) {
-            case "AAPL" -> "30";
-            case "MSFT" -> "35";
+            case "AAPL" -> "22";
+            case "MSFT" -> "24";
             case "GOOGL" -> "20";
             case "TSLA" -> "60";
             case "NVDA" -> "45";
