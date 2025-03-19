@@ -1,8 +1,12 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
+import com.larrydevincarter.optionscanner.entities.CallOpportunity;
+import com.larrydevincarter.optionscanner.entities.Portfolio;
 import com.larrydevincarter.optionscanner.entities.PutOpportunity;
 import com.larrydevincarter.optionscanner.entities.StockOverview;
 import com.larrydevincarter.optionscanner.mappers.StockOverviewMapper;
+import com.larrydevincarter.optionscanner.repositories.CallOpportunityRepository;
+import com.larrydevincarter.optionscanner.repositories.PortfolioRepository;
 import com.larrydevincarter.optionscanner.repositories.PutOpportunityRepository;
 import com.larrydevincarter.optionscanner.repositories.StockOverviewRepository;
 import com.larrydevincarter.optionscanner.services.OptionScannerService;
@@ -13,6 +17,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,12 +33,17 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
     @Autowired
     private StockOverviewRepository stockRepository;
     @Autowired
+    private PortfolioRepository portfolioRepository;
+    @Autowired
+    private CallOpportunityRepository callRepository;
+    @Autowired
     private StockOverviewMapper mapper;
 
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String API_KEY = "UBE69VEKRS3DTFZE";
-    private final Map<String, PutOpportunity> topOpportunities = new ConcurrentHashMap<>();
+    private final Map<String, PutOpportunity> topPutOpportunities = new ConcurrentHashMap<>();
+    private final Map<String, CallOpportunity> topCallOpportunities = new ConcurrentHashMap<>();
 
 
     @Override
@@ -43,7 +53,9 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         System.out.println("Scanning market (api) at " + new Date());
         logger.info("Starting market scan for {} stocks", tickers.length);
         putRepository.deleteAll();
-        topOpportunities.clear();
+        callRepository.deleteAll();
+        topPutOpportunities.clear();
+        topCallOpportunities.clear();
         
         for (String ticker : tickers) {
             try {
@@ -54,11 +66,45 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
                 if (stockPrice > 0 && isGoodStock(overview, stockPrice)) {
                     analyzePutOptions(ticker, stockPrice);
                 }
+                checkForAssignment(ticker, stockPrice);
+
             } catch (Exception e) {
                 logger.error("Error processing {}: {} ", ticker, e.getMessage());
             }
         }
-        saveAndDiplayTopOpportunities();
+        generateCoveredCalls();
+        saveAndDisplayTopOpportunities();
+    }
+
+    private void generateCoveredCalls() {
+
+        for (Portfolio stock : portfolioRepository.findAll()) {
+
+            double costBasis = stock.getCostBasis();
+            double mockPrice = getStockPrice(stock.getTicker());
+            double strike = mockPrice * 1.05;
+
+            if (strike > costBasis) {
+                CallOpportunity call = new CallOpportunity(stock.getTicker(), strike, 2.0, 0.7);
+                topCallOpportunities.put(stock.getTicker(), call);
+                logger.info("Generated covered call for {}: Strike ${}, Premium $2.00, PoP 70%", stock.getTicker(), strike);
+            }
+        }
+    }
+
+    private void checkForAssignment(String ticker, double stockPrice) {
+
+        PutOpportunity put = topPutOpportunities.get(ticker);
+
+        if (put != null && stockPrice < put.getStrike()) {
+            Portfolio portfolio = new Portfolio();
+            portfolio.setTicker(ticker);
+            portfolio.setShares(100);
+            portfolio.setCostBasis(put.getStrike() - put.getPremium());
+            portfolio.setAcquisitionDate(LocalDateTime.now());
+            portfolioRepository.save(portfolio);
+            logger.info("{} assigned: 100 shares at ${}", ticker, portfolio.getCostBasis());
+        }
     }
 
     private StockOverview getStockOverview(String ticker) {
@@ -79,11 +125,13 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         return overview;
     }
 
-    private void saveAndDiplayTopOpportunities() {
-
-        topOpportunities.values().forEach(putRepository::save);
+    private void saveAndDisplayTopOpportunities() {
+        topPutOpportunities.values().forEach(putRepository::save);
+        topCallOpportunities.values().forEach(callRepository::save);
         System.out.println("\nTop Put Opportunities:");
         putRepository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
+        System.out.println("\nTop Covered Call Opportunities:");
+        callRepository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
     }
 
     private void analyzePutOptions(String ticker, double stockPrice) {
@@ -93,7 +141,7 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         double pop = 0.75; //mock data
 
         PutOpportunity opp = new PutOpportunity(ticker, strike, premium, pop);
-        topOpportunities.put(ticker, opp);
+        topPutOpportunities.put(ticker, opp);
     }
 
     private boolean isGoodStock(StockOverview overview, double stockPrice) {
