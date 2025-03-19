@@ -224,8 +224,8 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
 
     private String getMockPrice(String ticker) {
         return switch (ticker) {
-            case "AAPL" -> "160";
-            case "MSFT" -> "410.00";
+            case "AAPL" -> "175.50";
+            case "MSFT" -> "420.75";
             case "GOOGL" -> "164.30";
             case "TSLA" -> "250.20";
             case "NVDA" -> "950.10";
