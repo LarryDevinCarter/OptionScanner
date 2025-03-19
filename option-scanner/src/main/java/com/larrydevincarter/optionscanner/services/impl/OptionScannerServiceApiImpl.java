@@ -56,6 +56,7 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         callRepository.deleteAll();
         topPutOpportunities.clear();
         topCallOpportunities.clear();
+        seedPortfolio();
         
         for (String ticker : tickers) {
             try {
@@ -66,14 +67,32 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
                 if (stockPrice > 0 && isGoodStock(overview, stockPrice)) {
                     analyzePutOptions(ticker, stockPrice);
                 }
-                checkForAssignment(ticker, stockPrice);
-
             } catch (Exception e) {
                 logger.error("Error processing {}: {} ", ticker, e.getMessage());
             }
         }
         generateCoveredCalls();
         saveAndDisplayTopOpportunities();
+    }
+
+    private void seedPortfolio() {
+
+        if (portfolioRepository.count() == 0) {
+
+            Portfolio aapl = new Portfolio();
+            aapl.setTicker("AAPL");
+            aapl.setShares(100);
+            aapl.setCostBasis(150.0); // Mock assignment at $152.50 - $2.50 premium
+            aapl.setAcquisitionDate(LocalDateTime.now().minusDays(1));
+            portfolioRepository.save(aapl);
+            Portfolio msft = new Portfolio();
+            msft.setTicker("MSFT");
+            msft.setShares(100);
+            msft.setCostBasis(380.0);
+            msft.setAcquisitionDate(LocalDateTime.now().minusDays(1));
+            portfolioRepository.save(msft);
+            logger.info("Seeded portfolio with AAPL and MSFT");
+        }
     }
 
     private void generateCoveredCalls() {
@@ -89,21 +108,6 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
                 topCallOpportunities.put(stock.getTicker(), call);
                 logger.info("Generated covered call for {}: Strike ${}, Premium $2.00, PoP 70%", stock.getTicker(), strike);
             }
-        }
-    }
-
-    private void checkForAssignment(String ticker, double stockPrice) {
-
-        PutOpportunity put = topPutOpportunities.get(ticker);
-
-        if (put != null && stockPrice < put.getStrike()) {
-            Portfolio portfolio = new Portfolio();
-            portfolio.setTicker(ticker);
-            portfolio.setShares(100);
-            portfolio.setCostBasis(put.getStrike() - put.getPremium());
-            portfolio.setAcquisitionDate(LocalDateTime.now());
-            portfolioRepository.save(portfolio);
-            logger.info("{} assigned: 100 shares at ${}", ticker, portfolio.getCostBasis());
         }
     }
 

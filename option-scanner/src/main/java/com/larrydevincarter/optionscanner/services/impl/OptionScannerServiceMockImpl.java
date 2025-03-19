@@ -49,6 +49,7 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
         callRepository.deleteAll();
         topPutOpportunities.clear();
         topCallOpportunities.clear();
+        seedPortfolio();
 
         for (String ticker : tickers) {
             try {
@@ -59,13 +60,32 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
                 if (stockPrice > 0 && isGoodStock(overview,stockPrice)) {
                     analyzePutOptions(ticker, stockPrice);
                 }
-                checkForAssignment(ticker, stockPrice);
             } catch (Exception e) {
                 logger.error("Error with {}: {}", ticker, e.getMessage());
             }
         }
         generateCoveredCalls();
         saveAndDisplayTopOpportunities();
+    }
+
+    private void seedPortfolio() {
+
+        if (portfolioRepository.count() == 0) {
+
+            Portfolio aapl = new Portfolio();
+            aapl.setTicker("AAPL");
+            aapl.setShares(100);
+            aapl.setCostBasis(150.0); // Mock assignment at $152.50 - $2.50 premium
+            aapl.setAcquisitionDate(LocalDateTime.now().minusDays(1));
+            portfolioRepository.save(aapl);
+            Portfolio msft = new Portfolio();
+            msft.setTicker("MSFT");
+            msft.setShares(100);
+            msft.setCostBasis(380.0);
+            msft.setAcquisitionDate(LocalDateTime.now().minusDays(1));
+            portfolioRepository.save(msft);
+            logger.info("Seeded portfolio with AAPL and MSFT");
+        }
     }
 
     private void generateCoveredCalls() {
@@ -204,8 +224,8 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
 
     private String getMockPrice(String ticker) {
         return switch (ticker) {
-            case "AAPL" -> "175.50";
-            case "MSFT" -> "420.75";
+            case "AAPL" -> "160";
+            case "MSFT" -> "410.00";
             case "GOOGL" -> "164.30";
             case "TSLA" -> "250.20";
             case "NVDA" -> "950.10";
@@ -213,18 +233,4 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
         };
     }
 
-    private void checkForAssignment(String ticker, double stockPrice) {
-
-        PutOpportunity put = topPutOpportunities.get(ticker);
-
-        if (put != null && stockPrice < put.getStrike()) {
-            Portfolio portfolio = new Portfolio();
-            portfolio.setTicker(ticker);
-            portfolio.setShares(100);
-            portfolio.setCostBasis(put.getStrike() - put.getPremium());
-            portfolio.setAcquisitionDate(LocalDateTime.now());
-            portfolioRepository.save(portfolio);
-            logger.info("{} assigned: 100 shares at ${}", ticker, portfolio.getCostBasis());
-        }
-    }
 }
