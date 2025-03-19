@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PutOpportunity {
+public class CallOpportunity {
 
     @Id
     private String ticker;
@@ -18,18 +18,8 @@ public class PutOpportunity {
     private double premium;
     private double pop;
 
-//    public PutOpportunity() {
-//    }
-//
-//    public PutOpportunity(String ticker, double strike, double premium, double pop) {
-//        this.ticker = ticker;
-//        this.strike = strike;
-//        this.premium = premium;
-//        this.pop = pop;
-//    }
-
     @Override
     public String toString() {
-        return  String.format("%s: Strike $%.2f, Premium $%.2f, PoP %.2f%%", ticker, strike, premium, pop * 100);
+        return String.format("%s: Strike $%.2f, Premium $%.2f, PoP %.2f%%", ticker, strike, premium, pop * 100);
     }
 }
