@@ -1,13 +1,17 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.PutOpportunity;
+import com.larrydevincarter.optionscanner.entities.StockOverview;
 import com.larrydevincarter.optionscanner.repositories.PutOpportunityRepository;
+import com.larrydevincarter.optionscanner.repositories.StockOverviewRepository;
 import com.larrydevincarter.optionscanner.services.OptionScannerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Profile("mock")
 public class OptionScannerServiceMockImpl implements OptionScannerService {
 
-    @Autowired
-    private PutOpportunityRepository repository;
+    private static final Logger logger = LoggerFactory.getLogger(OptionScannerServiceMockImpl.class);
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final String API_KEY = "UBE69VEKRS3DTFZE";
+    @Autowired
+    private PutOpportunityRepository putRepository;
+    @Autowired
+    private StockOverviewRepository stockRepository;
+
     private final Map<String, PutOpportunity> topOpportunities = new ConcurrentHashMap<>();
 
     @Override
@@ -29,32 +35,101 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
 
         String[] tickers = {"AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"};
         System.out.println("Scanning market at " + new Date());
+        logger.info("Starting mock market scan for {} stocks", tickers.length);
 
         for (String ticker : tickers) {
             try {
 
                 double stockPrice = getStockPrice(ticker);
+                StockOverview overview = getStockOverview(ticker);
 
-                if (isGoodStock(ticker,stockPrice)) {
+                if (stockPrice > 0 && isGoodStock(overview,stockPrice)) {
                     analyzePutOptions(ticker, stockPrice);
                 }
+
             } catch (Exception e) {
-                System.err.println("Error with " + ticker + ": " + e.getMessage());
+                logger.error("Error with {}: {}", ticker, e.getMessage());
             }
         }
-        saveAndDiplayTopOpportunities();
+        saveAndDisplayTopOpportunities();
     }
 
-    private void saveAndDiplayTopOpportunities() {
+    private StockOverview getStockOverview(String ticker) {
 
-        topOpportunities.values().forEach(repository::save);
+        Map<String, String> mockData = new HashMap<>();
+        mockData.put("Symbol", ticker);
+        mockData.put("PERatio", getMockPERatio(ticker));
+        mockData.put("EPS", getMockEPS(ticker));
+        mockData.put("DividendYield", getMockDividendYield(ticker));
+        mockData.put("MarketCapitalization", getMockMarketCap(ticker));
+        mockData.put("BookValue", getMockBookValue(ticker));
+        StockOverview overview = new StockOverview();
+        overview.setTicker(ticker);
+        overview.setPeRatio(Double.parseDouble(mockData.get("PERatio")));
+        overview.setEps(Double.parseDouble(mockData.get("EPS")));
+        overview.setDividendYield(Double.parseDouble(mockData.get("DividendYield")));
+        overview.setMarketCap(Long.parseLong(mockData.get("MarketCapitalization")));
+        overview.setBookValue(Double.parseDouble(mockData.get("BookValue")));
+        overview.setLastUpdated(LocalDateTime.now());
+        stockRepository.save(overview);
+
+        return overview;
+    }
+
+    private String getMockBookValue(String ticker) {
+        return switch (ticker) {
+            case "AAPL" -> "4.5";
+            case "MSFT" -> "35.0";
+            case "GOOGL" -> "25.0";
+            case "TSLA" -> "20.0";
+            case "NVDA" -> "15.0";
+            default -> "0";
+        };
+    }
+
+    private String getMockMarketCap(String ticker) {
+        return switch (ticker) {
+            case "AAPL" -> "2700000000000";
+            case "MSFT" -> "3100000000000";
+            case "GOOGL" -> "2000000000000";
+            case "TSLA" -> "800000000000";
+            case "NVDA" -> "2300000000000";
+            default -> "0";
+        };
+    }
+
+    private String getMockDividendYield(String ticker) {
+        return switch (ticker) {
+            case "AAPL" -> "0.005";
+            case "MSFT" -> "0.007";
+            case "GOOGL" -> "0.0";
+            case "TSLA" -> "0.0";
+            case "NVDA" -> "0.001";
+            default -> "0";
+        };
+    }
+
+    private String getMockEPS(String ticker) {
+        return switch (ticker) {
+            case "AAPL" -> "6.5";
+            case "MSFT" -> "11.0";
+            case "GOOGL" -> "7.8";
+            case "TSLA" -> "4.0";
+            case "NVDA" -> "8.2";
+            default -> "0";
+        };
+    };
+
+    private void saveAndDisplayTopOpportunities() {
+
+        topOpportunities.values().forEach(putRepository::save);
         System.out.println("\nTop Put Opportunities:");
-        repository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
+        putRepository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
     }
 
     private void analyzePutOptions(String ticker, double stockPrice) {
 
-        double strike = stockPrice * 0.95;
+        double strike = stockPrice * 0.95; //mock data
         double premium = 2.5; //mock data
         double pop = 0.75; //mock data
 
@@ -62,18 +137,21 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
         topOpportunities.put(ticker, opp);
     }
 
-    private boolean isGoodStock(String ticker, double stockPrice) {
+    private boolean isGoodStock(StockOverview overview, double stockPrice) {
 
-        Map<String, Object> overviewData =new HashMap<>();
-        overviewData.put("PERatio", getMockPERatio(ticker));
-        String peStr = (String) overviewData.getOrDefault("PERatio", "9999");
-        double pe = "N/A".equals(peStr) ? 9999 : Double.parseDouble(peStr);
-        System.out.println(ticker + " - P/E: " + pe + ", Price: " + stockPrice);
+        boolean passes = overview.getPeRatio() < 25 && overview.getEps() > 5 && overview.getDividendYield() > 0 && stockPrice > 50;
 
-        return pe < 50 && stockPrice > 50;
+        if (!passes) {
+            logger.info("{} filtered out - P/E: {}, EPS: {}. DividendYield: {}, Price: {}", overview.getTicker(), overview.getPeRatio(),
+                    overview.getEps(), overview.getDividendYield(), stockPrice);
+        } else {
+            logger.info("{} passed filters", overview.getTicker());
+        }
+
+        return passes;
     }
 
-    private Object getMockPERatio(String ticker) {
+    private String getMockPERatio(String ticker) {
         return switch (ticker) {
             case "AAPL" -> "30";
             case "MSFT" -> "35";
@@ -86,14 +164,13 @@ public class OptionScannerServiceMockImpl implements OptionScannerService {
 
     private double getStockPrice(String ticker) {
 
-        Map<String, Object> globalQuote = new HashMap<>();
-        globalQuote.put("05. price", getMockPrice(ticker));
-        String priceStr = (String) globalQuote.getOrDefault("05. price", "0");
+        Map<String, String> mockData = new HashMap<>();
+        mockData.put("05. price", getMockPrice(ticker));
 
-        return Double.parseDouble(priceStr);
+        return Double.parseDouble(mockData.getOrDefault("05. price", "0"));
     }
 
-    private Object getMockPrice(String ticker) {
+    private String getMockPrice(String ticker) {
         return switch (ticker) {
             case "AAPL" -> "175.50";
             case "MSFT" -> "420.75";
