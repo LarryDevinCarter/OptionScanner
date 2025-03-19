@@ -1,15 +1,19 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.PutOpportunity;
+import com.larrydevincarter.optionscanner.entities.StockOverview;
+import com.larrydevincarter.optionscanner.mappers.StockOverviewMapper;
 import com.larrydevincarter.optionscanner.repositories.PutOpportunityRepository;
+import com.larrydevincarter.optionscanner.repositories.StockOverviewRepository;
 import com.larrydevincarter.optionscanner.services.OptionScannerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,39 +21,67 @@ import java.util.concurrent.ConcurrentHashMap;
 @Profile("api")
 public class OptionScannerServiceApiImpl implements OptionScannerService {
 
+    private static final Logger logger = LoggerFactory.getLogger(OptionScannerServiceApiImpl.class);
+
     @Autowired
-    private PutOpportunityRepository repository;
+    private PutOpportunityRepository putRepository;
+    @Autowired
+    private StockOverviewRepository stockRepository;
+    @Autowired
+    private StockOverviewMapper mapper;
+
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String API_KEY = "UBE69VEKRS3DTFZE";
     private final Map<String, PutOpportunity> topOpportunities = new ConcurrentHashMap<>();
 
+
     @Override
     public void scanMarket() {
         
         String[] tickers = {"AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"};
-        System.out.println("Scanning market at " + new Date());
+        System.out.println("Scanning market (api) at " + new Date());
+        logger.info("Starting market scan for {} stocks", tickers.length);
         
         for (String ticker : tickers) {
             try {
 
                 double stockPrice = getStockPrice(ticker);
+                StockOverview overview = getStockOverview(ticker);
 
-                if (isGoodStock(ticker,stockPrice)) {
+                if (stockPrice > 0 && isGoodStock(overview, stockPrice)) {
                     analyzePutOptions(ticker, stockPrice);
                 }
             } catch (Exception e) {
-                System.err.println("Error with " + ticker + ": " + e.getMessage());
+                logger.error("Error processing {}: {} ", ticker, e.getMessage());
             }
         }
         saveAndDiplayTopOpportunities();
     }
 
+    private StockOverview getStockOverview(String ticker) {
+
+        String overviewUrl = String.format(
+                "https://www.alphavantage.co/query?function=OVERVIEW&symbol=%s&apikey=%s",
+                ticker, API_KEY);
+        Map<String, Object> overviewData = restTemplate.getForObject(overviewUrl, Map.class);
+
+        if (overviewData == null || overviewData.containsKey("Note") || overviewData.containsKey("Information")) {
+            logger.warn("API limit hit or error for {}", ticker);
+
+            return null;
+        }
+
+        StockOverview overview = mapper.toEntity(overviewData);
+        stockRepository.save(overview);
+        return overview;
+    }
+
     private void saveAndDiplayTopOpportunities() {
 
-        topOpportunities.values().forEach(repository::save);
+        topOpportunities.values().forEach(putRepository::save);
         System.out.println("\nTop Put Opportunities:");
-        repository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
+        putRepository.findTop3ByOrderByPremiumDesc().forEach(System.out::println);
     }
 
     private void analyzePutOptions(String ticker, double stockPrice) {
@@ -62,24 +94,21 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         topOpportunities.put(ticker, opp);
     }
 
-    private boolean isGoodStock(String ticker, double stockPrice) {
+    private boolean isGoodStock(StockOverview overview, double stockPrice) {
 
-        String overviewUrl = String.format(
-                "https://www.alphavantage.co/query?function=OVERVIEW&symbol=%s&apikey=%s",
-                ticker, API_KEY);
-        Map<String, Object> overviewData = restTemplate.getForObject(overviewUrl, Map.class);
+        if (overview == null) return false;
 
-        if (overviewData == null || overviewData.containsKey("Note") || overviewData.containsKey("Information")) {
-            System.err.println("API limit hit or error for " + ticker);
+        boolean passes = overview.getPeRatio() < 25 && overview.getEps() > 5 && overview.getDividendYield() > 0 && stockPrice > 50;
 
-            return false;
+        if (!passes) {
+            logger.info("{} filtered out - P/E: {}, EPS: {}. DividendYield: {}, Price: {}", overview.getTicker(), overview.getPeRatio(),
+                    overview.getEps(), overview.getDividendYield(), stockPrice);
+        } else {
+            logger.info("{} passed filters", overview.getTicker());
         }
 
-        String peStr = (String) overviewData.getOrDefault("PERatio", "9999");
-        double pe = "N/A".equals(peStr) ? 9999 : Double.parseDouble(peStr);
-        System.out.println(ticker + " - P/E: " + pe + ", Price: " + stockPrice);
+        return passes;
 
-        return pe < 50 && stockPrice > 50;
     }
 
     private double getStockPrice(String ticker) {
