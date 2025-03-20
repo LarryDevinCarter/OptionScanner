@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Option Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Option Scanner</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/puts">Puts</a>
+            <a class="nav-link" href="/calls">Calls</a>
+            <a class="nav-link" href="/portfolio">Portfolio</a>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    <th:block th:replace="${content}"/>
+</div>
+</body>
+</html>
