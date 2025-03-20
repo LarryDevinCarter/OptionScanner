@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Option Scanner - Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{layout :: navbar}"></div>
+<div class="container mt-4">
+    <h2>Portfolio</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Ticker</th>
+            <th>Shares</th>
+            <th>Cost Basis</th>
+            <th>Acquisition Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${portfolio}">
+            <td th:text="${entry.ticker}"></td>
+            <td th:text="${entry.shares}"></td>
+            <td th:text="${#numbers.formatDecimal(entry.costBasis, 1, 2)}"></td>
+            <td th:text="${entry.acquisitionDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
