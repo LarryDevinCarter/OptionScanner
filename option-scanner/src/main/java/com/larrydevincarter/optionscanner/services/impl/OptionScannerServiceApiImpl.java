@@ -56,7 +56,6 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         callRepository.deleteAll();
         topPutOpportunities.clear();
         topCallOpportunities.clear();
-        seedPortfolio();
         
         for (String ticker : tickers) {
             try {
@@ -73,26 +72,6 @@ public class OptionScannerServiceApiImpl implements OptionScannerService {
         }
         generateCoveredCalls();
         saveAndDisplayTopOpportunities();
-    }
-
-    private void seedPortfolio() {
-
-        if (portfolioRepository.count() == 0) {
-
-            Portfolio aapl = new Portfolio();
-            aapl.setTicker("AAPL");
-            aapl.setShares(100);
-            aapl.setCostBasis(150.0); // Mock assignment at $152.50 - $2.50 premium
-            aapl.setAcquisitionDate(LocalDateTime.now().minusDays(1));
-            portfolioRepository.save(aapl);
-            Portfolio msft = new Portfolio();
-            msft.setTicker("MSFT");
-            msft.setShares(100);
-            msft.setCostBasis(380.0);
-            msft.setAcquisitionDate(LocalDateTime.now().minusDays(1));
-            portfolioRepository.save(msft);
-            logger.info("Seeded portfolio with AAPL and MSFT");
-        }
     }
 
     private void generateCoveredCalls() {
