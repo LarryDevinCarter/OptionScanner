@@ -13,4 +13,6 @@ public class PortfolioInputDTO {
     private int shares;
     @Min(value = 0, message = "Cost basis must be non-negative")
     private double costBasis;
+
+    private String acquisitionDate; //YEAR-MN-DY Format
 }

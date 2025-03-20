@@ -30,7 +30,7 @@ public class PortfolioController {
     public ResponseEntity<Portfolio> addPortfolioEntry(@Validated @RequestBody PortfolioInputDTO dto) {
         Portfolio portfolio = mapper.toEntity(dto);
         portfolioRepository.save(portfolio);
-        logger.info("Added {}: {} shares at ${}", dto.getTicker(), dto.getShares(), dto.getCostBasis());
+        logger.info("Added {}: {} shares at ${}, acquired on {}", dto.getTicker(), dto.getShares(), dto.getCostBasis(), portfolio.getAcquisitionDate().toString());
         return  new ResponseEntity<>(portfolio, HttpStatus.CREATED);
     }
 }
