@@ -26,6 +26,31 @@
         </tr>
         </tbody>
     </table>
+
+    <h3>Add Portfolio Entry</h3>
+    <form th:action="@{/portfolio}" th:object="${portfolioInput}" method="post">
+        <div class="mb-3">
+            <label for="ticker" class="form-label">Ticker</label>
+            <input type="text" class="form-control" id="ticker" th:field="*{ticker}">
+            <div class="text-danger" th:errors="*{ticker}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="shares" class="form-label">Shares</label>
+            <input type="number" class="form-control" id="shares" th:field="*{shares}">
+            <div class="text-danger" th:errors="*{shares}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="costBasis" class="form-label">Cost Basis</label>
+            <input type="number" step="0.01" class="form-control" id="costBasis" th:field="*{costBasis}">
+            <div class="text-danger" th:errors="*{costBasis}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="acquisitionDate" class="form-label">Acquisition Date (YYYY-MM-DD)</label>
+            <input type="date" class="form-control" id="acquisitionDate" th:field="*{acquisitionDate}">
+            <div class="text-danger" th:errors="*{acquisitionDate}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
 </div>
 </body>
 </html>
