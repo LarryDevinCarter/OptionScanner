@@ -3,7 +3,6 @@ package com.larrydevincarter.optionscanner.services.impl;
 import com.larrydevincarter.optionscanner.entities.Asset;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.services.AssetService;
-import org.hibernate.type.descriptor.jdbc.ObjectNullResolvingJdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class AssetFetcherServiceImpl implements AssetService {
+public class AssetServiceImpl implements AssetService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AssetFetcherServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);
 
     @Autowired
     private AssetRepository assetRepository;
@@ -39,6 +39,7 @@ public class AssetFetcherServiceImpl implements AssetService {
     @Override
     public void fetchTradableAssets() {
 
+        LocalDateTime pullStartTime = LocalDateTime.now();
         logger.info("Starting fetching tradable assets");
 
         try {
@@ -66,6 +67,32 @@ public class AssetFetcherServiceImpl implements AssetService {
             }
         } catch (Exception e) {
             logger.error("Failed to fetch tradable assets: {}", e.getMessage());
+            return;
         }
+        List<Asset> staleAssets = assetRepository.findActiveStaleAssets(pullStartTime);
+
+        for (Asset staleAsset : staleAssets) {
+            try {
+
+                String url = baseUrl + "/v2/assets/" + staleAsset.getId();
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("APCA-API-KEY-ID", apiKey);
+                headers.set("APCA-API-SECRET-KEY", apiSecret);
+                HttpEntity<String> entity = new HttpEntity<>(headers);
+                Map<String, Object> assetData = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
+
+                if (assetData != null) {
+                    staleAsset.setStatus((String) assetData.get("status"));
+                    staleAsset.setTradable((Boolean) assetData.get("tradable"));
+                    staleAsset.setLastUpdated(LocalDateTime.now());
+                    assetRepository.save(staleAsset);
+                    logger.info("Updated stale asset {} to status {}", staleAsset.getSymbol(), staleAsset.getStatus());
+                }
+            } catch (Exception e) {
+                logger.error("Failed to update stale asset {}: {}", staleAsset.getSymbol(), e.getMessage());
+            }
+        }
+        logger.info("Checked {} stale active assets", staleAssets.size());
     }
+
 }
