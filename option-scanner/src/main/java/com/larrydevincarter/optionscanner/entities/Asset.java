@@ -16,7 +16,7 @@ public class Asset {
     @Id
     @Column(name = "id", nullable = false)
     private String id;
-    @Column(name = "symbol", nullable = false)
+    @Column(name = "symbol", nullable = false, unique = true)
     private String symbol;
     @Column(name = "name")
     private String name;
