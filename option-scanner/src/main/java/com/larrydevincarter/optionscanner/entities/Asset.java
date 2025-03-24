@@ -1,21 +1,31 @@
 package com.larrydevincarter.optionscanner.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "assets")
 public class Asset {
 
     @Id
+    @Column(name = "id", nullable = false)
     private String id;
+    @Column(name = "symbol", nullable = false)
     private String symbol;
+    @Column(name = "name")
     private String name;
+    @Column(name = "exchange")
     private String exchange;
+    @Column(name = "status")
     private String status;
+    @Column(name = "tradable")
     private boolean tradable;
+    @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
 }

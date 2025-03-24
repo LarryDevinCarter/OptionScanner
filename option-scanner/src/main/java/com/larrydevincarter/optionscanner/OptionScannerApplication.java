@@ -6,20 +6,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableScheduling
 public class OptionScannerApplication {
 
-//	@Autowired
-//	private AssetService assetService;
+	@Autowired
+	private AssetService assetService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OptionScannerApplication.class, args);
 	}
 
-//	@Scheduled(fixedRate = 60000)
-//	private void callAssetService() {
-//		assetService.fetchTradableAssets();
-//	}
+	@Scheduled(fixedRate = 600000000)
+	private void callAssetService() {
+		assetService.fetchTradableAssets();
+	}
 }
