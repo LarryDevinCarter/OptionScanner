@@ -3,9 +3,9 @@ package com.larrydevincarter.optionscanner.services.impl;
 import com.larrydevincarter.optionscanner.entities.Asset;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.services.AssetService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.larrydevincarter.optionscanner.services.IncomeStatementService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class AssetServiceImpl implements AssetService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);
+    private final AssetRepository assetRepository;
+    private final IncomeStatementService incomeStatementService;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private AssetRepository assetRepository;
     @Value("${alpaca.api.key}")
     private String apiKey;
     @Value("${alpaca.api.secret}")
@@ -33,14 +35,12 @@ public class AssetServiceImpl implements AssetService {
     @Value("${alpaca.api.base-url}")
     private String baseUrl;
 
-    private  final RestTemplate restTemplate = new RestTemplate();
-
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?", zone = "America/Chicago")
     @Override
     public void fetchTradableAssets() {
 
         LocalDateTime pullStartTime = LocalDateTime.now();
-        logger.info("Starting fetching tradable assets");
+        log.info("Starting fetching tradable assets");
 
         try {
 
@@ -63,10 +63,10 @@ public class AssetServiceImpl implements AssetService {
                     asset.setLastUpdated(LocalDateTime.now());
                     assetRepository.save(asset);
                 }
-                logger.info("Fetched {} assets", assets.size());
+                log.info("Fetched {} assets", assets.size());
             }
         } catch (Exception e) {
-            logger.error("Failed to fetch tradable assets: {}", e.getMessage());
+            log.error("Failed to fetch tradable assets: {}", e.getMessage());
             return;
         }
         List<Asset> staleAssets = assetRepository.findActiveStaleAssets(pullStartTime);
@@ -86,13 +86,14 @@ public class AssetServiceImpl implements AssetService {
                     staleAsset.setTradable((Boolean) assetData.get("tradable"));
                     staleAsset.setLastUpdated(LocalDateTime.now());
                     assetRepository.save(staleAsset);
-                    logger.info("Updated stale asset {} to status {}", staleAsset.getSymbol(), staleAsset.getStatus());
+                    log.info("Updated stale asset {} to status {}", staleAsset.getSymbol(), staleAsset.getStatus());
                 }
             } catch (Exception e) {
-                logger.error("Failed to update stale asset {}: {}", staleAsset.getSymbol(), e.getMessage());
+                log.error("Failed to update stale asset {}: {}", staleAsset.getSymbol(), e.getMessage());
             }
         }
-        logger.info("Checked {} stale active assets", staleAssets.size());
+        log.info("Checked {} stale active assets", staleAssets.size());
+        incomeStatementService.fetchAndStoreIncomeStatements();
     }
 
 }
