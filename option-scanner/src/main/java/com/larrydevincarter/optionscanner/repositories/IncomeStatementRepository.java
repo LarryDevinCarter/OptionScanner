@@ -28,4 +28,7 @@ public interface IncomeStatementRepository extends JpaRepository<IncomeStatement
     @Modifying
     @Query("DELETE FROM IncomeStatement i WHERE i.symbol = :symbol")
     void deleteBySymbol(String symbol);
+
+    @Query("SELECT i FROM IncomeStatement i WHERE i.reportType = 'annual'")
+    List<IncomeStatement> findAnnualStatements();
 }

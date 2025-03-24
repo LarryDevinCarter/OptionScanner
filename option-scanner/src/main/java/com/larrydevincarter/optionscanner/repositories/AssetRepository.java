@@ -15,4 +15,6 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
     @Query("SELECT a FROM Asset a WHERE a.status = 'active' AND a.lastUpdated < :cutoff")
     List<Asset> findActiveStaleAssets(LocalDateTime cutoff);
 
+    @Query("SELECT a.symbol FROM Asset a WHERE a.status = 'active' AND a.tradable = true")
+    List<String> findActiveTradableSymbols();
 }
