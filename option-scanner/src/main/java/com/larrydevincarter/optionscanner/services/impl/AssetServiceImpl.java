@@ -3,6 +3,7 @@ package com.larrydevincarter.optionscanner.services.impl;
 import com.larrydevincarter.optionscanner.entities.Asset;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.services.AssetService;
+import com.larrydevincarter.optionscanner.services.EarningsService;
 import com.larrydevincarter.optionscanner.services.IncomeStatementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +29,7 @@ import java.util.Map;
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
+    private final EarningsService earningsService;
     private final IncomeStatementService incomeStatementService;
     private final RestTemplate restTemplate;
 
@@ -34,6 +39,9 @@ public class AssetServiceImpl implements AssetService {
     private String apiSecret;
     @Value("${alpaca.api.base-url}")
     private String baseUrl;
+
+    private final List<String> errorLog = new ArrayList<>();
+    private static final long DELAY_MS = 60_000;
 
     @Scheduled(cron = "0 0 2 * * ?", zone = "America/Chicago")
     @Override
@@ -93,7 +101,42 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
-        incomeStatementService.fetchAndStoreIncomeStatements();
+        incomeStatementService.fetchAndStoreIncomeStatements(errorLog);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (Exception e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " +  e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        earningsService.fetchAndStoreEarnings(errorLog);
+        writeErrorReport();
     }
 
+    private void writeErrorReport() {
+
+        if (errorLog.isEmpty()) {
+            log.info("No errors to report.");
+            return;
+        }
+        String directory = "logs/errors/";
+        new File(directory).mkdirs();
+        String filename = directory + "error_report_" + LocalDateTime.now().toString().replace(":", "-") + ".txt";
+
+        try (FileWriter writer = new FileWriter(filename)){
+
+            writer.write("Error Report - Option Scanner Revenue Data Fetch\n");
+            writer.write("Timestamp: " +LocalDateTime.now() +"\n");
+            writer.write("Total Errors: " + errorLog.size() + "\n\n");
+
+            for (String error: errorLog) {
+                writer.write(error + "\n");
+            }
+
+            log.info("Error report written to {}", filename);
+        } catch (IOException e) {
+            log.error("Failed to write error report: {}", e.getMessage());
+        }
+    }
 }
