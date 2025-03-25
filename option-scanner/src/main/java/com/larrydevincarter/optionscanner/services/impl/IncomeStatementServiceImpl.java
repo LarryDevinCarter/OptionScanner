@@ -11,9 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,11 +34,10 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
     private static final int CALLS_PER_MINUTE = 75;
     private static final long DELAY_MS = 60_000;
     private static final int MAX_RETRIES = 3;
-    private final List<String> errorLog = new ArrayList<>();
 
     @Override
     @Transactional
-    public void fetchAndStoreIncomeStatements() {
+    public void fetchAndStoreIncomeStatements(List<String> errorLog) {
 
         errorLog.clear();
         List<String> symbols = getSymbolsNeedingUpdate();
@@ -94,41 +90,14 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
                 }
             }
             if (responseBody != null) {
-                processIncomeStatements(symbol, responseBody);
+                processIncomeStatements(symbol, responseBody, errorLog);
             } else {
                 errorLog.add("Failed to fetch income statement for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
             }
         }
-        writeErrorReport();
     }
 
-    private void writeErrorReport() {
-
-        if (errorLog.isEmpty()) {
-            log.info("No errors to report.");
-            return;
-        }
-        String directory = "logs/errors/";
-        new File(directory).mkdirs();
-        String filename = directory + "error_report_" + LocalDateTime.now().toString().replace(":", "-") + ".txt";
-
-        try (FileWriter writer = new FileWriter(filename)){
-
-            writer.write("Error Report - Option Scanner Revenue Data Fetch\n");
-            writer.write("Timestamp: " +LocalDateTime.now() +"\n");
-            writer.write("Total Errors: " + errorLog.size() + "\n\n");
-
-            for (String error: errorLog) {
-                writer.write(error + "\n");
-            }
-
-            log.info("Error report written to {}", filename);
-        } catch (IOException e) {
-            log.error("Failed to write error report: {}", e.getMessage());
-        }
-    }
-
-    private void processIncomeStatements(String symbol, Map<String, Object> response) {
+    private void processIncomeStatements(String symbol, Map<String, Object> response, List<String> errorLog) {
 
         repository.deleteBySymbol(symbol);
         log.info("Deleted existing income statements for symbol: {}", symbol);
@@ -136,18 +105,18 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
         List<Map<String, String>> annualReports = (List<Map<String, String>>) response.get("annualReports");
 
         if (annualReports != null) {
-            statements.addAll(parseReports(annualReports, symbol, "annual"));
+            statements.addAll(parseReports(annualReports, symbol, "annual", errorLog));
         }
         List<Map<String, String>> quarterlyReports = (List<Map<String, String>>) response.get("quarterlyReports");
 
         if (quarterlyReports != null) {
-            statements.addAll(parseReports(quarterlyReports, symbol, "quarterly"));
+            statements.addAll(parseReports(quarterlyReports, symbol, "quarterly", errorLog));
         }
         repository.saveAll(statements);
         log.info("Stored {} income statements for symbol: {}", statements.size(), symbol);
     }
 
-    private List<IncomeStatement> parseReports(List<Map<String, String>> reports, String symbol, String reportType) {
+    private List<IncomeStatement> parseReports(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
 
         Map<String, IncomeStatement> uniqueStatements = new LinkedHashMap<>();
 
@@ -159,30 +128,30 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
             statement.setFiscalDateEnding(fiscalDate);
             statement.setReportType(reportType);
             statement.setReportedCurrency(report.get("reportedCurrency"));
-            statement.setGrossProfit(parseDouble(report.get("grossProfit")));
-            statement.setTotalRevenue(parseDouble(report.get("totalRevenue")));
-            statement.setCostOfRevenue(parseDouble(report.get("costOfRevenue")));
-            statement.setCostOfGoodsAndServicesSold(parseDouble(report.get("costofGoodsAndServicesSold")));
-            statement.setOperatingIncome(parseDouble(report.get("operatingIncome")));
-            statement.setSellingGeneralAndAdministrative(parseDouble(report.get("sellingGeneralAndAdministrative")));
-            statement.setResearchAndDevelopment(parseDouble(report.get("researchAndDevelopment")));
-            statement.setOperatingExpenses(parseDouble(report.get("operatingExpenses")));
-            statement.setInvestmentIncomeNet(parseDouble(report.get("investmentIncomeNet")));
-            statement.setNetInterestIncome(parseDouble(report.get("netInterestIncome")));
-            statement.setInterestIncome(parseDouble(report.get("interestIncome")));
-            statement.setInterestExpense(parseDouble(report.get("interestExpense")));
-            statement.setNonInterestIncome(parseDouble(report.get("nonInterestIncome")));
-            statement.setOtherNonOperatingIncome(parseDouble(report.get("otherNonOperatingIncome")));
-            statement.setDepreciation(parseDouble(report.get("depreciation")));
-            statement.setDepreciationAndAmortization(parseDouble(report.get("depreciationAndAmortization")));
-            statement.setIncomeBeforeTax(parseDouble(report.get("incomeBeforeTax")));
-            statement.setIncomeTaxExpense(parseDouble(report.get("incomeTaxExpense")));
-            statement.setInterestAndDebtExpense(parseDouble(report.get("interestAndDebtExpense")));
-            statement.setNetIncomeFromContinuingOperations(parseDouble(report.get("netIncomeFromContinuingOperations")));
-            statement.setComprehensiveIncomeNetOfTax(parseDouble(report.get("comprehensiveIncomeNetOfTax")));
-            statement.setEbit(parseDouble(report.get("ebit")));
-            statement.setEbitda(parseDouble(report.get("ebitda")));
-            statement.setNetIncome(parseDouble(report.get("netIncome")));
+            statement.setGrossProfit(parseDouble(report.get("grossProfit"), errorLog));
+            statement.setTotalRevenue(parseDouble(report.get("totalRevenue"), errorLog));
+            statement.setCostOfRevenue(parseDouble(report.get("costOfRevenue"), errorLog));
+            statement.setCostOfGoodsAndServicesSold(parseDouble(report.get("costofGoodsAndServicesSold"), errorLog));
+            statement.setOperatingIncome(parseDouble(report.get("operatingIncome"), errorLog));
+            statement.setSellingGeneralAndAdministrative(parseDouble(report.get("sellingGeneralAndAdministrative"), errorLog));
+            statement.setResearchAndDevelopment(parseDouble(report.get("researchAndDevelopment"), errorLog));
+            statement.setOperatingExpenses(parseDouble(report.get("operatingExpenses"), errorLog));
+            statement.setInvestmentIncomeNet(parseDouble(report.get("investmentIncomeNet"), errorLog));
+            statement.setNetInterestIncome(parseDouble(report.get("netInterestIncome"), errorLog));
+            statement.setInterestIncome(parseDouble(report.get("interestIncome"), errorLog));
+            statement.setInterestExpense(parseDouble(report.get("interestExpense"), errorLog));
+            statement.setNonInterestIncome(parseDouble(report.get("nonInterestIncome"), errorLog));
+            statement.setOtherNonOperatingIncome(parseDouble(report.get("otherNonOperatingIncome"), errorLog));
+            statement.setDepreciation(parseDouble(report.get("depreciation"), errorLog));
+            statement.setDepreciationAndAmortization(parseDouble(report.get("depreciationAndAmortization"), errorLog));
+            statement.setIncomeBeforeTax(parseDouble(report.get("incomeBeforeTax"), errorLog));
+            statement.setIncomeTaxExpense(parseDouble(report.get("incomeTaxExpense"), errorLog));
+            statement.setInterestAndDebtExpense(parseDouble(report.get("interestAndDebtExpense"), errorLog));
+            statement.setNetIncomeFromContinuingOperations(parseDouble(report.get("netIncomeFromContinuingOperations"), errorLog));
+            statement.setComprehensiveIncomeNetOfTax(parseDouble(report.get("comprehensiveIncomeNetOfTax"), errorLog));
+            statement.setEbit(parseDouble(report.get("ebit"), errorLog));
+            statement.setEbitda(parseDouble(report.get("ebitda"), errorLog));
+            statement.setNetIncome(parseDouble(report.get("netIncome"), errorLog));
             statement.setLastUpdated(LocalDateTime.now());
             String key = fiscalDate + "|" + reportType;
 
@@ -195,7 +164,7 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
         return new ArrayList<>(uniqueStatements.values());
     }
 
-    private Double parseDouble(String value) {
+    private Double parseDouble(String value, List<String> errorLog) {
         if (value == null || "None".equals(value)) {
             return null;
         }
@@ -211,8 +180,8 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate() {
-        LocalDate ninetyDaysAgo = LocalDate.now().minusDays(90);
-        return repository.findActiveTradableSymbolsNeedingUpdate(ninetyDaysAgo);
+        LocalDate oneHundredThirtyDaysAgo = LocalDate.now().minusDays(130);
+        return repository.findActiveTradableSymbolsNeedingUpdate(oneHundredThirtyDaysAgo);
     }
 
 }

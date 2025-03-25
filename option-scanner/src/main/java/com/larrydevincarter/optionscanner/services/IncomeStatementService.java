@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface IncomeStatementService {
 
-    void fetchAndStoreIncomeStatements();
+    void fetchAndStoreIncomeStatements(List<String> errorLog);
 
     List<String> getSymbolsNeedingUpdate();
 
