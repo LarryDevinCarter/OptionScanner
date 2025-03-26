@@ -33,4 +33,6 @@ public interface IncomeStatementRepository extends JpaRepository<IncomeStatement
     @Query("SELECT i FROM IncomeStatement i WHERE i.reportType = 'annual'")
     List<IncomeStatement> findAnnualStatements();
 
+    @Query("SELECT DISTINCT i.symbol FROM IncomeStatement i WHERE i.lastUpdated >= :startOfDay")
+    List<String> findSymbolsUpdatedToday(LocalDateTime startOfDay);
 }
