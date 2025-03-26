@@ -103,6 +103,6 @@ public class IncomeStatement {
     private LocalDateTime lastUpdated;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "symbol",referencedColumnName = "symbol", insertable = false, updatable = false)
+    @JoinColumn(name = "symbol", referencedColumnName = "symbol", insertable = false, updatable = false)
     private Asset asset;
 }

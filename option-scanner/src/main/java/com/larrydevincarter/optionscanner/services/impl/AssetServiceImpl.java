@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -34,14 +35,21 @@ public class AssetServiceImpl implements AssetService {
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
-    private String apiKey;
+    private String alpacaApiKey;
     @Value("${alpaca.api.secret}")
     private String apiSecret;
     @Value("${alpaca.api.base-url}")
-    private String baseUrl;
+    private String AlpcacBaseUrl;
+
+    @Value("${alphavantage.api.key}")
+    private String AlphavantageApiKey;
+    @Value("${alphavantage.api.base-url}")
+    private String AlphavantageBaseUrl;
 
     private final List<String> errorLog = new ArrayList<>();
     private static final long DELAY_MS = 60_000;
+    private static final int CALLS_PER_MINUTE = 75;
+    private static final int MAX_RETRIES = 3;
 
     @Scheduled(cron = "0 0 2 * * ?", zone = "America/Chicago")
     @Override
@@ -52,9 +60,9 @@ public class AssetServiceImpl implements AssetService {
 
         try {
 
-            String url = baseUrl + "/v2/assets?status=active&asset_class=us_equity&attributes=has_options";
+            String url = AlpcacBaseUrl + "/v2/assets?status=active&asset_class=us_equity&attributes=has_options";
             HttpHeaders headers = new HttpHeaders();
-            headers.set("APCA-API-KEY-ID", apiKey);
+            headers.set("APCA-API-KEY-ID", alpacaApiKey);
             headers.set("APCA-API-SECRET-KEY", apiSecret);
             HttpEntity<String> entity = new HttpEntity<>(headers);
             List<Map<String, Object>> assets = restTemplate.exchange(url, HttpMethod.GET, entity, List.class).getBody();
@@ -82,9 +90,9 @@ public class AssetServiceImpl implements AssetService {
         for (Asset staleAsset : staleAssets) {
             try {
 
-                String url = baseUrl + "/v2/assets/" + staleAsset.getId();
+                String url = AlpcacBaseUrl + "/v2/assets/" + staleAsset.getId();
                 HttpHeaders headers = new HttpHeaders();
-                headers.set("APCA-API-KEY-ID", apiKey);
+                headers.set("APCA-API-KEY-ID", alpacaApiKey);
                 headers.set("APCA-API-SECRET-KEY", apiSecret);
                 HttpEntity<String> entity = new HttpEntity<>(headers);
                 Map<String, Object> assetData = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
@@ -101,7 +109,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
-        incomeStatementService.fetchAndStoreIncomeStatements(errorLog);
+        fetchAndStoreIncomeStatements(errorLog);
 
         try {
             Thread.sleep(DELAY_MS);
@@ -110,7 +118,7 @@ public class AssetServiceImpl implements AssetService {
             errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " +  e.getMessage());
             Thread.currentThread().interrupt();
         }
-        earningsService.fetchAndStoreEarnings(errorLog);
+        fetchAndStoreEarnings(errorLog);
         writeErrorReport();
     }
 
@@ -138,5 +146,126 @@ public class AssetServiceImpl implements AssetService {
         } catch (IOException e) {
             log.error("Failed to write error report: {}", e.getMessage());
         }
+    }
+
+    public void fetchAndStoreIncomeStatements(List<String> errorLog) {
+
+        errorLog.clear();
+        List<String> symbols = incomeStatementService.getSymbolsNeedingUpdate();
+        log.info("Number of Symbols to update INCOME_STATEMENTS for: " + symbols.size());
+        int callCount = 0;
+        log.info("Starting fetching income statements");
+
+        for (String symbol : symbols) {
+
+            if (callCount >= CALLS_PER_MINUTE) {
+
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (Exception e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " +  e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+            String url = String.format("%s/query?function=INCOME_STATEMENT&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException e) {
+
+                    attempt++;
+                    String errorMsg = "Attempt " + attempt + " failed for " + symbol + ": " + e.getMessage();
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + symbol + ". Skipping.");
+                        break;
+                    }
+                    try {
+                        Thread.sleep(DELAY_MS/ 2);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+            if (responseBody != null) {
+                incomeStatementService.processIncomeStatements(symbol, responseBody, errorLog);
+            } else {
+                errorLog.add("Failed to fetch income statement for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+    }
+
+    public void fetchAndStoreEarnings(List<String> errorLog) {
+
+        List<String> symbols = earningsService.getSymbolsWithUpdatedIncomeStatements();
+        log.info("Fetching earnings for {} symbols with updated income statements", symbols.size());
+        int callCount = 0;
+
+        for (String symbol : symbols) {
+            if (callCount >= CALLS_PER_MINUTE) {
+
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+            String url = String.format("%s/query?function=EARNINGS&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException e) {
+
+                    attempt++;
+                    String errorMsg = "Attempt " + attempt + " failed for " + symbol + ": " + e.getMessage();
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + symbol + ". Skipping.");
+                        break;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay for {}: {}", symbol, ie.getMessage());
+                    }
+                }
+            }
+            if (responseBody != null) {
+                try {
+                    earningsService.processEarnings(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process earnings for symbol {}: {}", symbol, e.getMessage(), e);
+                    errorLog.add("Failed to process earnings for symbol " + symbol + ": " + e.getMessage());
+                }
+            } else {
+                errorLog.add("Failed to fetch earnings for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+        log.info("Completed fetching and storing earnings for all symbols");
     }
 }
