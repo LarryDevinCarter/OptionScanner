@@ -1,0 +1,15 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-03-27T04:22:26.464010200
+Total Errors: 11
+
+Duplicate income statement report in API response: ATI - 2022-12-31 (annual)
+Duplicate income statement report in API response: ATI - 2023-09-30 (quarterly)
+Duplicate income statement report in API response: ATI - 2023-06-30 (quarterly)
+Duplicate income statement report in API response: ATI - 2023-03-31 (quarterly)
+Duplicate income statement report in API response: ATI - 2022-12-31 (quarterly)
+Duplicate income statement report in API response: ATI - 2022-09-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2023-06-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2021-06-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2021-03-31 (quarterly)
+Duplicate income statement report in API response: STKL - 2023-03-31 (quarterly)
+Duplicate income statement report in API response: TMO - 2023-03-31 (quarterly)

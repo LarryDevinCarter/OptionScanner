@@ -152,7 +152,7 @@ public class AssetServiceImpl implements AssetService {
 
         errorLog.clear();
         List<String> symbols = incomeStatementService.getSymbolsNeedingUpdate();
-        log.info("Number of Symbols to update INCOME_STATEMENTS for: " + symbols.size());
+        log.info("Number of Symbols to update INCOME_STATEMENTS for: {}", symbols.size());
         int callCount = 0;
         log.info("Starting fetching income statements");
 

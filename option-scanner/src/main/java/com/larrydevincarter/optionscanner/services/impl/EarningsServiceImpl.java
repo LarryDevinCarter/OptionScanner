@@ -1,15 +1,14 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.Earnings;
+import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.EarningsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,12 +21,14 @@ public class EarningsServiceImpl implements EarningsService {
 
     private final EarningsRepository earningsRepository;
     private final IncomeStatementRepository incomeStatementRepository;
+    private final AssetRepository assetRepository;
 
     @Override
     @Transactional
     public void processEarnings(String symbol, Map<String, Object> response, List<String> errorLog) {
 
         earningsRepository.deleteBySymbol(symbol);
+        earningsRepository.flush();
         log.info("Deleted existing earnings for symbol: {}", symbol);
         List<Earnings> earningsList = new ArrayList<>();
         List<Map<String, String>> annualEarnings = (List<Map<String, String>>) response.get("annualEarnings");
@@ -41,6 +42,7 @@ public class EarningsServiceImpl implements EarningsService {
             earningsList.addAll(parseEarnings(quarterlyEarnings,symbol, "quarterly", errorLog));
         }
         earningsRepository.saveAll(earningsList);
+        earningsRepository.flush();
         log.info("Stored {} earnings records for symbol: {}", earningsList.size(), symbol);
     }
 
@@ -93,10 +95,7 @@ public class EarningsServiceImpl implements EarningsService {
     @Override
     public List<String> getSymbolsWithUpdatedIncomeStatements() {
         LocalDate oneHundredThirtyDaysAgo = LocalDate.now().minusDays(130);
-        return incomeStatementRepository.findActiveTradableSymbolsNeedingUpdate(oneHundredThirtyDaysAgo);
+        return earningsRepository.findActiveTradableSymbolsNeedingUpdate(oneHundredThirtyDaysAgo);
 
-//        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-//        return incomeStatementRepository.findSymbolsUpdatedToday(startOfDay);
-        //TODO: rethink this method of selecting asset that need earnings updated.
     }
 }
