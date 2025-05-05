@@ -1,0 +1,17 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-04-02T04:20:37.998514300
+Total Errors: 13
+
+Duplicate income statement report in API response: ATI - 2022-12-31 (annual)
+Duplicate income statement report in API response: ATI - 2023-09-30 (quarterly)
+Duplicate income statement report in API response: ATI - 2023-06-30 (quarterly)
+Duplicate income statement report in API response: ATI - 2023-03-31 (quarterly)
+Duplicate income statement report in API response: ATI - 2022-12-31 (quarterly)
+Duplicate income statement report in API response: ATI - 2022-09-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2023-06-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2021-06-30 (quarterly)
+Duplicate income statement report in API response: HLLY - 2021-03-31 (quarterly)
+Duplicate income statement report in API response: STKL - 2023-03-31 (quarterly)
+Duplicate income statement report in API response: TMO - 2023-03-31 (quarterly)
+Failed to process earnings for symbol SBEV: More than one row with the given identifier was found: SBEV, for class: com.larrydevincarter.optionscanner.entities.Asset
+Failed to process earnings for symbol OGI: More than one row with the given identifier was found: OGI, for class: com.larrydevincarter.optionscanner.entities.Asset

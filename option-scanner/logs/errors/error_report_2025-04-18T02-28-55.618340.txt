@@ -1,0 +1,5 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-04-18T02:28:55.620337700
+Total Errors: 1
+
+Failed to process earnings for symbol SATL: More than one row with the given identifier was found: SATL, for class: com.larrydevincarter.optionscanner.entities.Asset

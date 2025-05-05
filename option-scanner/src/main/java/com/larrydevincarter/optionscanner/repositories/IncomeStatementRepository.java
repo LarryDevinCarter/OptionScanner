@@ -4,11 +4,14 @@ import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface IncomeStatementRepository extends JpaRepository<IncomeStatement, Long> {
 
     @Query("SELECT DISTINCT a.symbol " +
@@ -31,4 +34,7 @@ public interface IncomeStatementRepository extends JpaRepository<IncomeStatement
 
     @Query("SELECT i FROM IncomeStatement i WHERE i.reportType = 'annual'")
     List<IncomeStatement> findAnnualStatements();
+
+    @Query("SELECT DISTINCT i.symbol FROM IncomeStatement i WHERE i.lastUpdated >= :startOfDay")
+    List<String> findSymbolsUpdatedToday(LocalDateTime startOfDay);
 }
