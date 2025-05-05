@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface EarningsService {
 
-    List<String> getSymbolsWithUpdatedIncomeStatements();
+    List<String> getSymbolsNeedingUpdate();
 
     void processEarnings(String symbol, Map<String, Object> response, List<String> errorLog);
 }

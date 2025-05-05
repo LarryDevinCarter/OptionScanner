@@ -210,7 +210,7 @@ public class AssetServiceImpl implements AssetService {
 
     public void fetchAndStoreEarnings(List<String> errorLog) {
 
-        List<String> symbols = earningsService.getSymbolsWithUpdatedIncomeStatements();
+        List<String> symbols = earningsService.getSymbolsNeedingUpdate();
         log.info("Fetching earnings for {} symbols with updated income statements", symbols.size());
         int callCount = 0;
 
