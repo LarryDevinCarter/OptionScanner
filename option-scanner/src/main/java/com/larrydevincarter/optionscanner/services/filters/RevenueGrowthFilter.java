@@ -34,8 +34,8 @@ public class RevenueGrowthFilter implements FinancialFilter{
             return false;
         }
 
-        double endingRevenue = sortedStatements.get(0).getTotalRevenue();
-        double beginningRevenue = sortedStatements.get(sortedStatements.size() -1).getTotalRevenue();
+        double endingRevenue = sortedStatements.getFirst().getTotalRevenue();
+        double beginningRevenue = sortedStatements.getLast().getTotalRevenue();
 
         if (beginningRevenue <= 0) {
             log.debug("Invalid beginning revenue for symbol {}: {}", symbol, beginningRevenue);

@@ -3,10 +3,9 @@ package com.larrydevincarter.optionscanner.services;
 import java.util.List;
 import java.util.Map;
 
-public interface IncomeStatementService {
+public interface EarningsService {
 
     List<String> getSymbolsNeedingUpdate();
 
-    void processIncomeStatements(String symbol, Map<String, Object> response, List<String> errorLog);
-
+    void processEarnings(String symbol, Map<String, Object> response, List<String> errorLog);
 }

@@ -1,0 +1,7 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-05-03T02:27:30.716123200
+Total Errors: 3
+
+Failed to process earnings for symbol NEGG: More than one row with the given identifier was found: NEGG, for class: com.larrydevincarter.optionscanner.entities.Asset
+Failed to process earnings for symbol SATL: More than one row with the given identifier was found: SATL, for class: com.larrydevincarter.optionscanner.entities.Asset
+Failed to process earnings for symbol STKH: More than one row with the given identifier was found: STKH, for class: com.larrydevincarter.optionscanner.entities.Asset
