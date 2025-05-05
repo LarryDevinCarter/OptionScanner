@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -174,16 +176,19 @@ public class AssetServiceImpl implements AssetService {
             String url = String.format("%s/query?function=INCOME_STATEMENT&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
+            boolean hasLongPaused = false;
 
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
                     callCount++;
                     break;
-                } catch (ResourceAccessException e) {
+                } catch (ResourceAccessException | HttpServerErrorException e) {
 
                     attempt++;
-                    String errorMsg = "Attempt " + attempt + " failed for " + symbol + ": " + e.getMessage();
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, symbol, e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
                     log.warn(errorMsg);
                     errorLog.add(errorMsg);
 
@@ -191,21 +196,38 @@ public class AssetServiceImpl implements AssetService {
                         errorLog.add("Max retries reached for " + symbol + ". Skipping.");
                         break;
                     }
+                    long pauseDuration = DELAY_MS / 2;
+
+                    if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                            ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                        pauseDuration = 30 * 60 * 1000;
+                        log.info("Detected 503 Service Unavailable for {}. Pausing for 30 minutes before retry...", symbol);
+                        errorLog.add("Detected 503 for " + symbol + ". Pausing for 30 minutes.");
+                        hasLongPaused = true;
+                    }
+
                     try {
-                        Thread.sleep(DELAY_MS/ 2);
+                        Thread.sleep(pauseDuration);
                     } catch (InterruptedException ie) {
                         log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
                         Thread.currentThread().interrupt();
                         break;
                     }
                 }
             }
             if (responseBody != null) {
-                incomeStatementService.processIncomeStatements(symbol, responseBody, errorLog);
+                try {
+                    incomeStatementService.processIncomeStatements(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process income statements for symbol {}: {}", symbol, e.getMessage());
+                    errorLog.add("Failed to process income statements for " + symbol + ": " + e.getMessage());
+                }
             } else {
                 errorLog.add("Failed to fetch income statement for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
             }
         }
+        log.info("Completed fetching income statements");
     }
 
     public void fetchAndStoreEarnings(List<String> errorLog) {
@@ -231,16 +253,19 @@ public class AssetServiceImpl implements AssetService {
             String url = String.format("%s/query?function=EARNINGS&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
+            boolean hasLongPaused = false;
 
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
                     callCount++;
                     break;
-                } catch (ResourceAccessException e) {
+                } catch (ResourceAccessException | HttpServerErrorException e) {
 
                     attempt++;
-                    String errorMsg = "Attempt " + attempt + " failed for " + symbol + ": " + e.getMessage();
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, symbol, e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
                     log.warn(errorMsg);
                     errorLog.add(errorMsg);
 
@@ -248,10 +273,23 @@ public class AssetServiceImpl implements AssetService {
                         errorLog.add("Max retries reached for " + symbol + ". Skipping.");
                         break;
                     }
+                    long pauseDuration = 1000;
+
+                    if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                            ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                        pauseDuration = 30 * 60 * 1000;
+                        log.info("Detected 503 Service Unavailable for {}. Pausing for 30 minutes before retry...", symbol);
+                        errorLog.add("Detected 503 for " + symbol + ". Pausing for 30 minutes.");
+                        hasLongPaused = true;
+                    }
+
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(pauseDuration);
                     } catch (InterruptedException ie) {
-                        log.error("Interrupted during retry delay for {}: {}", symbol, ie.getMessage());
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }
