@@ -32,7 +32,7 @@ public class OptionScannerApplication {
 
 	@Scheduled(fixedRate = 600000000)
 	private void callAssetService() {
-//		assetService.fetchAndStoreEarnings(errorLog);
+		assetService.fetchTradableAssets();
 	}
 
 }
