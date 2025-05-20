@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -70,7 +71,30 @@ public class AssetServiceImpl implements AssetService {
             List<Map<String, Object>> assets = restTemplate.exchange(url, HttpMethod.GET, entity, List.class).getBody();
 
             if (assets != null) {
+
                 for (Map<String, Object> assetData : assets) {
+
+                    String symbol = (String) assetData.get("symbol");
+                    Optional<Asset> existingAsset = assetRepository.findBySymbol(symbol);
+
+                    if (existingAsset.isPresent()) {
+
+                        Asset oldAsset = existingAsset.get();
+                        String newId = (String) assetData.get("id");
+
+                        if(!oldAsset.getId().equals(newId)) {
+                            log.info("Deleting old asset with symbol {} and id {} before saving new id {}", symbol, oldAsset.getId(), newId);
+                            assetRepository.delete(oldAsset);
+                        } else {
+                            oldAsset.setName((String) assetData.get("name"));
+                            oldAsset.setExchange((String) assetData.get("exchange"));
+                            oldAsset.setStatus((String) assetData.get("status"));
+                            oldAsset.setTradable((Boolean) assetData.get("tradable"));
+                            oldAsset.setLastUpdated(LocalDateTime.now());
+                            assetRepository.save(oldAsset);
+                            continue;
+                        }
+                    }
                     Asset asset = new Asset();
                     asset.setId((String) assetData.get("id"));
                     asset.setSymbol((String) assetData.get("symbol"));
@@ -81,10 +105,11 @@ public class AssetServiceImpl implements AssetService {
                     asset.setLastUpdated(LocalDateTime.now());
                     assetRepository.save(asset);
                 }
-                log.info("Fetched {} assets", assets.size());
+                log.info("Processed {} assets", assets.size());
             }
         } catch (Exception e) {
             log.error("Failed to fetch tradable assets: {}", e.getMessage());
+            errorLog.add("Failed to fetch tradable assets: " + e.getMessage());
             return;
         }
         List<Asset> staleAssets = assetRepository.findActiveStaleAssets(pullStartTime);
@@ -100,6 +125,15 @@ public class AssetServiceImpl implements AssetService {
                 Map<String, Object> assetData = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
 
                 if (assetData != null) {
+
+                    String symbol = (String) assetData.get("symbol");
+                    Optional<Asset> existingAsset = assetRepository.findBySymbol(symbol);
+
+                    if (existingAsset.isPresent() && !existingAsset.get().getId().equals(staleAsset.getId())) {
+                        log.info("Deleting stale asset with symbol {} and id {} due to new asset", symbol, staleAsset.getId());
+                        assetRepository.delete(staleAsset);
+                        continue;
+                    }
                     staleAsset.setStatus((String) assetData.get("status"));
                     staleAsset.setTradable((Boolean) assetData.get("tradable"));
                     staleAsset.setLastUpdated(LocalDateTime.now());
@@ -108,6 +142,7 @@ public class AssetServiceImpl implements AssetService {
                 }
             } catch (Exception e) {
                 log.error("Failed to update stale asset {}: {}", staleAsset.getSymbol(), e.getMessage());
+                errorLog.add("Failed to update stale asset " + staleAsset.getSymbol() + ": " + e.getMessage());
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());

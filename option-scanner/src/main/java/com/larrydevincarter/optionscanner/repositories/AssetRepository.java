@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, String> {
@@ -16,4 +17,6 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
 
     @Query("SELECT a.symbol FROM Asset a WHERE a.status = 'active' AND a.tradable = true")
     List<String> findActiveTradableSymbols();
+
+    Optional<Asset> findBySymbol(String symbol);
 }
