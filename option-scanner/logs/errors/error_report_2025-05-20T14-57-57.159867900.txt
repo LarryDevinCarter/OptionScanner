@@ -1,0 +1,6 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-05-20T14:57:57.162867500
+Total Errors: 2
+
+Attempt 1 failed for RY: 503 Service Unavailable on GET request for "https://www.alphavantage.co/query": "<!DOCTYPE html><EOL>?<html><EOL>?  <head><EOL>??<meta name="viewport" content="width=device-width, initial-scale=1"><EOL>??<meta charset="utf-8"><EOL>??<title>Application Error</title><EOL>??<style media="screen"><EOL>??  html,body,iframe {<EOL>???margin: 0;<EOL>???padding: 0;<EOL>??  }<EOL>??  html,body {<EOL>???height: 100%;<EOL>???overflow: hidden;<EOL>??  }<EOL>??  iframe {<EOL>???width: 100%;<EOL>???height: 100%;<EOL>???border: 0;<EOL>??  }<EOL>??</style><EOL>?  </head><EOL>?  <body><EOL>??<iframe src="//www.herokucdn.com/error-pages/application-error.html"></iframe><EOL>?  </body><EOL>?</html>" (HTTP Status: 503 SERVICE_UNAVAILABLE)
+Detected 503 for RY. Pausing for 30 minutes.
