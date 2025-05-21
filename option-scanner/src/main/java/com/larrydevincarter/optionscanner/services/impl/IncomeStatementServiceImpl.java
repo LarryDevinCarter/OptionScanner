@@ -107,8 +107,8 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate() {
-        LocalDate oneHundredThirtyDaysAgo = LocalDate.now().minusDays(130);
-        return repository.findActiveTradableSymbolsNeedingUpdate(oneHundredThirtyDaysAgo);
+        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+        return repository.findActiveTradableSymbolsNeedingUpdate(thirtyDaysAgo);
     }
 
 }
