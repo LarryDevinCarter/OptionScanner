@@ -1,5 +1,6 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
+import com.larrydevincarter.optionscanner.entities.Earnings;
 import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class RevenueGrowthFilter implements FinancialFilter{
     private int years;
 
     @Override
-    public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
+    public boolean appliesToIncome(String symbol, List<IncomeStatement> statements) {
 
         List<IncomeStatement> sortedStatements = statements.stream()
                 .filter(s -> "annual".equals(s.getReportType()))
@@ -44,6 +45,12 @@ public class RevenueGrowthFilter implements FinancialFilter{
         double cagr = (Math.pow(endingRevenue/beginningRevenue, 1.0 / years) -1) * 100;
         log.debug("CAGR for symbol {}: {}%", symbol, cagr);
         return cagr > cagrThreshold;
+    }
+
+    @Override
+    public boolean appliesToEarnings(String symbol, List<Earnings> earnings) {
+        log.debug("RevenueGrowthFilter does not apply to earnings data for symbol {}", symbol);
+        return true;
     }
 
     @Override
