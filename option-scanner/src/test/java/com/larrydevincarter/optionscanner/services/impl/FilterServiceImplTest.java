@@ -1,5 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
+import com.larrydevincarter.optionscanner.entities.Earnings;
 import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
@@ -96,8 +97,13 @@ class FilterServiceImplTest {
         // Mock another filter that always returns true for simplicity
         FinancialFilter dummyFilter = new FinancialFilter() {
             @Override
-            public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
+            public boolean appliesToIncome(String symbol, List<IncomeStatement> statements) {
                 return true;
+            }
+
+            @Override
+            public boolean appliesToEarnings(String symbol, List<Earnings> earnings) {
+                return false;
             }
 
             @Override

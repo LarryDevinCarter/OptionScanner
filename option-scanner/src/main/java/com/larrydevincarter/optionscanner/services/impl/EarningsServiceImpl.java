@@ -94,8 +94,8 @@ public class EarningsServiceImpl implements EarningsService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate() {
-        LocalDate oneHundredThirtyDaysAgo = LocalDate.now().minusDays(130);
-        return earningsRepository.findActiveTradableSymbolsNeedingUpdate(oneHundredThirtyDaysAgo);
+        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+        return earningsRepository.findActiveTradableSymbolsNeedingUpdate(thirtyDaysAgo);
 
     }
 }

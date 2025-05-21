@@ -29,7 +29,7 @@ class RevenueGrowthFilterTest {
                 createStatement("TEST", 2021, 113.91),
                 createStatement("TEST", 2020, 100.0)
         );
-        assertTrue(filter.appliesTo("TEST", statements), "CAGR > 5% should pass");
+        assertTrue(filter.appliesToIncome("TEST", statements), "CAGR > 5% should pass");
     }
 
     @Test
@@ -42,7 +42,7 @@ class RevenueGrowthFilterTest {
                 createStatement("TEST", 2021, 108.69),
                 createStatement("TEST", 2020, 100.0)
         );
-        assertFalse(filter.appliesTo("TEST", statements), "CAGR < 5% should fail");
+        assertFalse(filter.appliesToIncome("TEST", statements), "CAGR < 5% should fail");
     }
 
     @Test
@@ -53,13 +53,13 @@ class RevenueGrowthFilterTest {
                 createStatement("TEST", 2023, 126.97),
                 createStatement("TEST", 2022, 120.27)
         );
-        assertFalse(filter.appliesTo("TEST", statements), "Insufficient years should fail");
+        assertFalse(filter.appliesToIncome("TEST", statements), "Insufficient years should fail");
     }
 
     @Test
     void testNoData() {
         List<IncomeStatement> statements = Collections.emptyList();
-        assertFalse(filter.appliesTo("TEST", statements), "No data should fail");
+        assertFalse(filter.appliesToIncome("TEST", statements), "No data should fail");
     }
 
     @Test
@@ -72,7 +72,7 @@ class RevenueGrowthFilterTest {
                 createStatement("TEST", 2021, 113.91),
                 createStatement("TEST", 2020, 0.0)
         );
-        assertFalse(filter.appliesTo("TEST", statements), "Zero or negative beginning revenue should fail");
+        assertFalse(filter.appliesToIncome("TEST", statements), "Zero or negative beginning revenue should fail");
     }
 
     @Test
@@ -88,7 +88,7 @@ class RevenueGrowthFilterTest {
                 createStatement("TEST", 2020, 100.0),
                 createStatement("TEST", 2019, 95.0)
         );
-        assertTrue(filter.appliesTo("TEST", statements), "Null revenue should be filtered out but still pass if enough data");
+        assertTrue(filter.appliesToIncome("TEST", statements), "Null revenue should be filtered out but still pass if enough data");
     }
 
     @Test
