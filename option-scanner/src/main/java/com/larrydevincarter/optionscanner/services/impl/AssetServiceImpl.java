@@ -2,6 +2,8 @@ package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.Asset;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
+import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
+import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.AssetService;
 import com.larrydevincarter.optionscanner.services.EarningsService;
 import com.larrydevincarter.optionscanner.services.IncomeStatementService;
@@ -33,7 +35,9 @@ import java.util.Optional;
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
+    private final EarningsRepository earningsRepository;
     private final EarningsService earningsService;
+    private final IncomeStatementRepository incomeStatementRepository;
     private final IncomeStatementService incomeStatementService;
     private final RestTemplate restTemplate;
 
@@ -83,8 +87,19 @@ public class AssetServiceImpl implements AssetService {
                         String newId = (String) assetData.get("id");
 
                         if(!oldAsset.getId().equals(newId)) {
+
                             log.info("Deleting old asset with symbol {} and id {} before saving new id {}", symbol, oldAsset.getId(), newId);
-                            assetRepository.delete(oldAsset);
+
+                            try {
+                                earningsRepository.deleteBySymbol(symbol);
+                                incomeStatementRepository.deleteBySymbol(symbol);
+                                assetRepository.delete(oldAsset);
+                                log.debug("Successfully deleted old asset and related records for symbol {}", symbol);
+                            } catch (Exception e) {
+                                log.error("Failed to delete old asset or related records for symbol {}: {}", symbol, e.getMessage());
+                                errorLog.add("Failed to delete old asset or related records for symbol " + symbol + ": " + e.getMessage());
+                                continue;
+                            }
                         } else {
                             oldAsset.setName((String) assetData.get("name"));
                             oldAsset.setExchange((String) assetData.get("exchange"));
