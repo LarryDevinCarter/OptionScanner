@@ -9,4 +9,6 @@ public interface AssetService {
     void fetchAndStoreIncomeStatements(List<String> errorLog);
 
     void fetchAndStoreEarnings(List<String> errorLog);
+
+    void fetchAndStoreBalanceSheets(List<String> errorLog);
 }
