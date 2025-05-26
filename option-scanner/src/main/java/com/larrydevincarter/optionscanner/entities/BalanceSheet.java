@@ -29,79 +29,79 @@ public class BalanceSheet {
     private String reportedCurrency;
 
     @Column(name = "total_assets")
-    private Long totalAssets;
+    private Double totalAssets;
 
     @Column(name = "total_current_assets")
-    private Long totalCurrentAssets;
+    private Double totalCurrentAssets;
 
     @Column(name = "cash_and_cash_equivalents_at_carrying_value")
-    private Long cashAndCashEquivalentsAtCarryingValue;
+    private Double cashAndCashEquivalentsAtCarryingValue;
 
     @Column(name = "cash_and_short_term_investments")
-    private Long cashAndShortTermInvestments;
+    private Double cashAndShortTermInvestments;
 
     @Column(name = "inventory")
-    private Long inventory;
+    private Double inventory;
 
     @Column(name = "current_net_receivables")
-    private Long currentNetReceivables;
+    private Double currentNetReceivables;
 
     @Column(name = "total_non_current_assets")
-    private Long totalNonCurrentAssets;
+    private Double totalNonCurrentAssets;
 
     @Column(name = "intangible_assets")
-    private Long intangibleAssets;
+    private Double intangibleAssets;
 
     @Column(name = "intangible_assets_excluding_goodwill")
-    private Long intangibleAssetsExcludingGoodwill;
+    private Double intangibleAssetsExcludingGoodwill;
 
     @Column(name = "goodwill")
-    private Long goodwill;
+    private Double goodwill;
 
     @Column(name = "total_liabilities")
-    private Long totalLiabilities;
+    private Double totalLiabilities;
 
     @Column(name = "total_current_liabilities")
-    private Long totalCurrentLiabilities;
+    private Double totalCurrentLiabilities;
 
     @Column(name = "current_accounts_payable")
-    private Long currentAccountsPayable;
+    private Double currentAccountsPayable;
 
     @Column(name = "short_term_debt")
-    private Long shortTermDebt;
+    private Double shortTermDebt;
 
     @Column(name = "total_non_current_liabilities")
-    private Long totalNonCurrentLiabilities;
+    private Double totalNonCurrentLiabilities;
 
     @Column(name = "capital_lease_obligations")
-    private Long capitalLeaseObligations;
+    private Double capitalLeaseObligations;
 
     @Column(name = "long_term_debt")
-    private Long longTermDebt;
+    private Double longTermDebt;
 
     @Column(name = "current_long_term_debt")
-    private Long currentLongTermDebt;
+    private Double currentLongTermDebt;
 
     @Column(name = "short_long_term_debt_total")
-    private Long shortLongTermDebtTotal;
+    private Double shortLongTermDebtTotal;
 
     @Column(name = "other_current_liabilities")
-    private Long otherCurrentLiabilities;
+    private Double otherCurrentLiabilities;
 
     @Column(name = "other_non_current_liabilities")
-    private Long otherNonCurrentLiabilities;
+    private Double otherNonCurrentLiabilities;
 
     @Column(name = "total_shareholder_equity")
-    private Long totalShareholderEquity;
+    private Double totalShareholderEquity;
 
     @Column(name = "retained_earnings")
-    private Long retainedEarnings;
+    private Double retainedEarnings;
 
     @Column(name = "common_stock")
-    private Long commonStock;
+    private Double commonStock;
 
     @Column(name = "common_stock_shares_outstanding")
-    private Long commonStockSharesOutstanding;
+    private Double commonStockSharesOutstanding;
 
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;

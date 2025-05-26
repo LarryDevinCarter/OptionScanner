@@ -177,24 +177,26 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
-        fetchAndStoreIncomeStatements(errorLog);
+//        fetchAndStoreIncomeStatements(errorLog);
+//TODO: re-add
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        fetchAndStoreEarnings(errorLog);
+//        try {
+//            Thread.sleep(DELAY_MS);
+//        } catch (InterruptedException e) {
+//            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+//            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
+//            Thread.currentThread().interrupt();
+//        }
+//        fetchAndStoreEarnings(errorLog);
+//TODO: re-add
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            Thread.sleep(DELAY_MS);
+//        } catch (InterruptedException e) {
+//            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+//            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
+//            Thread.currentThread().interrupt();
+//        }
         fetchAndStoreBalanceSheets(errorLog);
         writeErrorReport();
     }
@@ -308,7 +310,6 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public void fetchAndStoreEarnings(List<String> errorLog) {
 
-        errorLog.clear();
         List<String> symbols = earningsService.getSymbolsNeedingUpdate();
         log.info("Fetching earnings for {} symbols with updated income statements", symbols.size());
         int callCount = 0;
@@ -387,7 +388,6 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public void fetchAndStoreBalanceSheets(List<String> errorLog) {
 
-        errorLog.clear();
         List<String> symbols = balanceSheetService.getSymbolsNeedingUpdate();
         log.info("Number of Symbols to update BALANCE_SHEETS for: {}", symbols.size());
         int callCount = 0;
