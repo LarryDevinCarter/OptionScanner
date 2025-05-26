@@ -45,29 +45,7 @@ public class OptionScannerApplication {
 
 	@Scheduled(fixedRate = 600000000)
 	private void startUpTestMethod() {
-		try {
-			log.info("Starting filter test with default criteria: Revenue CAGR > {}% over {} years, EPS CAGR > {}% over {} years",
-					defaultRevenueCagrThreshold, defaultRevenueYears, defaultEpsCagrThreshold, defaultEpsYears);
-
-			// Create list of filters with default criteria
-			List<FinancialFilter> filters = new ArrayList<>();
-			filters.add(new RevenueGrowthFilter(defaultRevenueCagrThreshold, defaultRevenueYears));
-			filters.add(new EpsGrowthFilter(defaultEpsCagrThreshold, defaultEpsYears));
-
-			// Get filtered symbols
-			List<String> filteredSymbols = filterService.getFilteredSymbols(filters);
-
-			// Log results
-			if (filteredSymbols.isEmpty()) {
-				log.info("No symbols meet the default filter criteria.");
-			} else {
-				log.info("Found {} symbols meeting default filter criteria: {}", filteredSymbols.size(), filteredSymbols);
-			}
-		} catch (Exception e) {
-			String errorMsg = "Error applying filters in startUpTestMethod: " + e.getMessage();
-			log.error(errorMsg, e);
-			errorLog.add(errorMsg);
-		}
+		assetService.fetchTradableAssets();
 	}
 
 }

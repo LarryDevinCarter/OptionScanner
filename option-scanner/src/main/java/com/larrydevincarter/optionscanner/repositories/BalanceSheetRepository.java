@@ -24,8 +24,8 @@ public interface BalanceSheetRepository extends JpaRepository<BalanceSheet, Long
             "     a.symbol NOT IN (" +
             "         SELECT b2.symbol " +
             "         FROM BalanceSheet b2 " +
-            "         WHERE b2.lastUpdated >= :thresholdDate " +
+            "         WHERE b2.fiscalDateEnding >= :date " +
             "         AND b2.symbol = a.symbol " +
             "     ))")
-    List<String> findActiveTradableSymbolsNeedingUpdate(@Param("thresholdDate") LocalDate thresholdDate);
+    List<String> findActiveTradableSymbolsNeedingUpdate(LocalDate date);
 }
