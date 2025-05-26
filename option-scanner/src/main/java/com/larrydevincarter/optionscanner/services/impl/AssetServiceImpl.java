@@ -2,9 +2,11 @@ package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.Asset;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
+import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.AssetService;
+import com.larrydevincarter.optionscanner.services.BalanceSheetService;
 import com.larrydevincarter.optionscanner.services.EarningsService;
 import com.larrydevincarter.optionscanner.services.IncomeStatementService;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +38,11 @@ public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
     private final EarningsRepository earningsRepository;
-    private final EarningsService earningsService;
     private final IncomeStatementRepository incomeStatementRepository;
+    private final BalanceSheetRepository balanceSheetRepository;
+    private final EarningsService earningsService;
     private final IncomeStatementService incomeStatementService;
+    private final BalanceSheetService balanceSheetService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -46,12 +50,12 @@ public class AssetServiceImpl implements AssetService {
     @Value("${alpaca.api.secret}")
     private String apiSecret;
     @Value("${alpaca.api.base-url}")
-    private String AlpcacBaseUrl;
+    private String alpacaBaseUrl;
 
     @Value("${alphavantage.api.key}")
-    private String AlphavantageApiKey;
+    private String alphavantageApiKey;
     @Value("${alphavantage.api.base-url}")
-    private String AlphavantageBaseUrl;
+    private String alphavantageBaseUrl;
 
     private final List<String> errorLog = new ArrayList<>();
     private static final long DELAY_MS = 60_000;
@@ -67,7 +71,7 @@ public class AssetServiceImpl implements AssetService {
 
         try {
 
-            String url = AlpcacBaseUrl + "/v2/assets?status=active&asset_class=us_equity&attributes=has_options";
+            String url = alpacaBaseUrl + "/v2/assets?status=active&asset_class=us_equity&attributes=has_options";
             HttpHeaders headers = new HttpHeaders();
             headers.set("APCA-API-KEY-ID", alpacaApiKey);
             headers.set("APCA-API-SECRET-KEY", apiSecret);
@@ -86,13 +90,14 @@ public class AssetServiceImpl implements AssetService {
                         Asset oldAsset = existingAsset.get();
                         String newId = (String) assetData.get("id");
 
-                        if(!oldAsset.getId().equals(newId)) {
+                        if (!oldAsset.getId().equals(newId)) {
 
                             log.info("Deleting old asset with symbol {} and id {} before saving new id {}", symbol, oldAsset.getId(), newId);
 
                             try {
                                 earningsRepository.deleteBySymbol(symbol);
                                 incomeStatementRepository.deleteBySymbol(symbol);
+                                balanceSheetRepository.deleteBySymbol(symbol);
                                 assetRepository.delete(oldAsset);
                                 log.debug("Successfully deleted old asset and related records for symbol {}", symbol);
                             } catch (Exception e) {
@@ -132,7 +137,7 @@ public class AssetServiceImpl implements AssetService {
         for (Asset staleAsset : staleAssets) {
             try {
 
-                String url = AlpcacBaseUrl + "/v2/assets/" + staleAsset.getId();
+                String url = alpacaBaseUrl + "/v2/assets/" + staleAsset.getId();
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("APCA-API-KEY-ID", alpacaApiKey);
                 headers.set("APCA-API-SECRET-KEY", apiSecret);
@@ -145,15 +150,26 @@ public class AssetServiceImpl implements AssetService {
                     Optional<Asset> existingAsset = assetRepository.findBySymbol(symbol);
 
                     if (existingAsset.isPresent() && !existingAsset.get().getId().equals(staleAsset.getId())) {
+
                         log.info("Deleting stale asset with symbol {} and id {} due to new asset", symbol, staleAsset.getId());
-                        assetRepository.delete(staleAsset);
-                        continue;
+
+                        try {
+                            earningsRepository.deleteBySymbol(symbol);
+                            incomeStatementRepository.deleteBySymbol(symbol);
+                            balanceSheetRepository.deleteBySymbol(symbol);
+                            assetRepository.delete(staleAsset);
+                            log.debug("Successfully deleted stale asset and related records for symbol {}", symbol);
+                        } catch (Exception e) {
+                            log.error("Failed to delete stale asset or related records for symbol {}: {}", symbol, e.getMessage());
+                            errorLog.add("Failed to delete stale asset or related records for symbol " + symbol + ": " + e.getMessage());
+                        }
+                    } else {
+                        staleAsset.setStatus((String) assetData.get("status"));
+                        staleAsset.setTradable((Boolean) assetData.get("tradable"));
+                        staleAsset.setLastUpdated(LocalDateTime.now());
+                        assetRepository.save(staleAsset);
+                        log.info("Updated stale asset {} to status {}", staleAsset.getSymbol(), staleAsset.getStatus());
                     }
-                    staleAsset.setStatus((String) assetData.get("status"));
-                    staleAsset.setTradable((Boolean) assetData.get("tradable"));
-                    staleAsset.setLastUpdated(LocalDateTime.now());
-                    assetRepository.save(staleAsset);
-                    log.info("Updated stale asset {} to status {}", staleAsset.getSymbol(), staleAsset.getStatus());
                 }
             } catch (Exception e) {
                 log.error("Failed to update stale asset {}: {}", staleAsset.getSymbol(), e.getMessage());
@@ -165,12 +181,21 @@ public class AssetServiceImpl implements AssetService {
 
         try {
             Thread.sleep(DELAY_MS);
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " +  e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
         fetchAndStoreEarnings(errorLog);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        fetchAndStoreBalanceSheets(errorLog);
         writeErrorReport();
     }
 
@@ -184,22 +209,22 @@ public class AssetServiceImpl implements AssetService {
         new File(directory).mkdirs();
         String filename = directory + "error_report_" + LocalDateTime.now().toString().replace(":", "-") + ".txt";
 
-        try (FileWriter writer = new FileWriter(filename)){
+        try (FileWriter writer = new FileWriter(filename)) {
 
             writer.write("Error Report - Option Scanner Revenue Data Fetch\n");
-            writer.write("Timestamp: " +LocalDateTime.now() +"\n");
+            writer.write("Timestamp: " + LocalDateTime.now() + "\n");
             writer.write("Total Errors: " + errorLog.size() + "\n\n");
 
-            for (String error: errorLog) {
+            for (String error : errorLog) {
                 writer.write(error + "\n");
             }
-
             log.info("Error report written to {}", filename);
         } catch (IOException e) {
             log.error("Failed to write error report: {}", e.getMessage());
         }
     }
 
+    @Override
     public void fetchAndStoreIncomeStatements(List<String> errorLog) {
 
         errorLog.clear();
@@ -216,14 +241,14 @@ public class AssetServiceImpl implements AssetService {
 
                 try {
                     Thread.sleep(DELAY_MS);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " +  e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
                     Thread.currentThread().interrupt();
                 }
                 callCount = 0;
             }
-            String url = String.format("%s/query?function=INCOME_STATEMENT&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
+            String url = String.format("%s/query?function=INCOME_STATEMENT&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
             boolean hasLongPaused = false;
@@ -280,8 +305,10 @@ public class AssetServiceImpl implements AssetService {
         log.info("Completed fetching income statements");
     }
 
+    @Override
     public void fetchAndStoreEarnings(List<String> errorLog) {
 
+        errorLog.clear();
         List<String> symbols = earningsService.getSymbolsNeedingUpdate();
         log.info("Fetching earnings for {} symbols with updated income statements", symbols.size());
         int callCount = 0;
@@ -300,7 +327,8 @@ public class AssetServiceImpl implements AssetService {
                 }
                 callCount = 0;
             }
-            String url = String.format("%s/query?function=EARNINGS&symbol=%s&apikey=%s", AlphavantageBaseUrl, symbol, AlphavantageApiKey);
+
+            String url = String.format("%s/query?function=EARNINGS&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
             boolean hasLongPaused = false;
@@ -311,7 +339,6 @@ public class AssetServiceImpl implements AssetService {
                     callCount++;
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
-
                     attempt++;
                     String errorMsg = String.format("Attempt %d failed for %s: %s%s",
                             attempt, symbol, e.getMessage(),
@@ -347,7 +374,7 @@ public class AssetServiceImpl implements AssetService {
                 try {
                     earningsService.processEarnings(symbol, responseBody, errorLog);
                 } catch (Exception e) {
-                    log.error("Failed to process earnings for symbol {}: {}", symbol, e.getMessage(), e);
+                    log.error("Failed to process earnings for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process earnings for symbol " + symbol + ": " + e.getMessage());
                 }
             } else {
@@ -355,5 +382,86 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching and storing earnings for all symbols");
+    }
+
+    @Override
+    public void fetchAndStoreBalanceSheets(List<String> errorLog) {
+
+        errorLog.clear();
+        List<String> symbols = balanceSheetService.getSymbolsNeedingUpdate();
+        log.info("Number of Symbols to update BALANCE_SHEETS for: {}", symbols.size());
+        int callCount = 0;
+        log.info("Starting fetching balance sheets");
+
+        for (String symbol : symbols) {
+
+            if (callCount >= CALLS_PER_MINUTE) {
+
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+            String url = String.format("%s/query?function=BALANCE_SHEET&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+            boolean hasLongPaused = false;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException | HttpServerErrorException e) {
+
+                    attempt++;
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, symbol, e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + symbol + ". Skipping.");
+                        break;
+                    }
+                    long pauseDuration = DELAY_MS / 2;
+
+                    if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                            ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                        pauseDuration = 30 * 60 * 1000;
+                        log.info("Detected 503 Service Unavailable for {}. Pausing for 30 minutes before retry...", symbol);
+                        errorLog.add("Detected 503 for " + symbol + ". Pausing for 30 minutes.");
+                        hasLongPaused = true;
+                    }
+
+                    try {
+                        Thread.sleep(pauseDuration);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+            if (responseBody != null) {
+                try {
+                    balanceSheetService.processBalanceSheets(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process balance sheets for symbol {}: {}", symbol, e.getMessage());
+                    errorLog.add("Failed to process balance sheets for " + symbol + ": " + e.getMessage());
+                }
+            } else {
+                errorLog.add("Failed to fetch balance sheet for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+        log.info("Completed fetching balance sheets");
     }
 }
