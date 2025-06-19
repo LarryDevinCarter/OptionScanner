@@ -14,19 +14,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class EpsGrowthFilter implements FinancialFilter {
+public class EpsGrowthFilter implements FinancialFilter<Earnings> {
 
     private double cagrThreshold;
     private int years;
 
     @Override
-    public boolean appliesToIncome(String symbol, List<IncomeStatement> statements) {
-        log.debug("EpsGrowthFilter does not apply to income statement data for symbol {}", symbol);
-        return true;
-    }
-
-    @Override
-    public boolean appliesToEarnings(String symbol, List<Earnings> earnings) {
+    public boolean appliesTo(String symbol, List<Earnings> earnings) {
 
         List<Earnings> annualEarnings = earnings.stream()
                 .filter(e -> "annual".equals(e.getReportType()))

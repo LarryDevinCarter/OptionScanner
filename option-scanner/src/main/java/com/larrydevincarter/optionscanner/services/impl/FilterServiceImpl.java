@@ -59,7 +59,7 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
-    public List<String> getFilteredSymbols(List<FinancialFilter> filters) {
+    public List<String> getFilteredSymbols(List<FinancialFilter<?>> filters) {
 
         List<String> activeTradableSymbols = assetRepository.findActiveTradableSymbols();
         log.info("Found {} active and tradable assets", activeTradableSymbols.size());
@@ -75,9 +75,24 @@ public class FilterServiceImpl implements FilterService {
         Map<String, List<Earnings>> earningsBySymbol = earnings.stream().collect(Collectors.groupingBy(Earnings::getSymbol));
 
         List<String> filteredSymbols = activeTradableSymbols.stream().filter(symbol -> {
+
             List<IncomeStatement> symbolIncome = incomeBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<Earnings> symbolEarnings = earningsBySymbol.getOrDefault(symbol, Collections.emptyList());
-            return filters.stream().allMatch(filter -> filter.appliesToIncome(symbol, symbolIncome) && filter.appliesToEarnings(symbol, symbolEarnings));
+
+            return filters.stream().allMatch(filter -> {
+
+                if (filter instanceof RevenueGrowthFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<IncomeStatement> incomeFilter = (FinancialFilter<IncomeStatement>) filter;
+                    return incomeFilter.appliesTo(symbol, symbolIncome);
+                } else if (filter instanceof EpsGrowthFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<Earnings> incomeFilter = (FinancialFilter<Earnings>) filter;
+                    return incomeFilter.appliesTo(symbol, symbolEarnings);
+                }
+                log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
+                return true;
+            });
         }).toList();
 
         log.info("Filtered to {} symbols with {} filters", filteredSymbols.size(), filters.size());
