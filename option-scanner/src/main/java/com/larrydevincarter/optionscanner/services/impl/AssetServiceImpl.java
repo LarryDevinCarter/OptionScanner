@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -82,27 +83,25 @@ public class AssetServiceImpl implements AssetService {
 
                 for (Map<String, Object> assetData : assets) {
 
-                    String symbol = (String) assetData.get("symbol");
-                    Optional<Asset> existingAsset = assetRepository.findBySymbol(symbol);
+                    String newId = (String) assetData.get("id");
+                    String newSymbol = (String) assetData.get("symbol");
+                    Optional<Asset> existingAssetById = assetRepository.findById(newId);
+                    Optional<Asset> existingAssetBySymbol = assetRepository.findBySymbol(newSymbol);
 
-                    if (existingAsset.isPresent()) {
+                    if (existingAssetById.isPresent() || existingAssetBySymbol.isPresent()) {
 
-                        Asset oldAsset = existingAsset.get();
-                        String newId = (String) assetData.get("id");
+                        Asset oldAsset = existingAssetById.orElseGet(existingAssetBySymbol::get);
 
-                        if (!oldAsset.getId().equals(newId)) {
+                        if (!oldAsset.getId().equals(newId) || !oldAsset.getSymbol().equals(newSymbol)) {
 
-                            log.info("Deleting old asset with symbol {} and id {} before saving new id {}", symbol, oldAsset.getId(), newId);
+                            log.info("Deleting old asset with symbol {} and id {} before saving new symbol {} and id {}", oldAsset.getSymbol(), oldAsset.getId(), newSymbol, newId);
 
                             try {
-                                earningsRepository.deleteBySymbol(symbol);
-                                incomeStatementRepository.deleteBySymbol(symbol);
-                                balanceSheetRepository.deleteBySymbol(symbol);
-                                assetRepository.delete(oldAsset);
-                                log.debug("Successfully deleted old asset and related records for symbol {}", symbol);
+                                deleteAssetAndRelatedRecords(oldAsset.getSymbol(), oldAsset);
+                                log.debug("Successfully deleted old asset and related records for symbol {}", oldAsset.getSymbol());
                             } catch (Exception e) {
-                                log.error("Failed to delete old asset or related records for symbol {}: {}", symbol, e.getMessage());
-                                errorLog.add("Failed to delete old asset or related records for symbol " + symbol + ": " + e.getMessage());
+                                log.error("Failed to delete old asset or related records for symbol {}: {}", oldAsset.getSymbol(), e.getMessage());
+                                errorLog.add("Failed to delete old asset or related records for symbol " + oldAsset.getSymbol() + ": " + e.getMessage());
                                 continue;
                             }
                         } else {
@@ -123,6 +122,7 @@ public class AssetServiceImpl implements AssetService {
                     asset.setStatus((String) assetData.get("status"));
                     asset.setTradable((Boolean) assetData.get("tradable"));
                     asset.setLastUpdated(LocalDateTime.now());
+                    log.info("Asset id: {}, symbol: {}, name: {}, exchange: {}, status: {}, tradable: {}", asset.getId(), asset.getSymbol(), asset.getName(), asset.getExchange(), asset.getStatus(), asset.isTradable());
                     assetRepository.save(asset);
                 }
                 log.info("Processed {} assets", assets.size());
@@ -154,10 +154,7 @@ public class AssetServiceImpl implements AssetService {
                         log.info("Deleting stale asset with symbol {} and id {} due to new asset", symbol, staleAsset.getId());
 
                         try {
-                            earningsRepository.deleteBySymbol(symbol);
-                            incomeStatementRepository.deleteBySymbol(symbol);
-                            balanceSheetRepository.deleteBySymbol(symbol);
-                            assetRepository.delete(staleAsset);
+                            deleteAssetAndRelatedRecords(symbol, staleAsset);
                             log.debug("Successfully deleted stale asset and related records for symbol {}", symbol);
                         } catch (Exception e) {
                             log.error("Failed to delete stale asset or related records for symbol {}: {}", symbol, e.getMessage());
@@ -177,28 +174,34 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
-//        fetchAndStoreIncomeStatements(errorLog);
-//TODO: re-add
+        fetchAndStoreIncomeStatements(errorLog);
 
-//        try {
-//            Thread.sleep(DELAY_MS);
-//        } catch (InterruptedException e) {
-//            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-//            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
-//            Thread.currentThread().interrupt();
-//        }
-//        fetchAndStoreEarnings(errorLog);
-//TODO: re-add
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        fetchAndStoreEarnings(errorLog);
 
-//        try {
-//            Thread.sleep(DELAY_MS);
-//        } catch (InterruptedException e) {
-//            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-//            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
-//            Thread.currentThread().interrupt();
-//        }
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
         fetchAndStoreBalanceSheets(errorLog);
         writeErrorReport();
+    }
+
+    @Transactional
+    private void deleteAssetAndRelatedRecords(String symbol, Asset asset) {
+        earningsRepository.deleteBySymbol(symbol);
+        incomeStatementRepository.deleteBySymbol(symbol);
+        balanceSheetRepository.deleteBySymbol(symbol);
+        assetRepository.delete(asset);
     }
 
     private void writeErrorReport() {
