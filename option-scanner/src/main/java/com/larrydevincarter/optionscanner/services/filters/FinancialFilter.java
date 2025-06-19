@@ -5,9 +5,8 @@ import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 
 import java.util.List;
 
-public interface FinancialFilter {
+public interface FinancialFilter<T> {
 
-    boolean appliesToIncome(String symbol, List<IncomeStatement> statements);
-    boolean appliesToEarnings(String symbol, List<Earnings> earnings);
+    boolean appliesTo(String symbol, List<T> reports);
     String getName();
 }

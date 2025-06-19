@@ -1,5 +1,7 @@
 package com.larrydevincarter.optionscanner;
 
+import com.larrydevincarter.optionscanner.entities.Earnings;
+import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.services.AssetService;
 import com.larrydevincarter.optionscanner.services.EarningsService;
 import com.larrydevincarter.optionscanner.services.FilterService;
@@ -15,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
@@ -31,13 +34,14 @@ public class OptionScannerApplication {
 	private final List<String> errorLog = new ArrayList<>();
 
 	@Value("${revenue.growth.cagr.threshold}")
-	private double defaultRevenueCagrThreshold;
+	private double revenueCagrThreshold;
 	@Value("${revenue.growth.years}")
-	private int defaultRevenueYears;
+	private int revenueYears;
+
 	@Value("${eps.growth.cagr.threshold}")
-	private double defaultEpsCagrThreshold;
+	private double epsCagrThreshold;
 	@Value("${eps.growth.years}")
-	private int defaultEpsYears;
+	private int epsYears;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OptionScannerApplication.class, args);
@@ -45,7 +49,12 @@ public class OptionScannerApplication {
 
 	@Scheduled(fixedRate = 600000000)
 	private void startUpTestMethod() {
-		assetService.fetchTradableAssets();
+		FinancialFilter<IncomeStatement> revenueFilter = new RevenueGrowthFilter(revenueCagrThreshold, revenueYears);
+		FinancialFilter<Earnings> epsFilter = new EpsGrowthFilter(epsCagrThreshold, epsYears);
+		List<FinancialFilter<?>> filters = Arrays.asList(revenueFilter, epsFilter);
+		List<String> filteredSymbols = filterService.getFilteredSymbols(filters);
+		log.info("Found {} stocks passing revenue (CAGR > {}% over {} years) and EPS (CAGR > {}% over {} years) filters: {}",
+				filteredSymbols.size(), revenueCagrThreshold, revenueYears, epsCagrThreshold, epsYears, filteredSymbols);
 	}
 
 }

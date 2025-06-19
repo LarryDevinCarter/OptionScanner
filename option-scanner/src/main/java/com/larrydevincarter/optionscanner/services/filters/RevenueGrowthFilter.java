@@ -11,13 +11,13 @@ import java.util.List;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class RevenueGrowthFilter implements FinancialFilter{
+public class RevenueGrowthFilter implements FinancialFilter<IncomeStatement>{
 
     private double cagrThreshold;
     private int years;
 
     @Override
-    public boolean appliesToIncome(String symbol, List<IncomeStatement> statements) {
+    public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
 
         List<IncomeStatement> sortedStatements = statements.stream()
                 .filter(s -> "annual".equals(s.getReportType()))
@@ -45,12 +45,6 @@ public class RevenueGrowthFilter implements FinancialFilter{
         double cagr = (Math.pow(endingRevenue/beginningRevenue, 1.0 / years) -1) * 100;
         log.debug("CAGR for symbol {}: {}%", symbol, cagr);
         return cagr > cagrThreshold;
-    }
-
-    @Override
-    public boolean appliesToEarnings(String symbol, List<Earnings> earnings) {
-        log.debug("RevenueGrowthFilter does not apply to earnings data for symbol {}", symbol);
-        return true;
     }
 
     @Override
