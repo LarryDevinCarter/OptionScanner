@@ -1,19 +1,23 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
+import com.larrydevincarter.optionscanner.entities.BalanceSheet;
 import com.larrydevincarter.optionscanner.entities.Earnings;
 import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
+import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.FilterService;
 import com.larrydevincarter.optionscanner.services.filters.EpsGrowthFilter;
 import com.larrydevincarter.optionscanner.services.filters.FinancialFilter;
 import com.larrydevincarter.optionscanner.services.filters.RevenueGrowthFilter;
+import com.larrydevincarter.optionscanner.services.filters.RoicFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,7 @@ public class FilterServiceImpl implements FilterService {
     private final AssetRepository assetRepository;
     private final IncomeStatementRepository incomeStatementRepository;
     private final EarningsRepository earningsRepository;
+    private final BalanceSheetRepository balanceSheetRepository;
 
     @Value("${revenue.growth.cagr.threshold}")
     private double defaultCagrThreshold;
@@ -37,6 +42,14 @@ public class FilterServiceImpl implements FilterService {
     private double defaultEpsCagrThreshold;
     @Value("${eps.growth.years}")
     private int defaultEpsYears;
+
+
+    @Value("${roic.threshold}")
+    private double defaultRoicThreshold;
+    @Value("${roic.years}")
+    private int defaultRoicYears;
+    @Value("${roic.default.tax.rate}")
+    private double defaultTaxRate;
 
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
@@ -59,6 +72,16 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
+    public List<String> getSymbolsWithRoic(double roicThreshold, int years, double defaultTaxRate) {
+        FinancialFilter<Object> roicFilter = new RoicFilter(
+                roicThreshold >= 0 ? roicThreshold : defaultRoicThreshold,
+                years > 0 ? years : defaultRoicYears,
+                defaultTaxRate >= 0 ? defaultTaxRate : this.defaultTaxRate
+        );
+        return getFilteredSymbols(List.of(roicFilter));
+    }
+
+    @Override
     public List<String> getFilteredSymbols(List<FinancialFilter<?>> filters) {
 
         List<String> activeTradableSymbols = assetRepository.findActiveTradableSymbols();
@@ -74,10 +97,18 @@ public class FilterServiceImpl implements FilterService {
         List<Earnings> earnings = earningsRepository.findAll();
         Map<String, List<Earnings>> earningsBySymbol = earnings.stream().collect(Collectors.groupingBy(Earnings::getSymbol));
 
+        List<BalanceSheet> balanceSheets = balanceSheetRepository.findAll();
+        Map<String, List<BalanceSheet>> balanceBySymbol = balanceSheets.stream()
+                .collect(Collectors.groupingBy(BalanceSheet::getSymbol));
+
         List<String> filteredSymbols = activeTradableSymbols.stream().filter(symbol -> {
 
             List<IncomeStatement> symbolIncome = incomeBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<Earnings> symbolEarnings = earningsBySymbol.getOrDefault(symbol, Collections.emptyList());
+            List<BalanceSheet> symbolBalance = balanceBySymbol.getOrDefault(symbol, Collections.emptyList());
+            List<Object> combinedReports = new ArrayList<>();
+            combinedReports.addAll(symbolIncome);
+            combinedReports.addAll(symbolBalance);
 
             return filters.stream().allMatch(filter -> {
 
@@ -89,6 +120,10 @@ public class FilterServiceImpl implements FilterService {
                     @SuppressWarnings("unchecked")
                     FinancialFilter<Earnings> incomeFilter = (FinancialFilter<Earnings>) filter;
                     return incomeFilter.appliesTo(symbol, symbolEarnings);
+                } else if (filter instanceof RoicFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<Object> roicFilter = (FinancialFilter<Object>) filter;
+                    return roicFilter.appliesTo(symbol, combinedReports);
                 }
                 log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
                 return true;

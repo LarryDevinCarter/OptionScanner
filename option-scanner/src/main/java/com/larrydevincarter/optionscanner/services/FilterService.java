@@ -8,5 +8,6 @@ public interface FilterService {
 
     List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years);
     List<String> getSymbolsWithEpsGrowth(double cagrThreshold, int years);
+    List<String> getSymbolsWithRoic(double roicThreshold, int years, double defaultTaxRate);
     List<String> getFilteredSymbols(List<FinancialFilter<?>> filters);
 }
