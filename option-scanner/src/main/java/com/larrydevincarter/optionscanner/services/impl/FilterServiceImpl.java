@@ -8,10 +8,7 @@ import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.FilterService;
-import com.larrydevincarter.optionscanner.services.filters.EpsGrowthFilter;
-import com.larrydevincarter.optionscanner.services.filters.FinancialFilter;
-import com.larrydevincarter.optionscanner.services.filters.RevenueGrowthFilter;
-import com.larrydevincarter.optionscanner.services.filters.RoicFilter;
+import com.larrydevincarter.optionscanner.services.filters.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,10 +48,12 @@ public class FilterServiceImpl implements FilterService {
     @Value("${roic.default.tax.rate}")
     private double defaultTaxRate;
 
+    @Value("${debt.to.equity.threshold}")
+    private double defaultDebtToEquityThreshold;
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
 
-        FinancialFilter revenueFilter = new RevenueGrowthFilter(
+        FinancialFilter<IncomeStatement> revenueFilter = new RevenueGrowthFilter(
                 cagrThreshold >= 0 ? cagrThreshold : defaultCagrThreshold,
                 years > 0 ? years : defaultYears
         );
@@ -64,7 +63,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithEpsGrowth(double cagrThreshold, int years) {
-        FinancialFilter epsFilter = new EpsGrowthFilter(
+        FinancialFilter<Earnings> epsFilter = new EpsGrowthFilter(
                 cagrThreshold >= 0 ? cagrThreshold : defaultEpsCagrThreshold,
                 years > 0 ? years : defaultEpsYears
         );
@@ -79,6 +78,14 @@ public class FilterServiceImpl implements FilterService {
                 defaultTaxRate >= 0 ? defaultTaxRate : this.defaultTaxRate
         );
         return getFilteredSymbols(List.of(roicFilter));
+    }
+
+    @Override
+    public List<String> getSymbolsWithDebtToEquity(double debtToEquityThreshold) {
+        FinancialFilter<BalanceSheet> debtToEquityFilter = new DebtToEquityFilter(
+                debtToEquityThreshold >= 0 ? debtToEquityThreshold : defaultDebtToEquityThreshold
+        );
+        return getFilteredSymbols(List.of(debtToEquityFilter));
     }
 
     @Override
@@ -124,6 +131,10 @@ public class FilterServiceImpl implements FilterService {
                     @SuppressWarnings("unchecked")
                     FinancialFilter<Object> roicFilter = (FinancialFilter<Object>) filter;
                     return roicFilter.appliesTo(symbol, combinedReports);
+                } else if (filter instanceof DebtToEquityFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<BalanceSheet> debtToEquityFilter = (FinancialFilter<BalanceSheet>) filter;
+                    return debtToEquityFilter.appliesTo(symbol, symbolBalance);
                 }
                 log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
                 return true;
