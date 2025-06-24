@@ -1,14 +1,12 @@
 package com.larrydevincarter.optionscanner;
 
+import com.larrydevincarter.optionscanner.entities.BalanceSheet;
 import com.larrydevincarter.optionscanner.entities.Earnings;
 import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.services.AssetService;
 import com.larrydevincarter.optionscanner.services.EarningsService;
 import com.larrydevincarter.optionscanner.services.FilterService;
-import com.larrydevincarter.optionscanner.services.filters.EpsGrowthFilter;
-import com.larrydevincarter.optionscanner.services.filters.FinancialFilter;
-import com.larrydevincarter.optionscanner.services.filters.RevenueGrowthFilter;
-import com.larrydevincarter.optionscanner.services.filters.RoicFilter;
+import com.larrydevincarter.optionscanner.services.filters.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +49,9 @@ public class OptionScannerApplication {
 	@Value("${roic.default.tax.rate}")
 	private double defaultTaxRate;
 
+	@Value("${debt.to.equity.threshold}")
+	private double debtToEquityThreshold;
+
 	public static void main(String[] args) {
 		SpringApplication.run(OptionScannerApplication.class, args);
 	}
@@ -60,10 +61,11 @@ public class OptionScannerApplication {
 		FinancialFilter<IncomeStatement> revenueFilter = new RevenueGrowthFilter(revenueCagrThreshold, revenueYears);
 		FinancialFilter<Earnings> epsFilter = new EpsGrowthFilter(epsCagrThreshold, epsYears);
 		FinancialFilter<Object> roicFilter = new RoicFilter(roicThreshold, roicYears, defaultTaxRate);
-		List<FinancialFilter<?>> filters = Arrays.asList(revenueFilter, epsFilter, roicFilter);
+		FinancialFilter<BalanceSheet> debtToEquityFilter = new DebtToEquityFilter(debtToEquityThreshold);
+		List<FinancialFilter<?>> filters = Arrays.asList(revenueFilter, epsFilter, roicFilter, debtToEquityFilter);
 		List<String> filteredSymbols = filterService.getFilteredSymbols(filters);
-		log.info("Found {} stocks passing revenue (CAGR > {}% over {} years), EPS (CAGR > {}% over {} years), and ROIC (>{}% over {} years) filters: {}",
-				filteredSymbols.size(), revenueCagrThreshold, revenueYears, epsCagrThreshold, epsYears, roicThreshold, roicYears, filteredSymbols);
+		log.info("Found {} stocks passing revenue (CAGR > {}% over {} years), EPS (CAGR > {}% over {} years), ROIC (>{}% over {} years), and Debt-to-Equity (<{}%) filters: {}",
+				filteredSymbols.size(), revenueCagrThreshold, revenueYears, epsCagrThreshold, epsYears, roicThreshold, roicYears, debtToEquityThreshold, filteredSymbols);
 	}
 
 }
