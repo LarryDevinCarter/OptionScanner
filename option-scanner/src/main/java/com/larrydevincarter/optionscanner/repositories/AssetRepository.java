@@ -19,4 +19,10 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
     List<String> findActiveTradableSymbols();
 
     Optional<Asset> findBySymbol(String symbol);
+
+    @Query("SELECT a FROM Asset a WHERE a.status = 'active' AND a.tradable = true")
+    List<Asset> findByStatusAndTradable();
+
+    @Query("SELECT a FROM Asset a WHERE a.symbol IN :symbols")
+    List<Asset> findBySymbols(List<String> symbols);
 }

@@ -26,6 +26,10 @@ public class Asset {
     private String status;
     @Column(name = "tradable")
     private boolean tradable;
+    @Column(name = "current_price")
+    private Double currentPrice;
+    @Column(name = "last_price_updated")
+    private LocalDateTime lastPriceUpdated;
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
 }
