@@ -6,9 +6,11 @@ public interface AssetService {
 
     void fetchTradableAssets();
 
-    void fetchAndStoreIncomeStatements(List<String> errorLog);
+    List<String> fetchAndStoreIncomeStatements(List<String> errorLog, List<String> symbols);
 
-    void fetchAndStoreEarnings(List<String> errorLog);
+    List<String> fetchAndStoreEarnings(List<String> errorLog, List<String> symbols);
 
-    void fetchAndStoreBalanceSheets(List<String> errorLog);
+    List<String> fetchAndStoreBalanceSheets(List<String> errorLog, List<String> symbols);
+
+    List<String> fetchAndStoreCashFlows(List<String> errorLog, List<String> symbols);
 }
