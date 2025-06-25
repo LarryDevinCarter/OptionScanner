@@ -191,7 +191,7 @@ public class AssetServiceImpl implements AssetService {
             errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
-         symbols = fetchAndStoreBalanceSheets(errorLog, symbols);
+        symbols = fetchAndStoreBalanceSheets(errorLog, symbols);
 
         try {
             Thread.sleep(DELAY_MS);
@@ -201,6 +201,15 @@ public class AssetServiceImpl implements AssetService {
             Thread.currentThread().interrupt();
         }
         symbols = fetchAndStoreCashFlows(errorLog, symbols);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching balance sheets to fetching cash flows: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        fetchAndStoreStockPrices(errorLog, symbols);
         writeErrorReport();
     }
 
@@ -558,5 +567,84 @@ public class AssetServiceImpl implements AssetService {
         }
         log.info("Completed fetching cash flows");
         return cashFlowService.getSymbolsThatHaveStatements(symbols);
+    }
+
+    @Override
+    public void fetchAndStoreStockPrices(List<String> errorLog, List<String> symbols) {
+
+        List<Asset> assets = assetRepository.findBySymbols(symbols);
+        log.info("Fetching stock prices for {} active, tradable assets", assets.size());
+        int callCount = 0;
+
+        for (Asset asset : assets) {
+            if (callCount >= CALLS_PER_MINUTE) {
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + asset.getSymbol() + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+
+            String url = String.format("%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s",
+                    alphavantageBaseUrl, asset.getSymbol(), alphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException | HttpServerErrorException e) {
+                    attempt++;
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, asset.getSymbol(), e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + asset.getSymbol() + ". Skipping.");
+                        break;
+                    }
+                    try {
+                        Thread.sleep(DELAY_MS / 2);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + asset.getSymbol() + ": " + ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+
+            if (responseBody != null && responseBody.containsKey("Global Quote")) {
+                Map<String, String> quote = (Map<String, String>) responseBody.get("Global Quote");
+                String priceStr = quote.get("05. price");
+                try {
+                    Double price = processStockPrice(priceStr, asset);
+                    log.info("Stored stock price {} for symbol {}", price, asset.getSymbol());
+                } catch (NumberFormatException e) {
+                    log.error("Failed to parse price for symbol {}: {}", asset.getSymbol(), priceStr);
+                    errorLog.add("Failed to parse price for symbol " + asset.getSymbol() + ": " + priceStr);
+                }
+            } else {
+                errorLog.add("Failed to fetch stock price for symbol: " + asset.getSymbol());
+            }
+        }
+        log.info("Completed fetching stock prices");
+    }
+
+    @Transactional
+    private Double processStockPrice(String priceStr, Asset asset) {
+        Double price = Double.parseDouble(priceStr);
+        asset.setCurrentPrice(price);
+        asset.setLastPriceUpdated(LocalDateTime.now());
+        assetRepository.save(asset);
+        return price;
     }
 }
