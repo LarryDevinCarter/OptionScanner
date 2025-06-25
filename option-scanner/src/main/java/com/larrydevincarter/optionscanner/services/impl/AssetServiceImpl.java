@@ -5,10 +5,7 @@ import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
-import com.larrydevincarter.optionscanner.services.AssetService;
-import com.larrydevincarter.optionscanner.services.BalanceSheetService;
-import com.larrydevincarter.optionscanner.services.EarningsService;
-import com.larrydevincarter.optionscanner.services.IncomeStatementService;
+import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +41,7 @@ public class AssetServiceImpl implements AssetService {
     private final EarningsService earningsService;
     private final IncomeStatementService incomeStatementService;
     private final BalanceSheetService balanceSheetService;
+    private final CashFlowService cashFlowService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -174,7 +172,8 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
-        fetchAndStoreIncomeStatements(errorLog);
+        List<String> symbols = assetRepository.findActiveTradableSymbols();
+        symbols = fetchAndStoreIncomeStatements(errorLog, symbols);
 
         try {
             Thread.sleep(DELAY_MS);
@@ -183,7 +182,7 @@ public class AssetServiceImpl implements AssetService {
             errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
-        fetchAndStoreEarnings(errorLog);
+        symbols = fetchAndStoreEarnings(errorLog, symbols);
 
         try {
             Thread.sleep(DELAY_MS);
@@ -192,7 +191,16 @@ public class AssetServiceImpl implements AssetService {
             errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
-        fetchAndStoreBalanceSheets(errorLog);
+         symbols = fetchAndStoreBalanceSheets(errorLog, symbols);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching balance sheets to fetching cash flows: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        symbols = fetchAndStoreCashFlows(errorLog, symbols);
         writeErrorReport();
     }
 
@@ -230,15 +238,15 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public void fetchAndStoreIncomeStatements(List<String> errorLog) {
+    public List<String> fetchAndStoreIncomeStatements(List<String> errorLog, List<String> symbols) {
 
         errorLog.clear();
-        List<String> symbols = incomeStatementService.getSymbolsNeedingUpdate();
-        log.info("Number of Symbols to update INCOME_STATEMENTS for: {}", symbols.size());
+        List<String> symbolsNeedingUpdate = incomeStatementService.getSymbolsNeedingUpdate(symbols);
+        log.info("Number of Symbols to update INCOME_STATEMENTS for: {}", symbolsNeedingUpdate.size());
         int callCount = 0;
         log.info("Starting fetching income statements");
 
-        for (String symbol : symbols) {
+        for (String symbol : symbolsNeedingUpdate) {
 
             if (callCount >= CALLS_PER_MINUTE) {
 
@@ -308,16 +316,17 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching income statements");
+        return incomeStatementService.getSymbolsThatHaveStatements(symbols);
     }
 
     @Override
-    public void fetchAndStoreEarnings(List<String> errorLog) {
+    public List<String> fetchAndStoreEarnings(List<String> errorLog, List<String> symbols) {
 
-        List<String> symbols = earningsService.getSymbolsNeedingUpdate();
-        log.info("Fetching earnings for {} symbols with updated income statements", symbols.size());
+        List<String> symbolsNeedingUpdate = earningsService.getSymbolsNeedingUpdate(symbols);
+        log.info("Fetching earnings for {} symbols with updated income statements", symbolsNeedingUpdate.size());
         int callCount = 0;
 
-        for (String symbol : symbols) {
+        for (String symbol : symbolsNeedingUpdate) {
             if (callCount >= CALLS_PER_MINUTE) {
 
                 log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
@@ -386,17 +395,18 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching and storing earnings for all symbols");
+        return earningsRepository.findSymbolsThatHaveStatements(symbols);
     }
 
     @Override
-    public void fetchAndStoreBalanceSheets(List<String> errorLog) {
+    public List<String> fetchAndStoreBalanceSheets(List<String> errorLog, List<String> symbols) {
 
-        List<String> symbols = balanceSheetService.getSymbolsNeedingUpdate();
-        log.info("Number of Symbols to update BALANCE_SHEETS for: {}", symbols.size());
+        List<String> symbolsNeedingUpdate = balanceSheetService.getSymbolsNeedingUpdate(symbols);
+        log.info("Number of Symbols to update BALANCE_SHEETS for: {}", symbolsNeedingUpdate.size());
         int callCount = 0;
         log.info("Starting fetching balance sheets");
 
-        for (String symbol : symbols) {
+        for (String symbol : symbolsNeedingUpdate) {
 
             if (callCount >= CALLS_PER_MINUTE) {
 
@@ -466,5 +476,87 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching balance sheets");
+        return balanceSheetRepository.findSymbolsThatHaveStatements(symbols);
+    }
+
+    @Override
+    public List<String> fetchAndStoreCashFlows(List<String> errorLog, List<String> symbols) {
+
+        List<String> symbolsNeedingUpdate = cashFlowService.getSymbolsNeedingUpdate(symbols);
+        log.info("Number of Symbols to update CASH_FLOWS for: {}", symbolsNeedingUpdate.size());
+        int callCount = 0;
+        log.info("Starting fetching cash flows");
+
+        for (String symbol : symbolsNeedingUpdate) {
+
+            if (callCount >= CALLS_PER_MINUTE) {
+
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+            String url = String.format("%s/query?function=CASH_FLOW&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+            boolean hasLongPaused = false;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException | HttpServerErrorException e) {
+
+                    attempt++;
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, symbol, e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + symbol + ". Skipping.");
+                        break;
+                    }
+                    long pauseDuration = DELAY_MS / 2;
+
+                    if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                            ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                        pauseDuration = 30 * 60 * 1000;
+                        log.info("Detected 503 Service Unavailable for {}. Pausing for 30 minutes before retry...", symbol);
+                        errorLog.add("Detected 503 for " + symbol + ". Pausing for 30 minutes.");
+                        hasLongPaused = true;
+                    }
+
+                    try {
+                        Thread.sleep(pauseDuration);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+            if (responseBody != null) {
+                try {
+                    cashFlowService.processCashFlows(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process cash flows for symbol {}: {}", symbol, e.getMessage());
+                    errorLog.add("Failed to process cash flows for " + symbol + ": " + e.getMessage());
+                }
+            } else {
+                errorLog.add("Failed to fetch cash flow for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+        log.info("Completed fetching cash flows");
+        return cashFlowService.getSymbolsThatHaveStatements(symbols);
     }
 }
