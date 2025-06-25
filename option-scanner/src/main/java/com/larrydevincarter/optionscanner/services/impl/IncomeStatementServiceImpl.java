@@ -1,6 +1,7 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.IncomeStatementService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,14 @@ import java.util.Map;
 @Slf4j
 public class IncomeStatementServiceImpl implements IncomeStatementService {
 
-    private final IncomeStatementRepository repository;
+    private final IncomeStatementRepository incomeStatementRepository;
+    private final AssetRepository assetRepository;
 
     @Override
     @Transactional
     public void processIncomeStatements(String symbol, Map<String, Object> response, List<String> errorLog) {
 
-        repository.deleteBySymbol(symbol);
+        incomeStatementRepository.deleteBySymbol(symbol);
         log.info("Deleted existing income statements for symbol: {}", symbol);
         List<IncomeStatement> statements = new ArrayList<>();
         List<Map<String, String>> annualReports = (List<Map<String, String>>) response.get("annualReports");
@@ -39,7 +41,7 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
         if (quarterlyReports != null) {
             statements.addAll(parseReports(quarterlyReports, symbol, "quarterly", errorLog));
         }
-        repository.saveAll(statements);
+        incomeStatementRepository.saveAll(statements);
         log.info("Stored {} income statements for symbol: {}", statements.size(), symbol);
     }
 
@@ -106,9 +108,14 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
     }
 
     @Override
-    public List<String> getSymbolsNeedingUpdate() {
-        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
-        return repository.findActiveTradableSymbolsNeedingUpdate(thirtyDaysAgo);
+    public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
+        LocalDate date = LocalDate.now().minusDays(90);
+        return incomeStatementRepository.findSymbolsNeedingUpdate(date, symbols);
+    }
+
+    @Override
+    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
+        return incomeStatementRepository.findSymbolsThatHaveStatements(symbols);
     }
 
 }

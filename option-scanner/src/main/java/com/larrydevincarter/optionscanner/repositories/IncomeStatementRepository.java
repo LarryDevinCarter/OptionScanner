@@ -4,6 +4,7 @@ import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -37,4 +38,23 @@ public interface IncomeStatementRepository extends JpaRepository<IncomeStatement
 
     @Query("SELECT DISTINCT i.symbol FROM IncomeStatement i WHERE i.lastUpdated >= :startOfDay")
     List<String> findSymbolsUpdatedToday(LocalDateTime startOfDay);
+
+    @Query("SELECT DISTINCT a.symbol " +
+            "FROM Asset a " +
+            "LEFT JOIN IncomeStatement i ON a.symbol = i.symbol " +
+            "WHERE a.symbol IN :symbols " +
+            "AND (i.symbol IS NULL OR " +
+            "     i.fiscalDateEnding < :date " +
+            "     AND i.fiscalDateEnding = (" +
+            "         SELECT MAX(i2.fiscalDateEnding) " +
+            "         FROM IncomeStatement i2 " +
+            "         WHERE i2.symbol = i.symbol" +
+            "     )" +
+            ")")
+    List<String> findSymbolsNeedingUpdate(@Param("date") LocalDate date, @Param("symbols") List<String> symbols);
+
+    @Query("SELECT DISTINCT i.symbol " +
+            "FROM IncomeStatement i " +
+            "WHERE i.symbol IN :symbols")
+    List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
 }
