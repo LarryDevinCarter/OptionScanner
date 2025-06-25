@@ -110,8 +110,13 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
     }
 
     @Override
-    public List<String> getSymbolsNeedingUpdate() {
-        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
-        return balanceSheetRepository.findActiveTradableSymbolsNeedingUpdate(thirtyDaysAgo);
+    public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
+        LocalDate date = LocalDate.now().minusDays(90);
+        return balanceSheetRepository.findSymbolsNeedingUpdate(date, symbols);
+    }
+
+    @Override
+    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
+        return balanceSheetRepository.findSymbolsThatHaveStatements(symbols);
     }
 }
