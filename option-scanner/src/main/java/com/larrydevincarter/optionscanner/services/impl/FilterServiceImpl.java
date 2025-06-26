@@ -50,6 +50,11 @@ public class FilterServiceImpl implements FilterService {
     @Value("${fcf.yield.threshold:4.0}")
     private double defaultFcfYieldThreshold;
 
+    @Value("${operating.margin.threshold}")
+    private double operatingMarginThreshold;
+    @Value("${operating.margin.years}")
+    private int operatingMarginYears;
+
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
 
@@ -94,6 +99,14 @@ public class FilterServiceImpl implements FilterService {
                 fcfYieldThreshold >= 0 ? fcfYieldThreshold : defaultFcfYieldThreshold
         );
         return getFilteredSymbols(List.of(fcfYieldFilter));
+    }
+
+    @Override
+    public List<String> getSymbolsWithOperatingMargin(double marginThreshold, int years) {
+        FinancialFilter<IncomeStatement> operatingMarginFilter = new OperatingMarginFilter(
+                marginThreshold >= 0 ? marginThreshold : operatingMarginThreshold,  years >= 0 ? years : operatingMarginYears
+        );
+        return getFilteredSymbols(List.of(operatingMarginFilter));
     }
 
     @Override
@@ -159,6 +172,10 @@ public class FilterServiceImpl implements FilterService {
                     @SuppressWarnings("unchecked")
                     FinancialFilter<Object> fcfYieldFilter = (FinancialFilter<Object>) filter;
                     return fcfYieldFilter.appliesTo(symbol, combinedReports);
+                } else if (filter instanceof OperatingMarginFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<IncomeStatement> operatingMarginFilter = (FinancialFilter<IncomeStatement>) filter;
+                    return operatingMarginFilter.appliesTo(symbol, symbolIncome);
                 }
                 log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
                 return true;
