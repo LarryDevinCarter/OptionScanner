@@ -64,33 +64,38 @@ public class OptionScannerApplication {
 	@Value("${fcf.yield.threshold:4.0}")
 	private double defaultFcfYieldThreshold;
 
+	@Value("${operating.margin.threshold}")
+	private double operatingMarginThreshold;
+	@Value("${operating.margin.years}")
+	private int operatingMarginYears;
+
 	public static void main(String[] args) {
 		SpringApplication.run(OptionScannerApplication.class, args);
 	}
 
 	@Scheduled(fixedRate = 600000000)
 	private void startUpTestMethod() {
-//		List<String> symbols = assetRepository.findActiveTradableSymbols();
-//		System.out.println(symbols.size() + " active and tradable symbols.");
-//		List<String> symbolsNeedingUpdated = incomeStatementService.getSymbolsNeedingUpdate(symbols);
-//		System.out.println(symbolsNeedingUpdated.size() + " incomeStatements being updated.");
-//		symbols = incomeStatementService.getSymbolsThatHaveStatements(symbols);
-//		System.out.println(symbols.size() + " symbols with incomeStatements being passed to the next round.");
-//
-//		symbolsNeedingUpdated = earningsService.getSymbolsNeedingUpdate(symbols);
-//		System.out.println(symbolsNeedingUpdated.size() + " earnings being updated.");
-//		symbols = earningsService.getSymbolsThatHaveStatements(symbols);
-//		System.out.println(symbols.size() + " symbols with earnings being passed to the next round.");
-//
-//		symbolsNeedingUpdated = balanceSheetService.getSymbolsNeedingUpdate(symbols);
-//		System.out.println(symbolsNeedingUpdated.size() + " balanceSheets being updated.");
-//		symbols = balanceSheetService.getSymbolsThatHaveStatements(symbols);
-//		System.out.println(symbols.size() + " symbols with balanceSheets being passed to the next round.");
-//
-//		symbolsNeedingUpdated = cashFlowService.getSymbolsNeedingUpdate(symbols);
-//		System.out.println(symbolsNeedingUpdated.size() + " cashFlows being updated.");
-//		symbols = cashFlowService.getSymbolsThatHaveStatements(symbols);
-//		System.out.println(symbols.size() + " symbols with cashFlow being passed to the next round.");
+		List<String> symbols = assetRepository.findActiveTradableSymbols();
+		System.out.println(symbols.size() + " active and tradable symbols.");
+		List<String> symbolsNeedingUpdated = incomeStatementService.getSymbolsNeedingUpdate(symbols);
+		System.out.println(symbolsNeedingUpdated.size() + " incomeStatements being updated.");
+		symbols = incomeStatementService.getSymbolsThatHaveStatements(symbols);
+		System.out.println(symbols.size() + " symbols with incomeStatements being passed to the next round.");
+
+		symbolsNeedingUpdated = earningsService.getSymbolsNeedingUpdate(symbols);
+		System.out.println(symbolsNeedingUpdated.size() + " earnings being updated.");
+		symbols = earningsService.getSymbolsThatHaveStatements(symbols);
+		System.out.println(symbols.size() + " symbols with earnings being passed to the next round.");
+
+		symbolsNeedingUpdated = balanceSheetService.getSymbolsNeedingUpdate(symbols);
+		System.out.println(symbolsNeedingUpdated.size() + " balanceSheets being updated.");
+		symbols = balanceSheetService.getSymbolsThatHaveStatements(symbols);
+		System.out.println(symbols.size() + " symbols with balanceSheets being passed to the next round.");
+
+		symbolsNeedingUpdated = cashFlowService.getSymbolsNeedingUpdate(symbols);
+		System.out.println(symbolsNeedingUpdated.size() + " cashFlows being updated.");
+		symbols = cashFlowService.getSymbolsThatHaveStatements(symbols);
+		System.out.println(symbols.size() + " symbols with cashFlow being passed to the next round.");
 //
 //		assetService.fetchAndStoreStockPrices(errorLog, symbols);
 
@@ -100,11 +105,12 @@ public class OptionScannerApplication {
 				new EpsGrowthFilter(epsCagrThreshold,epsYears),
 				new FreeCashFlowYieldFilter(.29),
 				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-				new RoicFilter(roicThreshold, roicYears, defaultTaxRate)
+				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
 		);
-		List<String> symbols = filterService.getFilteredSymbols(filters);
-		System.out.println(symbols.size() + " symbols meet filers.");
-		System.out.println(symbols);
+		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+		System.out.println(symbols2.size() + " symbols meet filers.");
+		System.out.println(symbols2);
 	}
 
 }
