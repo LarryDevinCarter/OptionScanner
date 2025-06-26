@@ -1,12 +1,7 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
-import com.larrydevincarter.optionscanner.entities.Earnings;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
-import com.larrydevincarter.optionscanner.repositories.AssetRepository;
-import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
-import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
-import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
+import com.larrydevincarter.optionscanner.entities.*;
+import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.FilterService;
 import com.larrydevincarter.optionscanner.services.filters.*;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +24,7 @@ public class FilterServiceImpl implements FilterService {
     private final IncomeStatementRepository incomeStatementRepository;
     private final EarningsRepository earningsRepository;
     private final BalanceSheetRepository balanceSheetRepository;
+    private final CashFlowRepository cashFlowRepository;
 
     @Value("${revenue.growth.cagr.threshold}")
     private double defaultCagrThreshold;
@@ -50,6 +46,10 @@ public class FilterServiceImpl implements FilterService {
 
     @Value("${debt.to.equity.threshold}")
     private double defaultDebtToEquityThreshold;
+
+    @Value("${fcf.yield.threshold:4.0}")
+    private double defaultFcfYieldThreshold;
+
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
 
@@ -89,6 +89,14 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
+    public List<String> getSymbolsWithFcfYield(double fcfYieldThreshold) {
+        FinancialFilter<Object> fcfYieldFilter = new FreeCashFlowYieldFilter(
+                fcfYieldThreshold >= 0 ? fcfYieldThreshold : defaultFcfYieldThreshold
+        );
+        return getFilteredSymbols(List.of(fcfYieldFilter));
+    }
+
+    @Override
     public List<String> getFilteredSymbols(List<FinancialFilter<?>> filters) {
 
         List<String> activeTradableSymbols = assetRepository.findActiveTradableSymbols();
@@ -108,14 +116,26 @@ public class FilterServiceImpl implements FilterService {
         Map<String, List<BalanceSheet>> balanceBySymbol = balanceSheets.stream()
                 .collect(Collectors.groupingBy(BalanceSheet::getSymbol));
 
+        List<CashFlow> cashFlows = cashFlowRepository.findAll();
+        Map<String, List<CashFlow>> cashFlowBySymbol = cashFlows.stream()
+                .collect(Collectors.groupingBy(CashFlow::getSymbol));
+
+        List<Asset> assets = assetRepository.findAll();
+        Map<String, List<Asset>> assetBySymbol = assets.stream()
+                .collect(Collectors.groupingBy(Asset::getSymbol));
+
         List<String> filteredSymbols = activeTradableSymbols.stream().filter(symbol -> {
 
             List<IncomeStatement> symbolIncome = incomeBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<Earnings> symbolEarnings = earningsBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<BalanceSheet> symbolBalance = balanceBySymbol.getOrDefault(symbol, Collections.emptyList());
+            List<CashFlow> symbolCashFlow = cashFlowBySymbol.getOrDefault(symbol, Collections.emptyList());
+            List<Asset> symbolAsset = assetBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<Object> combinedReports = new ArrayList<>();
             combinedReports.addAll(symbolIncome);
             combinedReports.addAll(symbolBalance);
+            combinedReports.addAll(symbolCashFlow);
+            combinedReports.addAll(symbolAsset);
 
             return filters.stream().allMatch(filter -> {
 
@@ -135,6 +155,10 @@ public class FilterServiceImpl implements FilterService {
                     @SuppressWarnings("unchecked")
                     FinancialFilter<BalanceSheet> debtToEquityFilter = (FinancialFilter<BalanceSheet>) filter;
                     return debtToEquityFilter.appliesTo(symbol, symbolBalance);
+                } else if (filter instanceof FreeCashFlowYieldFilter) {
+                    @SuppressWarnings("unchecked")
+                    FinancialFilter<Object> fcfYieldFilter = (FinancialFilter<Object>) filter;
+                    return fcfYieldFilter.appliesTo(symbol, combinedReports);
                 }
                 log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
                 return true;
