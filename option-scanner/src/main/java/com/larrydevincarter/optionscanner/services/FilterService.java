@@ -10,8 +10,7 @@ public interface FilterService {
     List<String> getSymbolsWithEpsGrowth(double cagrThreshold, int years);
     List<String> getSymbolsWithRoic(double roicThreshold, int years, double defaultTaxRate);
     List<String> getSymbolsWithDebtToEquity(double debtToEquityThreshold);
-
     List<String> getSymbolsWithFcfYield(double fcfYieldThreshold);
-
+    List<String> getSymbolsWithOperatingMargin(double marginThreshold, int years);
     List<String> getFilteredSymbols(List<FinancialFilter<?>> filters);
 }
