@@ -14,5 +14,7 @@ public interface AssetService {
 
     List<String> fetchAndStoreCashFlows(List<String> errorLog, List<String> symbols);
 
+    List<String> fetchAndStoreDividends(List<String> errorLog, List<String> symbols);
+
     void fetchAndStoreStockPrices(List<String> errorLog, List<String> symbols);
 }
