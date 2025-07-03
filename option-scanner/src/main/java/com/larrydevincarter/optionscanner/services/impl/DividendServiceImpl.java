@@ -87,7 +87,7 @@ public class DividendServiceImpl implements DividendService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
-        LocalDate date = LocalDate.now().minusDays(90);
+        LocalDate date = LocalDate.now().minusDays(120);
         return dividendRepository.findSymbolsNeedingUpdate(date, symbols);
     }
 
