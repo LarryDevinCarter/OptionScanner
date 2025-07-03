@@ -94,7 +94,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
-        LocalDate date = LocalDate.now().minusDays(90);
+        LocalDate date = LocalDate.now().minusDays(120);
         return cashFlowRepository.findSymbolsNeedingUpdate(date, symbols);
     }
 

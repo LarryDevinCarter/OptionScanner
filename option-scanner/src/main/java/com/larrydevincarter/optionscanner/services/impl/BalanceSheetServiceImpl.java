@@ -111,7 +111,7 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
 
     @Override
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
-        LocalDate date = LocalDate.now().minusDays(90);
+        LocalDate date = LocalDate.now().minusDays(120);
         return balanceSheetRepository.findSymbolsNeedingUpdate(date, symbols);
     }
 
