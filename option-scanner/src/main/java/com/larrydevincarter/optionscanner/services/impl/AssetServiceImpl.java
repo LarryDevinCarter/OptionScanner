@@ -42,6 +42,7 @@ public class AssetServiceImpl implements AssetService {
     private final IncomeStatementService incomeStatementService;
     private final BalanceSheetService balanceSheetService;
     private final CashFlowService cashFlowService;
+    private final DividendService dividendService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -207,6 +208,15 @@ public class AssetServiceImpl implements AssetService {
         } catch (InterruptedException e) {
             log.error("Interrupted during rate limit delay: {}", e.getMessage());
             errorLog.add("Interrupted during rate limit delay while transitioning from fetching balance sheets to fetching cash flows: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        fetchAndStoreDividends(errorLog, symbols);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching dividends to fetching stock prices: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
         fetchAndStoreStockPrices(errorLog, symbols);
@@ -567,6 +577,85 @@ public class AssetServiceImpl implements AssetService {
         }
         log.info("Completed fetching cash flows");
         return cashFlowService.getSymbolsThatHaveStatements(symbols);
+    }
+
+    @Override
+    public List<String> fetchAndStoreDividends(List<String> errorLog, List<String> symbols) {
+
+        List<String> symbolsNeedingUpdate = dividendService.getSymbolsNeedingUpdate(symbols);
+        log.info("Number of Symbols to update DIVIDENDS for: {}", symbolsNeedingUpdate.size());
+        int callCount = 0;
+        log.info("Starting fetching dividends");
+
+        for (String symbol : symbolsNeedingUpdate) {
+            if (callCount >= CALLS_PER_MINUTE) {
+                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+
+            String url = String.format("%s/query?function=DIVIDENDS&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
+            Map<String, Object> responseBody = null;
+            int attempt = 0;
+            boolean hasLongPaused = false;
+
+            while (attempt < MAX_RETRIES) {
+                try {
+                    responseBody = restTemplate.getForObject(url, Map.class);
+                    callCount++;
+                    break;
+                } catch (ResourceAccessException | HttpServerErrorException e) {
+                    attempt++;
+                    String errorMsg = String.format("Attempt %d failed for %s: %s%s",
+                            attempt, symbol, e.getMessage(),
+                            e instanceof HttpServerErrorException ? " (HTTP Status: " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
+                    log.warn(errorMsg);
+                    errorLog.add(errorMsg);
+
+                    if (attempt == MAX_RETRIES) {
+                        errorLog.add("Max retries reached for " + symbol + ". Skipping.");
+                        break;
+                    }
+                    long pauseDuration = DELAY_MS / 2;
+
+                    if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                            ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                        pauseDuration = 30 * 60 * 1000;
+                        log.info("Detected 503 Service Unavailable for {}. Pausing for 30 minutes before retry...", symbol);
+                        errorLog.add("Detected 503 for " + symbol + ". Pausing for 30 minutes.");
+                        hasLongPaused = true;
+                    }
+
+                    try {
+                        Thread.sleep(pauseDuration);
+                    } catch (InterruptedException ie) {
+                        log.error("Interrupted during retry delay: {}", ie.getMessage());
+                        errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+
+            if (responseBody != null) {
+                try {
+                    dividendService.processDividends(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process dividends for symbol {}: {}", symbol, e.getMessage());
+                    errorLog.add("Failed to process dividends for " + symbol + ": " + e.getMessage());
+                }
+            } else {
+                errorLog.add("Failed to fetch dividends for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+        log.info("Completed fetching dividends");
+        return dividendService.getSymbolsThatHaveDividends(symbols);
     }
 
     @Override
