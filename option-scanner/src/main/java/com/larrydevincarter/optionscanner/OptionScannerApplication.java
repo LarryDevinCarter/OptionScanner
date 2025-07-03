@@ -15,7 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,20 +106,32 @@ public class OptionScannerApplication {
 //		symbols = dividendService.getSymbolsThatHaveDividends(symbols);
 //		System.out.println(symbols.size() + " symbols with dividends being passed to the next round.");
 
+//		LocalDateTime startTime = LocalDateTime.now();
 //		assetService.fetchTradableAssets();
+//		LocalDateTime endTime = LocalDateTime.now();
+//		Duration duration = Duration.between(startTime, endTime);
+//		long hours = duration.toHours();
+//		long minutes = duration.toMinutesPart();
+//		long seconds = duration.toSecondsPart();
+//		long millis = duration.toMillisPart();
+//
+//		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
-		List<FinancialFilter<?>> filters = List.of(
-				new DebtToEquityFilter(debtToEquityThreshold),
-				new EpsGrowthFilter(epsCagrThreshold,epsYears),
-				new FreeCashFlowYieldFilter(.29),
-				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
-				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
-		);
-		List<String> symbols2 = filterService.getFilteredSymbols(filters);
-		System.out.println(symbols2.size() + " symbols meet filers.");
-		System.out.println(symbols2);
+//		List<FinancialFilter<?>> filters = List.of(
+//				new DebtToEquityFilter(debtToEquityThreshold),
+//				new EpsGrowthFilter(epsCagrThreshold,epsYears),
+//				new FreeCashFlowYieldFilter(.29),
+//				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
+//				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+//				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
+//		);
+//		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+//		System.out.println(symbols2.size() + " symbols meet filers.");
+//		System.out.println(symbols2);
+
+		List<String> symbol = new ArrayList<>(List.of("IGT"));
+		assetService.fetchAndStoreStockPrices(errorLog, symbol);
 	}
 
 }

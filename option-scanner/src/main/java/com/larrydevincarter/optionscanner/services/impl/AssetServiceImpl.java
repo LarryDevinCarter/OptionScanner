@@ -714,15 +714,33 @@ public class AssetServiceImpl implements AssetService {
             if (responseBody != null && responseBody.containsKey("Global Quote")) {
                 Map<String, String> quote = (Map<String, String>) responseBody.get("Global Quote");
                 String priceStr = quote.get("05. price");
-                try {
-                    Double price = processStockPrice(priceStr, asset);
-                    log.info("Stored stock price {} for symbol {}", price, asset.getSymbol());
-                } catch (NumberFormatException e) {
-                    log.error("Failed to parse price for symbol {}: {}", asset.getSymbol(), priceStr);
-                    errorLog.add("Failed to parse price for symbol " + asset.getSymbol() + ": " + priceStr);
+                if (priceStr != null && !priceStr.trim().isEmpty()) {
+                    try {
+                        Double price = processStockPrice(priceStr, asset);
+                        log.info("Stored stock price {} for symbol {}", price, asset.getSymbol());
+                    } catch (NumberFormatException e) {
+                        log.error("Failed to parse price for symbol {}: {}", asset.getSymbol(), priceStr);
+                        errorLog.add("Failed to parse price for symbol " + asset.getSymbol() + ": " + priceStr);
+                        asset.setStatus("inactive");
+                        asset.setLastUpdated(LocalDateTime.now());
+                        assetRepository.save(asset);
+                        log.info("Marked asset {} as inactive due to invalid price format", asset.getSymbol());
+                    }
+                } else {
+                    log.error("Missing or empty price for symbol {}", asset.getSymbol());
+                    errorLog.add("Missing or empty price for symbol: " + asset.getSymbol());
+                    asset.setStatus("inactive");
+                    asset.setLastUpdated(LocalDateTime.now());
+                    assetRepository.save(asset);
+                    log.info("Marked asset {} as inactive due to missing or empty price", asset.getSymbol());
                 }
             } else {
+                log.error("Failed to fetch stock price for symbol {}", asset.getSymbol());
                 errorLog.add("Failed to fetch stock price for symbol: " + asset.getSymbol());
+                asset.setStatus("inactive");
+                asset.setLastUpdated(LocalDateTime.now());
+                assetRepository.save(asset);
+                log.info("Marked asset {} as inactive due to failed price fetch", asset.getSymbol());
             }
         }
         log.info("Completed fetching stock prices");
