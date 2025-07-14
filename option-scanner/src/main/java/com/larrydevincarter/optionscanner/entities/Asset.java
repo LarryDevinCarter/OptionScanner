@@ -32,4 +32,8 @@ public class Asset {
     private LocalDateTime lastPriceUpdated;
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
+    @Column(name = "adjusted_net_income")
+    private Double adjustedNetIncome;
+    @Column(name = "adjusted_earnings_per_share")
+    private Double adjustedEarningsPerShare;
 }
