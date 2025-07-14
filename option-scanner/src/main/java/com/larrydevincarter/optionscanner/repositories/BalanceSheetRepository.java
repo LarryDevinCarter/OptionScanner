@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BalanceSheetRepository extends JpaRepository<BalanceSheet, Long> {
@@ -47,4 +48,6 @@ public interface BalanceSheetRepository extends JpaRepository<BalanceSheet, Long
             "FROM BalanceSheet b " +
             "WHERE b.symbol IN :symbols")
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
+
+    Optional<BalanceSheet> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(String symbol, String reportType);
 }

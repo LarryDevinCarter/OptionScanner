@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CashFlowRepository extends JpaRepository<CashFlow, Long> {
@@ -48,4 +49,6 @@ public interface CashFlowRepository extends JpaRepository<CashFlow, Long> {
             "FROM CashFlow c " +
             "WHERE c.symbol IN :symbols")
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
+
+    Optional<CashFlow> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(String symbol, String reportType);
 }
