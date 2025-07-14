@@ -130,8 +130,8 @@ public class OptionScannerApplication {
 //		System.out.println(symbols2.size() + " symbols meet filers.");
 //		System.out.println(symbols2);
 
-		List<String> symbol = new ArrayList<>(List.of("IGT"));
-		assetService.fetchAndStoreStockPrices(errorLog, symbol);
+//		List<String> symbol = new ArrayList<>(List.of("IGT"));
+//		assetService.fetchAndStoreStockPrices(errorLog, symbol);
 	}
 
 }
