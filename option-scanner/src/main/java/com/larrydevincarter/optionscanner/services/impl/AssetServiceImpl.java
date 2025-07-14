@@ -1,10 +1,10 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.entities.Asset;
-import com.larrydevincarter.optionscanner.repositories.AssetRepository;
-import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
-import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
-import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
+import com.larrydevincarter.optionscanner.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.entities.CashFlow;
+import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,6 +35,7 @@ public class AssetServiceImpl implements AssetService {
     private final EarningsRepository earningsRepository;
     private final IncomeStatementRepository incomeStatementRepository;
     private final BalanceSheetRepository balanceSheetRepository;
+    private final CashFlowRepository cashFlowRepository;
     private final EarningsService earningsService;
     private final IncomeStatementService incomeStatementService;
     private final BalanceSheetService balanceSheetService;
@@ -718,6 +716,7 @@ public class AssetServiceImpl implements AssetService {
                     try {
                         Double price = processStockPrice(priceStr, asset);
                         log.info("Stored stock price {} for symbol {}", price, asset.getSymbol());
+                        computeAndStoreAdjustedMetrics(asset, errorLog);
                     } catch (NumberFormatException e) {
                         log.error("Failed to parse price for symbol {}: {}", asset.getSymbol(), priceStr);
                         errorLog.add("Failed to parse price for symbol " + asset.getSymbol() + ": " + priceStr);
@@ -744,6 +743,35 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching stock prices");
+    }
+
+    private void computeAndStoreAdjustedMetrics(Asset asset, List<String> errorLog) {
+        try {
+            IncomeStatement latestIncome = incomeStatementRepository
+                    .findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(asset.getSymbol(), "annual")
+                    .orElseThrow(() -> new NoSuchElementException("No annual income statement found"));
+            CashFlow latestCashFlow = cashFlowRepository
+                    .findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(asset.getSymbol(), "annual")
+                    .orElseThrow(() -> new NoSuchElementException("No annual cash flow found"));
+            BalanceSheet latestBalance = balanceSheetRepository
+                    .findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(asset.getSymbol(), "annual")
+                    .orElseThrow(() -> new NoSuchElementException("No annual balance sheet found"));
+
+            double adjustedNetIncomeVal = latestIncome.getNetIncome() +
+                    latestIncome.getResearchAndDevelopment() +
+                    latestCashFlow.getCapitalExpenditures();
+
+            double shares = latestBalance.getCommonStockSharesOutstanding();
+            double adjustedEps = (shares != 0) ? adjustedNetIncomeVal / shares : 0.0;
+
+            asset.setAdjustedNetIncome(adjustedNetIncomeVal);
+            asset.setAdjustedEarningsPerShare(adjustedEps);
+            assetRepository.save(asset);
+            log.info("Stored adjusted net income {} and EPS {} for symbol {}", adjustedNetIncomeVal, adjustedEps, asset.getSymbol());
+        } catch (NoSuchElementException e) {
+            log.warn("Missing latest annual statements for symbol {}: {}", asset.getSymbol(), e.getMessage());
+            errorLog.add("Missing latest annual statements for " + asset.getSymbol() + ": " + e.getMessage());
+        }
     }
 
     @Transactional
