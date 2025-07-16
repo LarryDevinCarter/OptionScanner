@@ -1,9 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.Asset;
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
-import com.larrydevincarter.optionscanner.entities.CashFlow;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,11 +36,13 @@ public class AssetServiceImpl implements AssetService {
     private final IncomeStatementRepository incomeStatementRepository;
     private final BalanceSheetRepository balanceSheetRepository;
     private final CashFlowRepository cashFlowRepository;
+    private final OptionRepository optionRepository;
     private final EarningsService earningsService;
     private final IncomeStatementService incomeStatementService;
     private final BalanceSheetService balanceSheetService;
     private final CashFlowService cashFlowService;
     private final DividendService dividendService;
+    private final OptionService optionService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -49,6 +51,8 @@ public class AssetServiceImpl implements AssetService {
     private String apiSecret;
     @Value("${alpaca.api.base-url}")
     private String alpacaBaseUrl;
+    @Value("${alpaca.data.base-url}")
+    private String alpacaDataBaseUrl;
 
     @Value("${alphavantage.api.key}")
     private String alphavantageApiKey;
@@ -59,6 +63,9 @@ public class AssetServiceImpl implements AssetService {
     private static final long DELAY_MS = 60_000;
     private static final int CALLS_PER_MINUTE = 75;
     private static final int MAX_RETRIES = 3;
+
+    private static final int ALPACA_CALLS_PER_MINUTE = 190;
+    private static final int BATCH_SIZE = 1000;
 
     @Scheduled(cron = "0 0 2 * * ?", zone = "America/Chicago")
     @Override
@@ -218,6 +225,15 @@ public class AssetServiceImpl implements AssetService {
             Thread.currentThread().interrupt();
         }
         fetchAndStoreStockPrices(errorLog, symbols);
+
+        try {
+            Thread.sleep(DELAY_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during rate limit delay: {}", e.getMessage());
+            errorLog.add("Interrupted during rate limit delay while transitioning from fetching stock prices to fetching options: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        fetchAndStoreOptions(errorLog, symbols);
         writeErrorReport();
     }
 
@@ -226,10 +242,11 @@ public class AssetServiceImpl implements AssetService {
         earningsRepository.deleteBySymbol(symbol);
         incomeStatementRepository.deleteBySymbol(symbol);
         balanceSheetRepository.deleteBySymbol(symbol);
+        optionRepository.deleteByUnderlyingSymbol(symbol);
         assetRepository.delete(asset);
     }
 
-    private void writeErrorReport() {
+    public void writeErrorReport() {
 
         if (errorLog.isEmpty()) {
             log.info("No errors to report.");
@@ -745,6 +762,88 @@ public class AssetServiceImpl implements AssetService {
         log.info("Completed fetching stock prices");
     }
 
+    @Override
+    @Transactional
+    public void fetchAndStoreOptions(List<String> errorLog, List<String> symbols) {
+        List<Asset> assets = assetRepository.findBySymbols(symbols);
+        log.info("Starting fetching put options for {} assets", assets.size());
+        LocalDate today = LocalDate.now();
+        LocalDate calendarStart = today.minusDays(30);
+        LocalDate maxEnd = LocalDate.of(2029, 12, 31);
+
+        Set<LocalDate> tradingDays = new HashSet<>();
+        try {
+            String calendarUrl = alpacaBaseUrl + "/v2/calendar?start=" + calendarStart.toString() + "&end=" + maxEnd.toString();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("APCA-API-KEY-ID", alpacaApiKey);
+            headers.set("APCA-API-SECRET-KEY", apiSecret);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> calendarResponse = restTemplate.exchange(calendarUrl, HttpMethod.GET, entity, List.class).getBody();
+            if (calendarResponse != null) {
+                for (Map<String, Object> day : calendarResponse) {
+                    tradingDays.add(LocalDate.parse((String) day.get("date")));
+                }
+                log.info("Fetched {} trading days from calendar", tradingDays.size());
+            } else {
+                log.warn("Failed to fetch calendar, falling back to no holiday check");
+                errorLog.add("Failed to fetch trading calendar");
+            }
+        } catch (Exception e) {
+            log.error("Error fetching calendar: {}", e.getMessage());
+            errorLog.add("Error fetching trading calendar: " + e.getMessage());
+        }
+
+        LocalDate previousTradingDay = tradingDays.stream()
+                .filter(d -> d.isBefore(today))
+                .max(java.util.Comparator.naturalOrder())
+                .orElse(null);
+
+        if (previousTradingDay == null) {
+            log.warn("No previous trading day found; skipping options fetch");
+            errorLog.add("No previous trading day found");
+            return;
+        }
+
+        int callCount = 0;
+
+        for (Asset asset : assets) {
+            if (callCount >= ALPACA_CALLS_PER_MINUTE) {
+                log.info("Hit Alpaca rate limit ({} calls/minute). Pausing for 1 minute...", ALPACA_CALLS_PER_MINUTE);
+                try {
+                    Thread.sleep(DELAY_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for asset " + asset.getSymbol() + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                callCount = 0;
+            }
+            optionService.processOptionsForSymbol(asset.getSymbol(), errorLog, tradingDays, previousTradingDay);
+            callCount++;
+        }
+        log.info("Completed fetching put options");
+    }
+
+    private int calculateTradingDays(LocalDate start, LocalDate end, Set<LocalDate> tradingDays) {
+        if (start.isAfter(end)) return 0;
+        int count = 0;
+        LocalDate current = start;
+        while (!current.isAfter(end)) {
+            if (tradingDays.isEmpty()) {
+                DayOfWeek day = current.getDayOfWeek();
+                if (day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY) {
+                    count++;
+                }
+            } else if (tradingDays.contains(current)) {
+                count++;
+            }
+            current = current.plusDays(1);
+        }
+        return count;
+    }
+
     private void computeAndStoreAdjustedMetrics(Asset asset, List<String> errorLog) {
         try {
             IncomeStatement latestIncome = incomeStatementRepository
@@ -756,14 +855,17 @@ public class AssetServiceImpl implements AssetService {
             BalanceSheet latestBalance = balanceSheetRepository
                     .findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(asset.getSymbol(), "annual")
                     .orElseThrow(() -> new NoSuchElementException("No annual balance sheet found"));
+            Double netIncome = latestIncome.getNetIncome();
+            Double researchAndDevelopment = latestIncome.getResearchAndDevelopment();
+            Double capitalExpenditures = latestCashFlow.getCapitalExpenditures();
+            Double shares = latestBalance.getCommonStockSharesOutstanding();
 
-            double adjustedNetIncomeVal = latestIncome.getNetIncome() +
-                    latestIncome.getResearchAndDevelopment() +
-                    latestCashFlow.getCapitalExpenditures();
-
-            double shares = latestBalance.getCommonStockSharesOutstanding();
+            if (netIncome == null || researchAndDevelopment == null || capitalExpenditures == null || shares == null) {
+                log.warn("Null values found in financial metrics for symbol {}: skipping adjusted metrics computation", asset.getSymbol());
+                return;
+            }
+            double adjustedNetIncomeVal = netIncome + researchAndDevelopment + capitalExpenditures;
             double adjustedEps = (shares != 0) ? adjustedNetIncomeVal / shares : 0.0;
-
             asset.setAdjustedNetIncome(adjustedNetIncomeVal);
             asset.setAdjustedEarningsPerShare(adjustedEps);
             assetRepository.save(asset);
