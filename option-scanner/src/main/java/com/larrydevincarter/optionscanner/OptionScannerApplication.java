@@ -118,20 +118,22 @@ public class OptionScannerApplication {
 //		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
-//		List<FinancialFilter<?>> filters = List.of(
-//				new DebtToEquityFilter(debtToEquityThreshold),
-//				new EpsGrowthFilter(epsCagrThreshold,epsYears),
-//				new FreeCashFlowYieldFilter(.29),
-//				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-//				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
-//				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
-//		);
-//		List<String> symbols2 = filterService.getFilteredSymbols(filters);
-//		System.out.println(symbols2.size() + " symbols meet filers.");
-//		System.out.println(symbols2);
+		List<FinancialFilter<?>> filters = List.of(
+				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
+				new EpsGrowthFilter(epsCagrThreshold,epsYears),
+				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+				new DebtToEquityFilter(debtToEquityThreshold),
+				new FreeCashFlowYieldFilter(.29),
+				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
+		);
+		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+		System.out.println(symbols2.size() + " symbols meet filers.");
+		System.out.println(symbols2);
 
-		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
-		assetService.fetchAndStoreStockPrices(errorLog, symbol);
+//		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
+//		assetService.fetchAndStoreStockPrices(errorLog, symbol);
+//		assetService.fetchAndStoreOptions(errorLog, symbol);
+//		assetService.writeErrorReport();
 	}
 
 }
