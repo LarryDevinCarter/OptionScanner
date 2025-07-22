@@ -20,6 +20,16 @@ public class RoicFilter implements FinancialFilter<Object> {
 
     @Override
     public boolean appliesTo(String symbol, List<Object> reports) {
+        double averageRoic = calculateAverageRoic(symbol, reports);
+        if (averageRoic < 0) {
+            return false;
+        }
+        log.debug("Average ROIC for symbol {} over {} years: {}% (threshold: {}%)",
+                symbol, years, averageRoic, roicThreshold);
+        return averageRoic > roicThreshold;
+    }
+
+    public double calculateAverageRoic(String symbol, List<Object> reports) {
         List<IncomeStatement> incomeStatements = reports.stream()
                 .filter(r -> r instanceof IncomeStatement)
                 .map(r -> (IncomeStatement) r)
@@ -39,9 +49,7 @@ public class RoicFilter implements FinancialFilter<Object> {
                 .toList();
 
         if (incomeStatements.size() < years || balanceSheets.size() < years) {
-            log.debug("Insufficient data for symbol {}: {} income statements, {} balance sheets",
-                    symbol, incomeStatements.size(), balanceSheets.size());
-            return false;
+            return -1.0;
         }
 
         double totalRoic = 0.0;
@@ -52,8 +60,6 @@ public class RoicFilter implements FinancialFilter<Object> {
             BalanceSheet balance = balanceSheets.get(i);
 
             if (income.getFiscalDateEnding().getYear() != balance.getFiscalDateEnding().getYear()) {
-                log.debug("Fiscal year mismatch for symbol {}: income {}, balance {}",
-                        symbol, income.getFiscalDateEnding(), balance.getFiscalDateEnding());
                 continue;
             }
 
@@ -66,26 +72,19 @@ public class RoicFilter implements FinancialFilter<Object> {
             double investedCapital = getInvestedCapital(balance);
 
             if (investedCapital <= 0) {
-                log.debug("Invalid invested capital for symbol {} in year {}: {}",
-                        symbol, income.getFiscalDateEnding().getYear(), investedCapital);
                 continue;
             }
 
             double roic = (nopat / investedCapital) * 100;
             totalRoic += roic;
             validYears++;
-            log.debug("ROIC for symbol {} in year {}: {}%", symbol, income.getFiscalDateEnding().getYear(), roic);
         }
 
         if (validYears == 0) {
-            log.debug("No valid ROIC calculations for symbol {}", symbol);
-            return false;
+            return -1.0;
         }
 
-        double averageRoic = totalRoic / validYears;
-        log.debug("Average ROIC for symbol {} over {} years: {}% (threshold: {}%)",
-                symbol, validYears, averageRoic, roicThreshold);
-        return averageRoic > roicThreshold;
+        return totalRoic / validYears;
     }
 
     private static double getInvestedCapital(BalanceSheet balance) {

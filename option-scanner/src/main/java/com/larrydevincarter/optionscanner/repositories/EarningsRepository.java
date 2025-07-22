@@ -51,4 +51,6 @@ public interface EarningsRepository extends JpaRepository<Earnings, Long> {
             "FROM Earnings e " +
             "WHERE e.symbol IN :symbols")
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
+
+    List<Earnings> findBySymbol(String symbol);
 }
