@@ -16,6 +16,15 @@ public class DebtToEquityFilter implements FinancialFilter<BalanceSheet> {
 
     @Override
     public boolean appliesTo(String symbol, List<BalanceSheet> balanceSheets) {
+        double ratio = calculateRatio(symbol, balanceSheets);
+        if (ratio < 0) {
+            return false;
+        }
+        log.debug("Debt-to-Equity Ratio for symbol {}: {} (threshold: {})", symbol, ratio, debtToEquityThreshold);
+        return ratio < debtToEquityThreshold;
+    }
+
+    public double calculateRatio(String symbol, List<BalanceSheet> balanceSheets) {
         BalanceSheet latestBalanceSheet = balanceSheets.stream()
                 .filter(s -> "annual".equals(s.getReportType()))
                 .filter(s -> s.getTotalLiabilities() != null && s.getTotalShareholderEquity() != null)
@@ -23,21 +32,17 @@ public class DebtToEquityFilter implements FinancialFilter<BalanceSheet> {
                 .orElse(null);
 
         if (latestBalanceSheet == null) {
-            log.debug("No valid annual balance sheet data for symbol {}", symbol);
-            return false;
+            return -1.0;
         }
 
         double totalLiabilities = latestBalanceSheet.getTotalLiabilities();
         double totalEquity = latestBalanceSheet.getTotalShareholderEquity();
 
         if (totalEquity <= 0) {
-            log.debug("Invalid or non-positive equity for symbol {}: {}", symbol, totalEquity);
-            return false;
+            return -1.0;
         }
 
-        double debtToEquityRatio = totalLiabilities / totalEquity;
-        log.debug("Debt-to-Equity Ratio for symbol {}: {} (threshold: {})", symbol, debtToEquityRatio, debtToEquityThreshold);
-        return debtToEquityRatio < debtToEquityThreshold;
+        return totalLiabilities / totalEquity;
     }
 
     @Override

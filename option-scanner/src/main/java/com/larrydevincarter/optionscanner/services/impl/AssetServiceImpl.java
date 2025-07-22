@@ -43,6 +43,7 @@ public class AssetServiceImpl implements AssetService {
     private final CashFlowService cashFlowService;
     private final DividendService dividendService;
     private final OptionService optionService;
+    private final ReportService reportService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -235,6 +236,7 @@ public class AssetServiceImpl implements AssetService {
         }
         fetchAndStoreOptions(errorLog, symbols);
         writeErrorReport();
+        reportService.generateReport(null);
     }
 
     @Transactional

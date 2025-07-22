@@ -18,33 +18,33 @@ public class RevenueGrowthFilter implements FinancialFilter<IncomeStatement>{
 
     @Override
     public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
+        double cagr = calculateCagr(statements);
+        if (cagr < 0) {
+            return false;
+        }
+        log.debug("CAGR for symbol {}: {}%", symbol, cagr);
+        return cagr > cagrThreshold;
+    }
 
+    public double calculateCagr(List<IncomeStatement> statements) {
         List<IncomeStatement> sortedStatements = statements.stream()
                 .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getTotalRevenue() !=  null)
+                .filter(s -> s.getTotalRevenue() != null)
                 .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
                 .limit(years)
                 .toList();
 
         if (sortedStatements.size() < years) {
-            if (!sortedStatements.isEmpty()) {
-                log.debug("Insufficient data for symbol {}: only {} years available", symbol, sortedStatements.size());
-            } else {
-                log.debug("No data for symbol {}", symbol);
-            }
-            return false;
+            return -1.0;
         }
 
         double endingRevenue = sortedStatements.getFirst().getTotalRevenue();
         double beginningRevenue = sortedStatements.getLast().getTotalRevenue();
 
         if (beginningRevenue <= 0) {
-            log.debug("Invalid beginning revenue for symbol {}: {}", symbol, beginningRevenue);
-            return false;
+            return -1.0;
         }
-        double cagr = (Math.pow(endingRevenue/beginningRevenue, 1.0 / years) -1) * 100;
-        log.debug("CAGR for symbol {}: {}%", symbol, cagr);
-        return cagr > cagrThreshold;
+        return (Math.pow(endingRevenue / beginningRevenue, 1.0 / years) - 1) * 100;
     }
 
     @Override

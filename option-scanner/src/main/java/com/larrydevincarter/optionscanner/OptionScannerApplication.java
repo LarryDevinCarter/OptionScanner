@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,8 @@ public class OptionScannerApplication {
 	private CashFlowService cashFlowService;
 	@Autowired
 	private DividendService dividendService;
+	@Autowired
+	private ReportService reportService;
 	@Autowired
 	private AssetRepository assetRepository;
 	private final List<String> errorLog = new ArrayList<>();
@@ -118,22 +121,25 @@ public class OptionScannerApplication {
 //		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
-		List<FinancialFilter<?>> filters = List.of(
-				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-				new EpsGrowthFilter(epsCagrThreshold,epsYears),
-				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
-				new DebtToEquityFilter(debtToEquityThreshold),
-				new FreeCashFlowYieldFilter(.29),
-				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
-		);
-		List<String> symbols2 = filterService.getFilteredSymbols(filters);
-		System.out.println(symbols2.size() + " symbols meet filers.");
-		System.out.println(symbols2);
+//		List<FinancialFilter<?>> filters = List.of(
+//				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
+//				new EpsGrowthFilter(epsCagrThreshold,epsYears),
+//				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+//				new DebtToEquityFilter(debtToEquityThreshold),
+//				new FreeCashFlowYieldFilter(defaultFcfYieldThreshold),
+//				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
+//		);
+//		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+//		System.out.println(symbols2.size() + " symbols meet filers.");
+//		System.out.println(symbols2);
 
 //		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
 //		assetService.fetchAndStoreStockPrices(errorLog, symbol);
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
+
+		Double maxStrike = 40.;
+		reportService.generateReport(maxStrike);
 	}
 
 }

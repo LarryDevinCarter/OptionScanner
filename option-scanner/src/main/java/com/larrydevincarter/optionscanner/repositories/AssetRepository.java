@@ -25,4 +25,6 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
 
     @Query("SELECT a FROM Asset a WHERE a.symbol IN :symbols")
     List<Asset> findBySymbols(List<String> symbols);
+
+
 }
