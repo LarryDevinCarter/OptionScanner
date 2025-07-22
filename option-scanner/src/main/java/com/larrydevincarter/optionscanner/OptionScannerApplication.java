@@ -138,7 +138,7 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-		Double maxStrike = 40.;
+		Double maxStrike = 4.;
 		reportService.generateReport(maxStrike);
 	}
 

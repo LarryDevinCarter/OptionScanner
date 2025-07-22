@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -166,7 +167,9 @@ public class ReportServiceImpl implements ReportService {
 
         // Step 8: Write to file
         String strikeCap = strikeMax == null ? "_no_cap_" : "_$" + strikeMax.toString() + "_cap_";
-        String directory = "logs/reports/";
+        String date = LocalDate.now().toString().replace(":", "-");
+        String cap = strikeMax == null ? "/no_cap" : "/" + strikeMax.toString();
+        String directory = "logs/reports/" + date + "/" + cap + "/";
         new File(directory).mkdirs();
         String filename = directory + LocalDateTime.now().toString().replace(":", "-") + strikeCap + "put_report_" + ".txt";
 
