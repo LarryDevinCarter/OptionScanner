@@ -1,27 +1,25 @@
 package com.larrydevincarter.optionscanner.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "income_statements",
         uniqueConstraints = @UniqueConstraint(columnNames = {"symbol", "fiscal_date_ending", "report_type"}))
 @Data
-public class IncomeStatement {
+public class IncomeStatement extends BaseFinancialReport{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "symbol", nullable = false)
-    private String symbol;
-
-    @Column(name = "fiscal_date_ending", nullable = false)
+    @NotNull
+    @Column(name = "fiscal_date_ending")
     private LocalDate fiscalDateEnding;
 
-    @Column(name = "report_type", nullable = false)
+    @NotNull
+    @Column(name = "report_type")
     private String reportType;
 
     @Column(name = "reported_currency")
@@ -98,11 +96,4 @@ public class IncomeStatement {
 
     @Column(name = "net_income")
     private Double netIncome;
-
-    @Column(name = "last_updated", nullable = false)
-    private LocalDateTime lastUpdated;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "symbol", referencedColumnName = "symbol", insertable = false, updatable = false)
-    private Asset asset;
 }
