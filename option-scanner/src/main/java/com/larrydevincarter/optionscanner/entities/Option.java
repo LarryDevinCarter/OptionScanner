@@ -46,7 +46,7 @@ public class Option {
     @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "underlying_symbol", referencedColumnName = "symbol", insertable = false, updatable = false)
     private Asset asset;
 }
