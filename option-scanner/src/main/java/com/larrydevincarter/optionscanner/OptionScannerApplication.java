@@ -1,5 +1,6 @@
 package com.larrydevincarter.optionscanner;
 
+import com.larrydevincarter.optionscanner.dtos.SoldOptionDTO;
 import com.larrydevincarter.optionscanner.entities.BalanceSheet;
 import com.larrydevincarter.optionscanner.entities.CashFlow;
 import com.larrydevincarter.optionscanner.entities.Earnings;
@@ -138,8 +139,31 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-		Double maxStrike = 4.;
+		Double maxStrike = null;
 		reportService.generateReport(maxStrike);
+
+		maxStrike = 4.;
+		reportService.generateReport(maxStrike);
+
+		List<SoldOptionDTO> sampleDtos = List.of(
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("WOLF");
+					setStrikePrice(0.50);
+					setExpirationDate(LocalDate.of(2025, 9, 19));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 7, 22));
+					setSoldPrice(0.09);
+				}},
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("KPTI");
+					setStrikePrice(2.50);
+					setExpirationDate(LocalDate.of(2026, 2, 20));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 7, 22));
+					setSoldPrice(1.20);
+				}}
+		);
+		reportService.generateSoldOptionsReports(sampleDtos);
 	}
 
 }
