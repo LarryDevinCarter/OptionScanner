@@ -1,5 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
+import com.larrydevincarter.optionscanner.dtos.SoldOptionDTO;
 import com.larrydevincarter.optionscanner.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
@@ -9,7 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,6 +50,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private OptionRepository optionRepository;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Value("${revenue.growth.cagr.threshold}")
     private double revenueCagrThreshold;
@@ -73,6 +80,13 @@ public class ReportServiceImpl implements ReportService {
     private double operatingMarginThreshold;
     @Value("${operating.margin.years}")
     private int operatingMarginYears;
+
+    @Value("${alpaca.api.base-url}")
+    private String alpacaBaseUrl;
+    @Value("${alpaca.api.key}")
+    private String alpacaApiKey;
+    @Value("${alpaca.api.secret}")
+    private String apiSecret;
 
     private static final String BENCHMARK_SYMBOL = "TSLA";
     private static final double EPSILON = 0.01; // Small adjustment for floating-point comparisons
@@ -186,6 +200,121 @@ public class ReportServiceImpl implements ReportService {
             log.error("Failed to write error report: {}", e.getMessage());
         }
         log.info("Report generated with {} unique underlyings.", addedUnderlyings.size());
+    }
+
+    @Override
+    public void generateSoldOptionsReports(List<SoldOptionDTO> dtos) {
+        for (SoldOptionDTO dto : dtos) {
+            generateSoldOptionReport(dto);
+        }
+    }
+
+    private void generateSoldOptionReport(SoldOptionDTO dto) {
+        List<LocalDate> tradingDays = getTradingDays(dto.getSoldDate(), dto.getExpirationDate());
+        int totalTradingDays = tradingDays.size();
+        if (totalTradingDays == 0) {
+            log.warn("No trading days found for {} from {} to {}", dto.getUnderlyingSymbol(), dto.getSoldDate(), dto.getExpirationDate());
+            return;
+        }
+
+        double[] multipliers = {2.0, 1.5, 1.25, 1.12, 1.06, 1.03, 1.01, 1.0};
+
+        List<String> reportLines = new ArrayList<>();
+        reportLines.add("Sold Option Buy-to-Close Report - Option Scanner");
+        reportLines.add("Underlying: " + dto.getUnderlyingSymbol());
+        reportLines.add("Strike: " + dto.getStrikePrice());
+        reportLines.add("Expiration: " + dto.getExpirationDate());
+        reportLines.add("Type: " + dto.getOptionType());
+        reportLines.add("Sold Date: " + dto.getSoldDate());
+        reportLines.add("Sold Price: " + String.format("%.2f", dto.getSoldPrice()));
+        reportLines.add("Total Trading Days: " + totalTradingDays);
+        reportLines.add("Timestamp: " + LocalDateTime.now());
+        reportLines.add("");
+        reportLines.add(String.format("%-12s %-10s %-12s %-12s", "Date", "Days Held", "Linear BTC", "Accel BTC"));
+        reportLines.add("---------------------------------------------------------");
+
+        for (int i = 0; i < totalTradingDays; i++) {
+            LocalDate currentDate = tradingDays.get(i);
+            int dayHeldSoFar = i + 1;
+
+            // Linear BTC (multiplier = 1.0)
+            double linearPrice = calculatePrice(dto.getSoldPrice(), totalTradingDays, dayHeldSoFar, 1.0);
+            double flooredLinear = floorToCent(linearPrice);
+            if (linearPrice < 0.01) {
+                flooredLinear = 0.00;
+            }
+
+            // Accelerated BTC
+            double accelPrice = 0.00;
+            for (double multi : multipliers) {
+                double candidatePrice = calculatePrice(dto.getSoldPrice(), totalTradingDays, dayHeldSoFar, multi);
+                if (candidatePrice >= 0.01) {
+                    accelPrice = floorToCent(candidatePrice);
+                    break;
+                }
+            }
+            // If all multipliers give < 0.01, it remains 0.00
+
+            reportLines.add(String.format("%-12s %-10d %-12.2f %-12.2f",
+                    currentDate.toString(),
+                    dayHeldSoFar,
+                    flooredLinear,
+                    accelPrice));
+        }
+
+        // Write to file
+        String date = LocalDate.now().toString();
+        String directory = "logs/reports/" + date + "/" + "sold_options/";
+        new File(directory).mkdirs();
+        String filename = directory + dto.getUnderlyingSymbol() + "_" + dto.getExpirationDate().toString().replace("-", "") + "_" +
+                LocalDateTime.now().toString().replace(":", "-").replace(".", "_") + ".txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String line : reportLines) {
+                writer.write(line);
+                writer.newLine();
+            }
+            log.info("Generated sold option report for {} expiring {}", dto.getUnderlyingSymbol(), dto.getExpirationDate());
+        } catch (IOException e) {
+            log.error("Failed to write sold option report for {}: {}", dto.getUnderlyingSymbol(), e.getMessage());
+        }
+    }
+
+    private double floorToCent(double price) {
+        return Math.floor(price * 100) / 100.0;
+    }
+
+    private double calculatePrice(double soldPrice, int totalDays, int dayHeld, double multiplier) {
+        double effectiveDaysHeld = dayHeld * multiplier;
+        if (effectiveDaysHeld >= totalDays) {
+            return 0.0;
+        }
+        return soldPrice * (totalDays - effectiveDaysHeld) / totalDays;
+    }
+
+    private List<LocalDate> getTradingDays(LocalDate soldDate, LocalDate expirationDate) {
+        List<LocalDate> tradingDays = new ArrayList<>();
+        try {
+            String calendarUrl = alpacaBaseUrl + "/v2/calendar?start=" + soldDate + "&end=" + expirationDate;
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("APCA-API-KEY-ID", alpacaApiKey);
+            headers.set("APCA-API-SECRET-KEY", apiSecret);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> calendarResponse = restTemplate.exchange(calendarUrl, HttpMethod.GET, entity, List.class).getBody();
+            if (calendarResponse != null) {
+                for (Map<String, Object> day : calendarResponse) {
+                    tradingDays.add(LocalDate.parse((String) day.get("date")));
+                }
+                log.info("Fetched {} trading days from calendar", tradingDays.size());
+            } else {
+                log.warn("Failed to fetch calendar, falling back to no holiday check");
+            }
+        } catch (Exception e) {
+            log.error("Error fetching calendar: {}", e.getMessage());
+        }
+        return tradingDays;
     }
 
     private void adjustFiltersForBenchmark(List<FinancialFilter<?>> filters) {

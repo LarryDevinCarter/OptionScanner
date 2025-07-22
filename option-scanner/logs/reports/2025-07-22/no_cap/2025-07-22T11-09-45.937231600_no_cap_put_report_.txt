@@ -1,5 +1,5 @@
 Put Option Report - Option Scanner Revenue Data Crunch
-Timestamp: 2025-07-22T10:05:03.077664
+Timestamp: 2025-07-22T11:09:45.939230800
 Total Options: 87
 
 These are tier 1 options:
