@@ -51,4 +51,6 @@ public interface CashFlowRepository extends JpaRepository<CashFlow, Long> {
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
 
     Optional<CashFlow> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(String symbol, String reportType);
+
+    List<CashFlow> findBySymbol(String symbol);
 }

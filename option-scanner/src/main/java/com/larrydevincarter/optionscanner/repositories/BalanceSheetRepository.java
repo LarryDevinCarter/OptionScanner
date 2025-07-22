@@ -50,4 +50,6 @@ public interface BalanceSheetRepository extends JpaRepository<BalanceSheet, Long
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
 
     Optional<BalanceSheet> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(String symbol, String reportType);
+
+    List<BalanceSheet> findBySymbol(String symbol);
 }

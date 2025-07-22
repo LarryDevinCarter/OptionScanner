@@ -18,7 +18,15 @@ public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
 
     @Override
     public boolean appliesTo(String symbol, List<Object> reports) {
+        double fcfYield = calculateFcfYield(symbol, reports);
+        if (fcfYield < 0) {
+            return false;
+        }
+        log.debug("FCF Yield for symbol {}: {}% (threshold: {}%)", symbol, fcfYield, fcfYieldThreshold);
+        return fcfYield > fcfYieldThreshold;
+    }
 
+    public double calculateFcfYield(String symbol, List<Object> reports) {
         List<CashFlow> cashFlows = reports.stream()
                 .filter(r -> r instanceof CashFlow)
                 .map(r -> (CashFlow) r)
@@ -42,9 +50,7 @@ public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
                 .toList();
 
         if (cashFlows.isEmpty() || balanceSheets.isEmpty() || assets.isEmpty()) {
-            log.debug("Insufficient data for symbol {}: {} cash flows, {} balance sheets, {} assets",
-                    symbol, cashFlows.size(), balanceSheets.size(), assets.size());
-            return false;
+            return -1.0;
         }
 
         CashFlow latestCashFlow = cashFlows.getFirst();
@@ -52,29 +58,22 @@ public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
         Asset asset = assets.getFirst();
 
         if (latestCashFlow.getFiscalDateEnding().getYear() != latestBalanceSheet.getFiscalDateEnding().getYear()) {
-            log.debug("Fiscal year mismatch for symbol {}: cash flow {}, balance sheet {}",
-                    symbol, latestCashFlow.getFiscalDateEnding(), latestBalanceSheet.getFiscalDateEnding());
-            return false;
+            return -1.0;
         }
 
         double freeCashFlow = latestCashFlow.getOperatingCashflow() - latestCashFlow.getCapitalExpenditures();
         if (freeCashFlow <= 0) {
-            log.debug("Non-positive free cash flow for symbol {}: {}", symbol, freeCashFlow);
-            return false;
+            return -1.0;
         }
 
         double sharesOutstanding = latestBalanceSheet.getCommonStockSharesOutstanding();
         double currentPrice = asset.getCurrentPrice();
         double marketCap = currentPrice * sharesOutstanding;
         if (marketCap <= 0) {
-            log.debug("Invalid market capitalization for symbol {}: price={}, shares={}",
-                    symbol, currentPrice, sharesOutstanding);
-            return false;
+            return -1.0;
         }
 
-        double fcfYield = (freeCashFlow / marketCap) * 100;
-        log.debug("FCF Yield for symbol {}: {}% (threshold: {}%)", symbol, fcfYield, fcfYieldThreshold);
-        return fcfYield > fcfYieldThreshold;
+        return (freeCashFlow / marketCap) * 100;
     }
 
     @Override
