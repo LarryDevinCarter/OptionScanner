@@ -17,7 +17,16 @@ public class OperatingMarginFilter implements FinancialFilter<IncomeStatement> {
 
     @Override
     public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
+        double averageMargin = calculateAverageMargin(symbol, statements);
+        if (averageMargin < 0) {
+            return false;
+        }
+        log.debug("Average Operating Margin for symbol {} over {} years: {}% (threshold: {}%)",
+                symbol, years, averageMargin, marginThreshold);
+        return averageMargin > marginThreshold;
+    }
 
+    public double calculateAverageMargin(String symbol, List<IncomeStatement> statements) {
         List<IncomeStatement> sortedStatements = statements.stream()
                 .filter(s -> "annual".equals(s.getReportType()))
                 .filter(s -> s.getOperatingIncome() != null && s.getTotalRevenue() != null)
@@ -26,25 +35,19 @@ public class OperatingMarginFilter implements FinancialFilter<IncomeStatement> {
                 .toList();
 
         if (sortedStatements.size() < years) {
-            log.debug("Insufficient data for symbol {}: only {} years available", symbol, sortedStatements.size());
-            return false;
+            return -1.0;
         }
 
         double totalMargin = 0.0;
         for (IncomeStatement statement : sortedStatements) {
             if (statement.getTotalRevenue() <= 0) {
-                log.debug("Invalid revenue for symbol {} in year {}: {}",
-                        symbol, statement.getFiscalDateEnding().getYear(), statement.getTotalRevenue());
-                return false;
+                return -1.0;
             }
             double margin = (statement.getOperatingIncome() / statement.getTotalRevenue()) * 100;
             totalMargin += margin;
         }
 
-        double averageMargin = totalMargin / years;
-        log.debug("Average Operating Margin for symbol {} over {} years: {}% (threshold: {}%)",
-                symbol, years, averageMargin, marginThreshold);
-        return averageMargin > marginThreshold;
+        return totalMargin / years;
     }
 
     @Override

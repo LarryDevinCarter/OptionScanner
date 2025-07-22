@@ -59,4 +59,6 @@ public interface IncomeStatementRepository extends JpaRepository<IncomeStatement
     List<String> findSymbolsThatHaveStatements(@Param("symbols") List<String> symbols);
 
     Optional<IncomeStatement> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(String symbol, String reportType);
+
+    List<IncomeStatement> findBySymbol(String symbol);
 }
