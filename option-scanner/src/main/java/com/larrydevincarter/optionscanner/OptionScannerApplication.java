@@ -139,28 +139,28 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-		Double maxStrike = null;
-		reportService.generateReport(maxStrike);
+//		Double maxStrike = 1.;
+//		reportService.generateReport(maxStrike);
 
-		maxStrike = 4.;
-		reportService.generateReport(maxStrike);
+//		maxStrike = 4.;
+//		reportService.generateReport(maxStrike);
 
 		List<SoldOptionDTO> sampleDtos = List.of(
 				new SoldOptionDTO() {{
 					setUnderlyingSymbol("WOLF");
 					setStrikePrice(0.50);
-					setExpirationDate(LocalDate.of(2025, 9, 19));
+					setExpirationDate(LocalDate.of(2026, 1, 16));
 					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 22));
-					setSoldPrice(0.09);
-				}},
-				new SoldOptionDTO() {{
-					setUnderlyingSymbol("KPTI");
-					setStrikePrice(2.50);
-					setExpirationDate(LocalDate.of(2026, 2, 20));
-					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 22));
-					setSoldPrice(1.20);
+					setSoldDate(LocalDate.of(2025, 7, 28));
+					setSoldPrice(0.21);
+//				}},
+//				new SoldOptionDTO() {{
+//					setUnderlyingSymbol("KPTI");
+//					setStrikePrice(2.50);
+//					setExpirationDate(LocalDate.of(2026, 2, 20));
+//					setOptionType("put");
+//					setSoldDate(LocalDate.of(2025, 7, 22));
+//					setSoldPrice(1.20);
 				}}
 		);
 		reportService.generateSoldOptionsReports(sampleDtos);
