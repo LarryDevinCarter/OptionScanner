@@ -1,5 +1,6 @@
 package com.larrydevincarter.optionscanner.entities;
 
+import com.larrydevincarter.optionscanner.entities.base.BaseFinancialReport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @Table(name = "dividends",
         uniqueConstraints = @UniqueConstraint(columnNames = {"symbol", "ex_dividend_date"}))
 @Data
-public class Dividend extends BaseFinancialReport{
+public class Dividend extends BaseFinancialReport {
 
     @NotNull
     @Column(name = "ex_dividend_date")

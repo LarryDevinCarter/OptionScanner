@@ -1,5 +1,6 @@
-package com.larrydevincarter.optionscanner.entities;
+package com.larrydevincarter.optionscanner.entities.base;
 
+import com.larrydevincarter.optionscanner.entities.Asset;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
