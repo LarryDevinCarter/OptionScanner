@@ -139,8 +139,8 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-//		Double maxStrike = 1.;
-//		reportService.generateReport(maxStrike);
+		Double maxStrike = 1.;
+		reportService.generateReport(maxStrike);
 
 //		maxStrike = 4.;
 //		reportService.generateReport(maxStrike);
@@ -153,14 +153,14 @@ public class OptionScannerApplication {
 					setOptionType("put");
 					setSoldDate(LocalDate.of(2025, 7, 28));
 					setSoldPrice(0.21);
-//				}},
-//				new SoldOptionDTO() {{
-//					setUnderlyingSymbol("KPTI");
-//					setStrikePrice(2.50);
-//					setExpirationDate(LocalDate.of(2026, 2, 20));
-//					setOptionType("put");
-//					setSoldDate(LocalDate.of(2025, 7, 22));
-//					setSoldPrice(1.20);
+				}},
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("KPTI");
+					setStrikePrice(2.50);
+					setExpirationDate(LocalDate.of(2026, 2, 20));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 7, 22));
+					setSoldPrice(1.20);
 				}}
 		);
 		reportService.generateSoldOptionsReports(sampleDtos);

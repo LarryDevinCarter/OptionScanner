@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a company's income statement, capturing revenue, expenses, and profit metrics
+ * for a fiscal period. Used to analyze financial performance, sourced from Alpha Vantage.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "income_statements",

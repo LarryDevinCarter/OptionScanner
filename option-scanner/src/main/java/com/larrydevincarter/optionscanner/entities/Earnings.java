@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a company's earnings data, capturing earnings per share (EPS) and related metrics
+ * for a fiscal period. Used to evaluate stock performance, sourced from Alpha Vantage.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "earnings",

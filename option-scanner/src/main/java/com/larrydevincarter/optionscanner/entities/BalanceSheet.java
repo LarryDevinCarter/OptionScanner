@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a company's balance sheet, capturing financial position at a specific fiscal date.
+ * Stores assets, liabilities, and equity data sourced from Alpha Vantage for stock option analysis.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "balance_sheets",
