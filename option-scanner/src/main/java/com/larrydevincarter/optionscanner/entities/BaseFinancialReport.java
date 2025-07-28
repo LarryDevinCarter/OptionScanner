@@ -7,6 +7,11 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
+/**
+ * Abstract base class for financial report entities, providing common fields for database persistence.
+ * Represents shared attributes for financial data tied to a stock symbol, such as balance sheets,
+ * income statements, cash flows, and earnings reports, sourced from Alpha Vantage API.
+ */
 @EqualsAndHashCode(exclude = "asset")
 @MappedSuperclass
 @Data

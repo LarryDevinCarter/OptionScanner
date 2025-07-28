@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a company's cash flow statement, capturing cash inflows and outflows
+ * for a fiscal period. Used to assess financial health, sourced from Alpha Vantage.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "cash_flows",

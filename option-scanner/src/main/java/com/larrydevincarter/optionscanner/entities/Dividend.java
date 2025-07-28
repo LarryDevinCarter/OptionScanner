@@ -7,6 +7,10 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a dividend payment for a stock, capturing key dates and amount.
+ * Used to track dividend-related data, sourced from Alpha Vantage.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "dividends",

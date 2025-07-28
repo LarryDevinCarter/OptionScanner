@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a financial asset (stock) with metadata such as symbol, price, and tradability.
+ * Used to store core asset details and link to financial reports, sourced Alpaca and Alpha Vantage.
+ */
 @Entity
 @Data
 @Table(name = "assets")
