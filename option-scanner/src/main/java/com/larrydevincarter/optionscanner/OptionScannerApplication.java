@@ -110,16 +110,16 @@ public class OptionScannerApplication {
 //		symbols = dividendService.getSymbolsThatHaveDividends(symbols);
 //		System.out.println(symbols.size() + " symbols with dividends being passed to the next round.");
 
-//		LocalDateTime startTime = LocalDateTime.now();
-//		assetService.fetchTradableAssets();
-//		LocalDateTime endTime = LocalDateTime.now();
-//		Duration duration = Duration.between(startTime, endTime);
-//		long hours = duration.toHours();
-//		long minutes = duration.toMinutesPart();
-//		long seconds = duration.toSecondsPart();
-//		long millis = duration.toMillisPart();
-//
-//		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
+		LocalDateTime startTime = LocalDateTime.now();
+		assetService.fetchTradableAssets();
+		LocalDateTime endTime = LocalDateTime.now();
+		Duration duration = Duration.between(startTime, endTime);
+		long hours = duration.toHours();
+		long minutes = duration.toMinutesPart();
+		long seconds = duration.toSecondsPart();
+		long millis = duration.toMillisPart();
+
+		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
 //		List<FinancialFilter<?>> filters = List.of(
@@ -139,31 +139,31 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-		Double maxStrike = 1.;
-		reportService.generateReport(maxStrike);
+//		Double maxStrike = 1.;
+//		reportService.generateReport(maxStrike);
 
 //		maxStrike = 4.;
 //		reportService.generateReport(maxStrike);
 
-		List<SoldOptionDTO> sampleDtos = List.of(
-				new SoldOptionDTO() {{
-					setUnderlyingSymbol("WOLF");
-					setStrikePrice(0.50);
-					setExpirationDate(LocalDate.of(2026, 1, 16));
-					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 28));
-					setSoldPrice(0.21);
-				}},
-				new SoldOptionDTO() {{
-					setUnderlyingSymbol("KPTI");
-					setStrikePrice(2.50);
-					setExpirationDate(LocalDate.of(2026, 2, 20));
-					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 22));
-					setSoldPrice(1.20);
-				}}
-		);
-		reportService.generateSoldOptionsReports(sampleDtos);
+//		List<SoldOptionDTO> sampleDtos = List.of(
+//				new SoldOptionDTO() {{
+//					setUnderlyingSymbol("WOLF");
+//					setStrikePrice(0.50);
+//					setExpirationDate(LocalDate.of(2025, 12, 19));
+//					setOptionType("put");
+//					setSoldDate(LocalDate.of(2025, 7, 29));
+//					setSoldPrice(0.17);
+//				}},
+//				new SoldOptionDTO() {{
+//					setUnderlyingSymbol("KPTI");
+//					setStrikePrice(2.50);
+//					setExpirationDate(LocalDate.of(2026, 2, 20));
+//					setOptionType("put");
+//					setSoldDate(LocalDate.of(2025, 7, 22));
+//					setSoldPrice(1.20);
+//				}}
+//		);
+//		reportService.generateSoldOptionsReports(sampleDtos);
 	}
 
 }

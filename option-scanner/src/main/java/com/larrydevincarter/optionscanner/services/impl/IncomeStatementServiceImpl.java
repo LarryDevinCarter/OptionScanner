@@ -115,7 +115,7 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
 
     @Override
     public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return incomeStatementRepository.findSymbolsThatHaveStatements(symbols);
+        return incomeStatementRepository.findSymbolsWithData(symbols);
     }
 
 }
