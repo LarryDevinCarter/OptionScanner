@@ -6,6 +6,7 @@ import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -431,7 +432,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching and storing earnings for all symbols");
-        return earningsRepository.findSymbolsThatHaveStatements(symbols);
+        return earningsRepository.findSymbolsWithData(symbols);
     }
 
     @Override
@@ -512,7 +513,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching balance sheets");
-        return balanceSheetRepository.findSymbolsThatHaveStatements(symbols);
+        return balanceSheetRepository.findSymbolsWithData(symbols);
     }
 
     @Override
@@ -872,6 +873,9 @@ public class AssetServiceImpl implements AssetService {
             asset.setAdjustedEarningsPerShare(adjustedEps);
             assetRepository.save(asset);
             log.info("Stored adjusted net income {} and EPS {} for symbol {}", adjustedNetIncomeVal, adjustedEps, asset.getSymbol());
+        } catch (IncorrectResultSizeDataAccessException e) {
+            log.error("Non-unique result for symbol {}: {}", asset.getSymbol(), e.getMessage());
+            errorLog.add("Non-unique result for symbol " + asset.getSymbol() + ": " + e.getMessage());
         } catch (NoSuchElementException e) {
             log.warn("Missing latest annual statements for symbol {}: {}", asset.getSymbol(), e.getMessage());
             errorLog.add("Missing latest annual statements for " + asset.getSymbol() + ": " + e.getMessage());

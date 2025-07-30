@@ -100,6 +100,6 @@ public class CashFlowServiceImpl implements CashFlowService {
 
     @Override
     public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return cashFlowRepository.findSymbolsThatHaveStatements(symbols);
+        return cashFlowRepository.findSymbolsWithData(symbols);
     }
 }
