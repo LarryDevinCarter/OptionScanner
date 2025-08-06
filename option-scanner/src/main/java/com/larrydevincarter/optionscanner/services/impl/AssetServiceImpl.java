@@ -76,6 +76,9 @@ public class AssetServiceImpl implements AssetService {
         LocalDateTime pullStartTime = LocalDateTime.now();
         log.info("Starting fetching tradable assets");
 
+        //TODO: Remove before merge
+//        Set<String> testSymbols = new HashSet<>(Arrays.asList("TSLA", "TSM", "WOLF"));
+
         try {
 
             String url = alpacaBaseUrl + "/v2/assets?status=active&asset_class=us_equity&attributes=has_options";
@@ -91,6 +94,12 @@ public class AssetServiceImpl implements AssetService {
 
                     String newId = (String) assetData.get("id");
                     String newSymbol = (String) assetData.get("symbol");
+
+                    //TODO: Remove before merge
+//                    if (!testSymbols.contains(newSymbol)) {
+//                        continue;
+//                    }
+
                     Optional<Asset> existingAssetById = assetRepository.findById(newId);
                     Optional<Asset> existingAssetBySymbol = assetRepository.findBySymbol(newSymbol);
 

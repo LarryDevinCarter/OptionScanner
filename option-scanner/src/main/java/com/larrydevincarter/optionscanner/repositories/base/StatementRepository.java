@@ -52,6 +52,6 @@ public interface StatementRepository<T extends BaseFinancialReport> extends Base
      * @param reportType the type of report (e.g., quarterly, annual)
      * @return the most recent record, if present
      */
-    @Query("SELECT e FROM #{#entityName} e WHERE e.symbol = :symbol AND e.reportType = :reportType ORDER BY e.fiscalDateEnding DESC")
+    @Query("SELECT e FROM #{#entityName} e WHERE e.symbol = :symbol AND e.reportType = :reportType AND e.fiscalDateEnding = (SELECT MAX(e2.fiscalDateEnding) FROM #{#entityName} e2 WHERE e2.symbol = :symbol AND e2.reportType = :reportType)")
     Optional<T> findTopBySymbolAndReportTypeOrderByFiscalDateEndingDesc(@Param("symbol") String symbol, @Param("reportType") String reportType);
 }
