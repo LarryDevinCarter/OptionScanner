@@ -36,7 +36,7 @@ public class DebtToEquityFilter implements FinancialFilter {
                     double totalEquity = bs.getTotalShareholderEquity();
                     return totalEquity > 0 ? bs.getTotalLiabilities() / totalEquity : -1.0;
                 })
-                .orElse(-1.0);
+                .orElse(INVALID_RESULT);
     }
 
     @Override

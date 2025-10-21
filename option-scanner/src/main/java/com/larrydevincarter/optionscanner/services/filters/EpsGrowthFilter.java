@@ -36,7 +36,7 @@ public class EpsGrowthFilter implements FinancialFilter {
                 FinancialFilterUtils.EARNINGS_DATE_EXTRACTOR);
 
         if (annualEarnings.size() < 2) {
-            return -1.0;
+            return INVALID_RESULT;
         }
         Earnings mostRecent = annualEarnings.get(0);
         Earnings secondMostRecent = annualEarnings.get(1);
@@ -48,13 +48,13 @@ public class EpsGrowthFilter implements FinancialFilter {
         }
 
         if (annualEarnings.size() <= years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
         double endingEps = annualEarnings.getFirst().getReportedEPS();
         double beginningEps = annualEarnings.get(years).getReportedEPS();
 
         if (beginningEps <= 0 || endingEps <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
         return (Math.pow(endingEps / beginningEps, 1.0 / years) - 1) * 100;
     }

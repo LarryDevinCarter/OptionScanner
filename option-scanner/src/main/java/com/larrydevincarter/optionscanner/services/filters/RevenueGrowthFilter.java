@@ -33,14 +33,14 @@ public class RevenueGrowthFilter implements FinancialFilter{
                 FinancialFilterUtils.INCOME_DATE_EXTRACTOR);
 
         if (sortedStatements.size() < years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double endingRevenue = sortedStatements.getFirst().getTotalRevenue();
         double beginningRevenue = sortedStatements.getLast().getTotalRevenue();
 
         if (beginningRevenue <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
         return (Math.pow(endingRevenue / beginningRevenue, 1.0 / years) - 1) * 100;
     }

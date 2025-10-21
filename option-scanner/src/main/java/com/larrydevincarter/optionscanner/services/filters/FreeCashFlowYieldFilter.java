@@ -44,7 +44,7 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
         List<Asset> assets = FinancialFilterUtils.getValidAssets(reports.getAssets());
 
         if (cashFlows.isEmpty() || balanceSheets.isEmpty() || assets.isEmpty()) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         CashFlow latestCashFlow = cashFlows.getFirst();
@@ -52,19 +52,21 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
         Asset asset = assets.getFirst();
 
         if (latestCashFlow.getFiscalDateEnding().getYear() != latestBalanceSheet.getFiscalDateEnding().getYear()) {
-            return -1.0;
+            log.warn("Year mismatch for {}: CashFlow={}, BalanceSheet={}",
+                    symbol, latestCashFlow.getFiscalDateEnding().getYear(), latestBalanceSheet.getFiscalDateEnding().getYear());
+            return INVALID_RESULT;
         }
 
         double freeCashFlow = latestCashFlow.getOperatingCashflow() - latestCashFlow.getCapitalExpenditures();
         if (freeCashFlow <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double sharesOutstanding = latestBalanceSheet.getCommonStockSharesOutstanding();
         double currentPrice = asset.getCurrentPrice();
         double marketCap = currentPrice * sharesOutstanding;
         if (marketCap <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         return (freeCashFlow / marketCap) * 100;

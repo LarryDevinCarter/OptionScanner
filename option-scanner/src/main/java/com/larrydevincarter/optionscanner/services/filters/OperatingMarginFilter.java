@@ -34,13 +34,13 @@ public class OperatingMarginFilter implements FinancialFilter {
                 FinancialFilterUtils.INCOME_DATE_EXTRACTOR);
 
         if (sortedStatements.size() < years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double totalMargin = 0.0;
         for (IncomeStatement statement : sortedStatements) {
             if (statement.getTotalRevenue() <= 0) {
-                return -1.0;
+                return INVALID_RESULT;
             }
             double margin = (statement.getOperatingIncome() / statement.getTotalRevenue()) * 100;
             totalMargin += margin;

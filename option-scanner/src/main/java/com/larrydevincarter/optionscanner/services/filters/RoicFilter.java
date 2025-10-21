@@ -44,7 +44,7 @@ public class RoicFilter implements FinancialFilter {
         );
 
         if (incomeStatements.size() < years || balanceSheets.size() < years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double totalRoic = 0.0;
@@ -76,7 +76,7 @@ public class RoicFilter implements FinancialFilter {
         }
 
         if (validYears == 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         return totalRoic / validYears;
