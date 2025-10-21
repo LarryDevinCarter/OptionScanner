@@ -2,6 +2,7 @@ package com.larrydevincarter.optionscanner.services.filters;
 
 import com.larrydevincarter.optionscanner.models.FinancialReports;
 import com.larrydevincarter.optionscanner.models.entities.Earnings;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +31,9 @@ public class EpsGrowthFilter implements FinancialFilter {
     }
 
     public double calculateCagr(String symbol, List<Earnings> earnings) {
-        List<Earnings> annualEarnings = earnings.stream()
-                .filter(e -> "annual".equals(e.getReportType()))
-                .filter(e -> e.getReportedEPS() != null)
-                .sorted(Comparator.comparing(Earnings::getFiscalDateEnding).reversed())
-                .collect(Collectors.toCollection(ArrayList::new));
+        List<Earnings> annualEarnings = FinancialFilterUtils.getAnnualReports(earnings, Integer.MAX_VALUE,
+                e -> e.getReportedEPS() != null,
+                FinancialFilterUtils.EARNINGS_DATE_EXTRACTOR);
 
         if (annualEarnings.size() < 2) {
             return -1.0;
