@@ -3,6 +3,7 @@ package com.larrydevincarter.optionscanner.services.filters;
 import com.larrydevincarter.optionscanner.models.FinancialReports;
 import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
 import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -30,19 +31,17 @@ public class RoicFilter implements FinancialFilter {
     }
 
     public double calculateAverageRoic(String symbol, FinancialReports reports) {
-        List<IncomeStatement> incomeStatements = reports.getIncomeStatements().stream()
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getOperatingIncome() != null && s.getIncomeBeforeTax() != null && s.getIncomeTaxExpense() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+        List<IncomeStatement> incomeStatements = FinancialFilterUtils.getAnnualReports(
+                reports.getIncomeStatements(), years,
+                s -> s.getOperatingIncome() != null && s.getIncomeBeforeTax() != null && s.getIncomeTaxExpense() != null,
+                FinancialFilterUtils.INCOME_DATE_EXTRACTOR
+        );
 
-        List<BalanceSheet> balanceSheets = reports.getBalanceSheets().stream()
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getTotalShareholderEquity() != null && s.getCashAndShortTermInvestments() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+        List<BalanceSheet> balanceSheets = FinancialFilterUtils.getAnnualReports(
+                reports.getBalanceSheets(), years,
+                s -> s.getTotalShareholderEquity() != null && s.getCashAndShortTermInvestments() != null,
+                FinancialFilterUtils.BALANCE_DATE_EXTRACTOR
+        );
 
         if (incomeStatements.size() < years || balanceSheets.size() < years) {
             return -1.0;

@@ -134,7 +134,7 @@ public class OptionScannerApplication {
 		Double maxStrike = null;
 		reportService.generateReport(maxStrike);
 
-		maxStrike = 449.40;
+		maxStrike = 400.00;
 		reportService.generateReport(maxStrike);
 
 		List<SoldOptionDTO> sampleDtos = List.of(

@@ -2,6 +2,7 @@ package com.larrydevincarter.optionscanner.services.filters;
 
 import com.larrydevincarter.optionscanner.models.FinancialReports;
 import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,9 @@ public class RevenueGrowthFilter implements FinancialFilter{
     }
 
     public double calculateCagr(List<IncomeStatement> statements) {
-        List<IncomeStatement> sortedStatements = statements.stream()
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getTotalRevenue() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+        List<IncomeStatement> sortedStatements = FinancialFilterUtils.getAnnualReports(statements, years,
+                s -> s.getTotalRevenue() != null,
+                FinancialFilterUtils.INCOME_DATE_EXTRACTOR);
 
         if (sortedStatements.size() < years) {
             return -1.0;
