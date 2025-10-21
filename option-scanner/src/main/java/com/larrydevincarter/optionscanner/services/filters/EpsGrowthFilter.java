@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Data
@@ -22,7 +19,7 @@ public class EpsGrowthFilter implements FinancialFilter {
 
     @Override
     public boolean appliesTo(String symbol, FinancialReports reports) {
-        double cagr = calculateCagr(symbol, reports.getEarnings());
+        double cagr = calculateCagr(reports.getEarnings());
         if (cagr < 0) {
             return false;
         }
@@ -30,7 +27,7 @@ public class EpsGrowthFilter implements FinancialFilter {
         return cagr > cagrThreshold;
     }
 
-    public double calculateCagr(String symbol, List<Earnings> earnings) {
+    public double calculateCagr(List<Earnings> earnings) {
         List<Earnings> annualEarnings = FinancialFilterUtils.getAnnualReports(earnings, Integer.MAX_VALUE,
                 e -> e.getReportedEPS() != null,
                 FinancialFilterUtils.EARNINGS_DATE_EXTRACTOR);

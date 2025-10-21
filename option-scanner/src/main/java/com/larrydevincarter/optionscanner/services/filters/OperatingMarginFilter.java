@@ -19,7 +19,7 @@ public class OperatingMarginFilter implements FinancialFilter {
 
     @Override
     public boolean appliesTo(String symbol, FinancialReports reports) {
-        double averageMargin = calculateAverageMargin(symbol, reports.getIncomeStatements());
+        double averageMargin = calculateAverageMargin(reports.getIncomeStatements());
         if (averageMargin < 0) {
             return false;
         }
@@ -28,7 +28,7 @@ public class OperatingMarginFilter implements FinancialFilter {
         return averageMargin > marginThreshold;
     }
 
-    public double calculateAverageMargin(String symbol, List<IncomeStatement> statements) {
+    public double calculateAverageMargin(List<IncomeStatement> statements) {
         List<IncomeStatement> sortedStatements = FinancialFilterUtils.getAnnualReports(statements, years,
                 s -> s.getOperatingIncome() != null && s.getTotalRevenue() != null,
                 FinancialFilterUtils.INCOME_DATE_EXTRACTOR);
