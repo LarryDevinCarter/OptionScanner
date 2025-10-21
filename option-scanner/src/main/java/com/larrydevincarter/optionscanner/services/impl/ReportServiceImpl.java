@@ -340,7 +340,7 @@ public class ReportServiceImpl implements ReportService {
                     log.info("Adjusted Revenue CAGR threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof EpsGrowthFilter epsFilter) {
-                metric = epsFilter.calculateCagr(BENCHMARK_SYMBOL, tslaReports.getEarnings());
+                metric = epsFilter.calculateCagr(tslaReports.getEarnings());
                 if (metric >= 0 && metric <= epsFilter.getCagrThreshold()) {
                     double newThreshold = metric - EPSILON;
                     epsFilter.setCagrThreshold(newThreshold);
@@ -368,7 +368,7 @@ public class ReportServiceImpl implements ReportService {
                     log.info("Adjusted FCF Yield threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof OperatingMarginFilter marginFilter) {
-                metric = marginFilter.calculateAverageMargin(BENCHMARK_SYMBOL, tslaReports.getIncomeStatements());
+                metric = marginFilter.calculateAverageMargin(tslaReports.getIncomeStatements());
                 if (metric >= 0 && metric <= marginFilter.getMarginThreshold()) {
                     double newThreshold = metric - EPSILON;
                     marginFilter.setMarginThreshold(newThreshold);
