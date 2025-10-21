@@ -1,7 +1,7 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.Earnings;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.Earnings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class EpsGrowthFilter implements FinancialFilter<Earnings> {
+public class EpsGrowthFilter implements FinancialFilter {
 
     private double cagrThreshold;
     private int years;
 
     @Override
-    public boolean appliesTo(String symbol, List<Earnings> earnings) {
-        double cagr = calculateCagr(symbol, earnings);
+    public boolean appliesTo(String symbol, FinancialReports reports) {
+        double cagr = calculateCagr(symbol, reports.getEarnings());
         if (cagr < 0) {
             return false;
         }

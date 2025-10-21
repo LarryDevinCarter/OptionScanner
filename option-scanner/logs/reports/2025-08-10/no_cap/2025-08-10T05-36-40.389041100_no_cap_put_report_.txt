@@ -1,0 +1,37 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-08-10T05:36:40.390040600
+Total Options: 33
+
+These are tier 1 options:
+Underlying: TSM | Expiration: 15-Aug-25 | Strike: 240.00 | Previous Close: 3.00 | Adjusted PE: 0.53 | Yield: 0.25%
+Underlying: NTES | Expiration: 15-Aug-25 | Strike: 125.00 | Previous Close: 2.40 | Adjusted PE: 1.63 | Yield: 0.38%
+Underlying: PLAB | Expiration: 15-Aug-25 | Strike: 20.00 | Previous Close: 0.40 | Adjusted PE: 4.49 | Yield: 0.39%
+Underlying: ACMR | Expiration: 15-Aug-25 | Strike: 23.00 | Previous Close: 0.31 | Adjusted PE: 5.23 | Yield: 0.26%
+Underlying: SMLR | Expiration: 15-Aug-25 | Strike: 32.00 | Previous Close: 1.00 | Adjusted PE: 5.58 | Yield: 0.62%
+Underlying: SMLR | Expiration: 15-Aug-25 | Strike: 35.00 | Previous Close: 0.82 | Adjusted PE: 6.11 | Yield: 0.46%
+Underlying: SMLR | Expiration: 19-Sep-25 | Strike: 35.00 | Previous Close: 2.50 | Adjusted PE: 6.11 | Yield: 0.25%
+Underlying: REGN | Expiration: 15-Aug-25 | Strike: 560.00 | Previous Close: 10.10 | Adjusted PE: 6.20 | Yield: 0.36%
+Underlying: SMLR | Expiration: 15-Aug-25 | Strike: 36.00 | Previous Close: 1.10 | Adjusted PE: 6.28 | Yield: 0.61%
+Underlying: ALKS | Expiration: 15-Aug-25 | Strike: 26.00 | Previous Close: 0.34 | Adjusted PE: 6.81 | Yield: 0.25%
+Underlying: CRUS | Expiration: 15-Aug-25 | Strike: 100.00 | Previous Close: 1.26 | Adjusted PE: 6.95 | Yield: 0.25%
+Underlying: ON | Expiration: 15-Aug-25 | Strike: 47.00 | Previous Close: 0.80 | Adjusted PE: 7.06 | Yield: 0.34%
+Underlying: ON | Expiration: 22-Aug-25 | Strike: 47.00 | Previous Close: 1.26 | Adjusted PE: 7.06 | Yield: 0.27%
+Underlying: UTHR | Expiration: 15-Aug-25 | Strike: 300.00 | Previous Close: 4.30 | Adjusted PE: 7.57 | Yield: 0.29%
+Underlying: XOM | Expiration: 15-Aug-25 | Strike: 106.00 | Previous Close: 1.25 | Adjusted PE: 7.73 | Yield: 0.23%
+Underlying: YALA | Expiration: 15-Aug-25 | Strike: 7.50 | Previous Close: 0.10 | Adjusted PE: 8.30 | Yield: 0.24%
+Underlying: NEM | Expiration: 15-Aug-25 | Strike: 68.00 | Previous Close: 0.81 | Adjusted PE: 11.24 | Yield: 0.24%
+Underlying: ALGN | Expiration: 22-Aug-25 | Strike: 136.00 | Previous Close: 3.60 | Adjusted PE: 11.32 | Yield: 0.26%
+Underlying: ALGN | Expiration: 15-Aug-25 | Strike: 137.00 | Previous Close: 1.90 | Adjusted PE: 11.40 | Yield: 0.28%
+Underlying: ALGN | Expiration: 15-Aug-25 | Strike: 138.00 | Previous Close: 2.02 | Adjusted PE: 11.48 | Yield: 0.29%
+Underlying: ALGN | Expiration: 22-Aug-25 | Strike: 138.00 | Previous Close: 3.80 | Adjusted PE: 11.48 | Yield: 0.28%
+Underlying: ALGN | Expiration: 15-Aug-25 | Strike: 139.00 | Previous Close: 2.65 | Adjusted PE: 11.57 | Yield: 0.38%
+Underlying: YETI | Expiration: 15-Aug-25 | Strike: 32.50 | Previous Close: 0.68 | Adjusted PE: 11.68 | Yield: 0.41%
+Underlying: GOOGL | Expiration: 15-Aug-25 | Strike: 200.00 | Previous Close: 3.10 | Adjusted PE: 12.33 | Yield: 0.31%
+Underlying: GOOG | Expiration: 15-Aug-25 | Strike: 200.00 | Previous Close: 2.78 | Adjusted PE: 12.33 | Yield: 0.28%
+Underlying: AMAT | Expiration: 15-Aug-25 | Strike: 177.50 | Previous Close: 2.61 | Adjusted PE: 12.76 | Yield: 0.29%
+Underlying: AMAT | Expiration: 15-Aug-25 | Strike: 180.00 | Previous Close: 3.45 | Adjusted PE: 12.94 | Yield: 0.38%
+Underlying: AMAT | Expiration: 22-Aug-25 | Strike: 180.00 | Previous Close: 4.45 | Adjusted PE: 12.94 | Yield: 0.25%
+Underlying: AMAT | Expiration: 15-Aug-25 | Strike: 182.50 | Previous Close: 4.50 | Adjusted PE: 13.12 | Yield: 0.49%
+Underlying: AMAT | Expiration: 22-Aug-25 | Strike: 182.50 | Previous Close: 5.36 | Adjusted PE: 13.12 | Yield: 0.29%
+Underlying: META | Expiration: 15-Aug-25 | Strike: 767.50 | Previous Close: 9.37 | Adjusted PE: 13.98 | Yield: 0.24%
+Underlying: MPWR | Expiration: 15-Aug-25 | Strike: 790.00 | Previous Close: 10.40 | Adjusted PE: 17.09 | Yield: 0.26%

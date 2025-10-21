@@ -1,0 +1,64 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-08-14T08:10:53.363972100
+Total Options: 60
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+Underlying: CAAS | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.05 | Adjusted PE: 0.74 | Yield: 0.80%
+These are tier 6 options:
+Underlying: WOLF | Expiration: 17-Oct-25 | Strike: 0.50 | Previous Close: 0.10 | Adjusted PE: 0.04 | Yield: 0.39%
+Underlying: WOLF | Expiration: 19-Sep-25 | Strike: 0.50 | Previous Close: 0.06 | Adjusted PE: 0.04 | Yield: 0.39%
+Underlying: WOLF | Expiration: 16-Jan-26 | Strike: 0.50 | Previous Close: 0.21 | Adjusted PE: 0.04 | Yield: 0.37%
+Underlying: WOLF | Expiration: 21-Nov-25 | Strike: 0.50 | Previous Close: 0.14 | Adjusted PE: 0.04 | Yield: 0.37%
+Underlying: WOLF | Expiration: 15-May-26 | Strike: 0.50 | Previous Close: 0.29 | Adjusted PE: 0.04 | Yield: 0.30%
+Underlying: WOLF | Expiration: 20-Mar-26 | Strike: 0.50 | Previous Close: 0.22 | Adjusted PE: 0.04 | Yield: 0.28%
+Underlying: WOLF | Expiration: 12-Sep-25 | Strike: 0.50 | Previous Close: 0.03 | Adjusted PE: 0.04 | Yield: 0.19%
+Underlying: WOLF | Expiration: 18-Sep-26 | Strike: 0.50 | Previous Close: 0.27 | Adjusted PE: 0.04 | Yield: 0.19%
+Underlying: WOLF | Expiration: 17-Dec-27 | Strike: 0.50 | Previous Close: 0.32 | Adjusted PE: 0.04 | Yield: 0.11%
+Underlying: WOLF | Expiration: 26-Sep-25 | Strike: 1.00 | Previous Close: 0.28 | Adjusted PE: 0.08 | Yield: 0.87%
+Underlying: WOLF | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.39 | Adjusted PE: 0.08 | Yield: 0.83%
+Underlying: WOLF | Expiration: 19-Sep-25 | Strike: 1.00 | Previous Close: 0.22 | Adjusted PE: 0.08 | Yield: 0.81%
+Underlying: WOLF | Expiration: 12-Sep-25 | Strike: 1.00 | Previous Close: 0.17 | Adjusted PE: 0.08 | Yield: 0.76%
+Underlying: WOLF | Expiration: 21-Nov-25 | Strike: 1.00 | Previous Close: 0.47 | Adjusted PE: 0.08 | Yield: 0.65%
+Underlying: WOLF | Expiration: 05-Sep-25 | Strike: 1.00 | Previous Close: 0.11 | Adjusted PE: 0.08 | Yield: 0.63%
+Underlying: WOLF | Expiration: 19-Dec-25 | Strike: 1.00 | Previous Close: 0.54 | Adjusted PE: 0.08 | Yield: 0.59%
+Underlying: WOLF | Expiration: 16-Jan-26 | Strike: 1.00 | Previous Close: 0.59 | Adjusted PE: 0.08 | Yield: 0.54%
+Underlying: WOLF | Expiration: 20-Mar-26 | Strike: 1.00 | Previous Close: 0.62 | Adjusted PE: 0.08 | Yield: 0.40%
+Underlying: WOLF | Expiration: 29-Aug-25 | Strike: 1.00 | Previous Close: 0.05 | Adjusted PE: 0.08 | Yield: 0.33%
+Underlying: WOLF | Expiration: 18-Jun-26 | Strike: 1.00 | Previous Close: 0.70 | Adjusted PE: 0.08 | Yield: 0.32%
+Underlying: WOLF | Expiration: 22-Aug-25 | Strike: 1.00 | Previous Close: 0.03 | Adjusted PE: 0.08 | Yield: 0.29%
+Underlying: WOLF | Expiration: 18-Sep-26 | Strike: 1.00 | Previous Close: 0.73 | Adjusted PE: 0.08 | Yield: 0.26%
+Underlying: KPTI | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 1.20 | Adjusted PE: 0.30 | Yield: 0.67%
+Underlying: KPTI | Expiration: 19-Sep-25 | Strike: 2.50 | Previous Close: 0.29 | Adjusted PE: 0.30 | Yield: 0.43%
+Underlying: MLCO | Expiration: 15-Aug-25 | Strike: 2.00 | Previous Close: 0.21 | Adjusted PE: 0.82 | Yield: 5.00%
+Underlying: CTMX | Expiration: 15-Aug-25 | Strike: 1.50 | Previous Close: 0.05 | Adjusted PE: 1.10 | Yield: 1.33%
+Underlying: CTMX | Expiration: 19-Sep-25 | Strike: 1.50 | Previous Close: 0.15 | Adjusted PE: 1.10 | Yield: 0.36%
+Underlying: CTMX | Expiration: 20-Feb-26 | Strike: 1.50 | Previous Close: 0.35 | Adjusted PE: 1.10 | Yield: 0.17%
+Underlying: NPWR | Expiration: 15-Aug-25 | Strike: 2.00 | Previous Close: 0.02 | Adjusted PE: 1.72 | Yield: 0.25%
+Underlying: NVAX | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.02 | Adjusted PE: 1.76 | Yield: 0.20%
+Underlying: NPWR | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.07 | Adjusted PE: 2.15 | Yield: 1.20%
+Underlying: NPWR | Expiration: 19-Sep-25 | Strike: 2.50 | Previous Close: 0.37 | Adjusted PE: 2.15 | Yield: 0.55%
+Underlying: NPWR | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.62 | Adjusted PE: 2.15 | Yield: 0.34%
+Underlying: NOTE | Expiration: 19-Sep-25 | Strike: 0.50 | Previous Close: 0.07 | Adjusted PE: 2.20 | Yield: 0.46%
+Underlying: EB | Expiration: 19-Sep-25 | Strike: 2.50 | Previous Close: 0.08 | Adjusted PE: 2.90 | Yield: 0.11%
+Underlying: PSEC | Expiration: 19-Sep-25 | Strike: 2.00 | Previous Close: 0.05 | Adjusted PE: 3.18 | Yield: 0.08%
+Underlying: TXG | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.05 | Adjusted PE: 3.19 | Yield: 0.80%
+Underlying: FLNC | Expiration: 15-Jan-27 | Strike: 2.00 | Previous Close: 0.45 | Adjusted PE: 3.41 | Yield: 0.06%
+Underlying: PATH | Expiration: 15-Aug-25 | Strike: 2.00 | Previous Close: 0.03 | Adjusted PE: 3.48 | Yield: 0.50%
+Underlying: DLO | Expiration: 17-Oct-25 | Strike: 2.47 | Previous Close: 0.17 | Adjusted PE: 5.10 | Yield: 0.14%
+Underlying: LTRX | Expiration: 19-Sep-25 | Strike: 2.50 | Previous Close: 0.05 | Adjusted PE: 5.42 | Yield: 0.06%
+Underlying: CAPR | Expiration: 19-Dec-25 | Strike: 2.50 | Previous Close: 0.25 | Adjusted PE: 7.97 | Yield: 0.11%
+Underlying: GRAB | Expiration: 29-Aug-25 | Strike: 1.00 | Previous Close: 0.24 | Adjusted PE: 10.46 | Yield: 1.92%
+Underlying: CRON | Expiration: 15-Aug-25 | Strike: 2.00 | Previous Close: 0.05 | Adjusted PE: 13.24 | Yield: 1.00%
+Underlying: CRON | Expiration: 17-Oct-25 | Strike: 2.00 | Previous Close: 0.10 | Adjusted PE: 13.24 | Yield: 0.10%
+Underlying: CRON | Expiration: 19-Sep-25 | Strike: 2.00 | Previous Close: 0.05 | Adjusted PE: 13.24 | Yield: 0.08%
+Underlying: GRAB | Expiration: 12-Sep-25 | Strike: 1.50 | Previous Close: 0.05 | Adjusted PE: 15.69 | Yield: 0.13%
+Underlying: CRON | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.05 | Adjusted PE: 16.54 | Yield: 0.80%
+Underlying: CRON | Expiration: 19-Sep-25 | Strike: 2.50 | Previous Close: 0.22 | Adjusted PE: 16.54 | Yield: 0.32%
+Underlying: CRON | Expiration: 17-Oct-25 | Strike: 2.50 | Previous Close: 0.26 | Adjusted PE: 16.54 | Yield: 0.22%
+Underlying: CRON | Expiration: 16-Jan-26 | Strike: 2.50 | Previous Close: 0.33 | Adjusted PE: 16.54 | Yield: 0.12%
+Underlying: BLDE | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.03 | Adjusted PE: 21.84 | Yield: 0.40%
+Underlying: SLQT | Expiration: 16-Jan-26 | Strike: 2.00 | Previous Close: 0.40 | Adjusted PE: 121.19 | Yield: 0.18%

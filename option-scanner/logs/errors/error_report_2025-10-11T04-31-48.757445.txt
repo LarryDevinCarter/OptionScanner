@@ -1,0 +1,9 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-10-11T04:31:48.760439400
+Total Errors: 5
+
+Permanent error (422) for DYNX: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: DYNX"}". Skipping.
+Permanent error (422) for BIGC: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: BIGC"}". Skipping.
+Permanent error (422) for BLDE: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: BLDE"}". Skipping.
+Permanent error (422) for BYON: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: BYON"}". Skipping.
+Permanent error (422) for SHOT: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: SHOT"}". Skipping.

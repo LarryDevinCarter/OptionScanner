@@ -1,0 +1,53 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-10-20T11:29:07.254335
+Total Options: 49
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: KPTI | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.10 | Adjusted PE: 0.30 | Yield: 0.14%
+Underlying: KPTI | Expiration: 20-Feb-26 | Strike: 2.50 | Previous Close: 0.15 | Adjusted PE: 0.30 | Yield: 0.07%
+Underlying: MGNX | Expiration: 17-Apr-26 | Strike: 1.50 | Previous Close: 0.31 | Adjusted PE: 0.82 | Yield: 0.16%
+Underlying: NPWR | Expiration: 20-Feb-26 | Strike: 1.50 | Previous Close: 0.28 | Adjusted PE: 1.29 | Yield: 0.21%
+Underlying: CTMX | Expiration: 21-Nov-25 | Strike: 2.00 | Previous Close: 0.10 | Adjusted PE: 1.47 | Yield: 0.18%
+Underlying: NPWR | Expiration: 21-Nov-25 | Strike: 2.00 | Previous Close: 0.07 | Adjusted PE: 1.72 | Yield: 0.12%
+Underlying: NPWR | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.24 | Adjusted PE: 2.15 | Yield: 0.37%
+Underlying: NPWR | Expiration: 15-Jan-27 | Strike: 2.50 | Previous Close: 1.23 | Adjusted PE: 2.15 | Yield: 0.16%
+Underlying: STRO | Expiration: 21-Nov-25 | Strike: 1.00 | Previous Close: 0.20 | Adjusted PE: 2.78 | Yield: 0.76%
+Underlying: ALEC | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.45 | Adjusted PE: 3.54 | Yield: 0.70%
+Underlying: ALEC | Expiration: 19-Dec-25 | Strike: 2.50 | Previous Close: 0.65 | Adjusted PE: 3.54 | Yield: 0.58%
+Underlying: ALEC | Expiration: 16-Jan-26 | Strike: 2.50 | Previous Close: 0.70 | Adjusted PE: 3.54 | Yield: 0.45%
+Underlying: SPRO | Expiration: 21-Nov-25 | Strike: 2.00 | Previous Close: 0.15 | Adjusted PE: 3.83 | Yield: 0.28%
+Underlying: SRTS | Expiration: 16-Jan-26 | Strike: 3.00 | Previous Close: 0.40 | Adjusted PE: 4.41 | Yield: 0.21%
+Underlying: GDRX | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.08 | Adjusted PE: 4.66 | Yield: 0.11%
+Underlying: GDRX | Expiration: 17-Apr-26 | Strike: 2.50 | Previous Close: 0.20 | Adjusted PE: 4.66 | Yield: 0.06%
+Underlying: INDI | Expiration: 15-Jan-27 | Strike: 2.50 | Previous Close: 0.50 | Adjusted PE: 7.70 | Yield: 0.06%
+Underlying: CAPR | Expiration: 21-Nov-25 | Strike: 2.50 | Previous Close: 0.26 | Adjusted PE: 7.97 | Yield: 0.40%
+Underlying: CAPR | Expiration: 19-Dec-25 | Strike: 2.50 | Previous Close: 0.45 | Adjusted PE: 7.97 | Yield: 0.40%
+Underlying: CAPR | Expiration: 15-Jan-27 | Strike: 2.50 | Previous Close: 0.94 | Adjusted PE: 7.97 | Yield: 0.12%
+Underlying: ACB | Expiration: 16-Jan-26 | Strike: 3.50 | Previous Close: 0.19 | Adjusted PE: 8.09 | Yield: 0.08%
+Underlying: ACB | Expiration: 21-Nov-25 | Strike: 4.00 | Previous Close: 0.19 | Adjusted PE: 9.24 | Yield: 0.18%
+Underlying: ACB | Expiration: 16-Jan-26 | Strike: 4.00 | Previous Close: 0.35 | Adjusted PE: 9.24 | Yield: 0.14%
+Underlying: ACB | Expiration: 19-Dec-25 | Strike: 4.00 | Previous Close: 0.23 | Adjusted PE: 9.24 | Yield: 0.13%
+Underlying: ACB | Expiration: 20-Mar-26 | Strike: 4.00 | Previous Close: 0.48 | Adjusted PE: 9.24 | Yield: 0.11%
+Underlying: RKLB | Expiration: 16-Jan-26 | Strike: 1.00 | Previous Close: 0.05 | Adjusted PE: 9.66 | Yield: 0.07%
+Underlying: CRON | Expiration: 16-Jan-26 | Strike: 1.50 | Previous Close: 0.10 | Adjusted PE: 9.93 | Yield: 0.10%
+Underlying: TUYA | Expiration: 19-Dec-25 | Strike: 2.00 | Previous Close: 0.15 | Adjusted PE: 10.45 | Yield: 0.16%
+Underlying: TUYA | Expiration: 20-Mar-26 | Strike: 2.00 | Previous Close: 0.26 | Adjusted PE: 10.45 | Yield: 0.12%
+Underlying: INDI | Expiration: 21-Nov-25 | Strike: 3.50 | Previous Close: 0.11 | Adjusted PE: 10.78 | Yield: 0.11%
+Underlying: INDI | Expiration: 21-Nov-25 | Strike: 4.00 | Previous Close: 0.24 | Adjusted PE: 12.32 | Yield: 0.23%
+Underlying: INDI | Expiration: 16-Jan-26 | Strike: 4.00 | Previous Close: 0.50 | Adjusted PE: 12.32 | Yield: 0.20%
+Underlying: INDI | Expiration: 20-Feb-26 | Strike: 4.00 | Previous Close: 0.60 | Adjusted PE: 12.32 | Yield: 0.17%
+Underlying: CAPR | Expiration: 21-Nov-25 | Strike: 4.00 | Previous Close: 0.83 | Adjusted PE: 12.76 | Yield: 0.82%
+Underlying: CAPR | Expiration: 19-Dec-25 | Strike: 4.00 | Previous Close: 1.20 | Adjusted PE: 12.76 | Yield: 0.68%
+Underlying: CRON | Expiration: 16-Jan-26 | Strike: 2.00 | Previous Close: 0.09 | Adjusted PE: 13.24 | Yield: 0.07%
+Underlying: CRON | Expiration: 17-Apr-26 | Strike: 2.00 | Previous Close: 0.16 | Adjusted PE: 13.24 | Yield: 0.06%
+Underlying: PRQR | Expiration: 19-Dec-25 | Strike: 2.50 | Previous Close: 0.40 | Adjusted PE: 20.39 | Yield: 0.36%
+Underlying: IDN | Expiration: 20-Feb-26 | Strike: 4.00 | Previous Close: 0.45 | Adjusted PE: 25.80 | Yield: 0.13%
+Underlying: GRAB | Expiration: 21-Nov-25 | Strike: 3.00 | Previous Close: 0.18 | Adjusted PE: 31.38 | Yield: 0.23%
+Underlying: GRAB | Expiration: 19-Dec-25 | Strike: 3.00 | Previous Close: 0.25 | Adjusted PE: 31.38 | Yield: 0.18%
+Underlying: ARDX | Expiration: 21-Nov-25 | Strike: 4.00 | Previous Close: 0.20 | Adjusted PE: 66.30 | Yield: 0.19%
+Underlying: BLND | Expiration: 15-May-26 | Strike: 3.00 | Previous Close: 0.74 | Adjusted PE: 120.40 | Yield: 0.17%

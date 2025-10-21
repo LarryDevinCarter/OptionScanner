@@ -1,0 +1,11 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-09-30T06:20:13.400760100
+Total Options: 7
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: CRON | Expiration: 16-Jan-26 | Strike: 0.50 | Previous Close: 0.05 | Adjusted PE: 3.31 | Yield: 0.11%

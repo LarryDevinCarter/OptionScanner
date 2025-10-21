@@ -1,0 +1,13 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-10-01T06:35:07.312810400
+Total Options: 9
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: LYFT | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.75 | Adjusted PE: 0.82 | Yield: 5.69%
+Underlying: CERS | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.03 | Adjusted PE: 4.52 | Yield: 0.15%
+Underlying: GRAB | Expiration: 03-Oct-25 | Strike: 1.00 | Previous Close: 0.04 | Adjusted PE: 10.46 | Yield: 1.00%

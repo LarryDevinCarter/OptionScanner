@@ -1,6 +1,7 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +11,13 @@ import java.util.List;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class DebtToEquityFilter implements FinancialFilter<BalanceSheet> {
+public class DebtToEquityFilter implements FinancialFilter {
 
     private double debtToEquityThreshold;
 
     @Override
-    public boolean appliesTo(String symbol, List<BalanceSheet> balanceSheets) {
-        double ratio = calculateRatio(symbol, balanceSheets);
+    public boolean appliesTo(String symbol, FinancialReports reports) {
+        double ratio = calculateRatio(symbol, reports.getBalanceSheets());
         if (ratio < 0) {
             return false;
         }

@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.repositories;
 
-import com.larrydevincarter.optionscanner.entities.Earnings;
+import com.larrydevincarter.optionscanner.models.entities.Earnings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

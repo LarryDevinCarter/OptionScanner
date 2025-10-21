@@ -1,0 +1,12 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-09-02T08:55:18.053595
+Total Options: 8
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: SKYT | Expiration: 12-Sep-25 | Strike: 1.00 | Previous Close: 0.18 | Adjusted PE: 2.43 | Yield: 1.89%
+Underlying: HRTX | Expiration: 19-Dec-25 | Strike: 1.00 | Previous Close: 0.13 | Adjusted PE: 31.70 | Yield: 0.15%

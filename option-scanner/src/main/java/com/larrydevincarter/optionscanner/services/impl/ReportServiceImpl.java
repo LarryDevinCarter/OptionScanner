@@ -1,7 +1,8 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.dtos.SoldOptionDTO;
-import com.larrydevincarter.optionscanner.entities.*;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDTO;
+import com.larrydevincarter.optionscanner.models.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
 import com.larrydevincarter.optionscanner.services.filters.*;
@@ -20,8 +21,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -108,7 +107,7 @@ public class ReportServiceImpl implements ReportService {
         FreeCashFlowYieldFilter fcfFilter = new FreeCashFlowYieldFilter(fcfYieldThreshold);
         OperatingMarginFilter marginFilter = new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears);
 
-        List<FinancialFilter<?>> allFilters = new ArrayList<>(List.of(
+        List<FinancialFilter> allFilters = new ArrayList<>(List.of(
                 revenueFilter, epsFilter, roicFilter, debtFilter, fcfFilter, marginFilter
         ));
 
@@ -120,9 +119,9 @@ public class ReportServiceImpl implements ReportService {
         Set<String> addedSymbol = new HashSet<>();
         int tier = 1;
         int yieldIndex = 0;
-        List<FinancialFilter<?>> currentFilters = new ArrayList<>(allFilters);
+        List<FinancialFilter> currentFilters = new ArrayList<>(allFilters);
 
-        while (addedUnderlyings.size() < 20 && yieldIndex < YIELD_LEVELS.length) {
+        while (yieldIndex < YIELD_LEVELS.length) {
             reportLines.add("These are tier " + tier + " options:");
 
             List<String> symbols = filterService.getFilteredSymbols(currentFilters);
@@ -154,15 +153,15 @@ public class ReportServiceImpl implements ReportService {
             }
 
             // Step 7: If still <20 unique, remove a filter and reduce yield
-            if (addedUnderlyings.size() >= 20) {
+            if (addedUnderlyings.size() == 20) {
                 break;
             }
 
             // Remove next filter (never remove RevenueGrowthFilter)
             boolean removed = false;
             for (Class<?> filterClass : FILTER_REMOVAL_ORDER) {
-                Optional<FinancialFilter<?>> toRemove = currentFilters.stream()
-                        .filter(f -> filterClass.isInstance(f))
+                Optional<FinancialFilter> toRemove = currentFilters.stream()
+                        .filter(filterClass::isInstance)
                         .findFirst();
                 if (toRemove.isPresent()) {
                     currentFilters.remove(toRemove.get());
@@ -317,7 +316,7 @@ public class ReportServiceImpl implements ReportService {
         return tradingDays;
     }
 
-    private void adjustFiltersForBenchmark(List<FinancialFilter<?>> filters) {
+    private void adjustFiltersForBenchmark(List<FinancialFilter> filters) {
         // Fetch TSLA data once
         List<IncomeStatement> tslaIncome = incomeStatementRepository.findBySymbol(BENCHMARK_SYMBOL); // Add this method to IncomeStatementService if needed: return repo.findBySymbol(symbol);
         List<Earnings> tslaEarnings = earningsRepository.findBySymbol(BENCHMARK_SYMBOL); // Add similar method
@@ -329,53 +328,47 @@ public class ReportServiceImpl implements ReportService {
             return;
         }
         Asset tslaAsset = tslaAssetOpt.get();
+        FinancialReports tslaReports = new FinancialReports(tslaIncome, tslaEarnings, tslaBalance, tslaCashFlow, List.of(tslaAsset));
 
-        for (FinancialFilter<?> filter : filters) {
+        for (FinancialFilter filter : filters) {
             double metric = -1.0;
             if (filter instanceof RevenueGrowthFilter revenueFilter) {
-                metric = revenueFilter.calculateCagr(tslaIncome);
+                metric = revenueFilter.calculateCagr(tslaReports.getIncomeStatements());
                 if (metric >= 0 && metric <= revenueFilter.getCagrThreshold()) {
                     double newThreshold = metric - EPSILON;
                     revenueFilter.setCagrThreshold(newThreshold);
                     log.info("Adjusted Revenue CAGR threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof EpsGrowthFilter epsFilter) {
-                metric = epsFilter.calculateCagr(BENCHMARK_SYMBOL, tslaEarnings);
+                metric = epsFilter.calculateCagr(BENCHMARK_SYMBOL, tslaReports.getEarnings());
                 if (metric >= 0 && metric <= epsFilter.getCagrThreshold()) {
                     double newThreshold = metric - EPSILON;
                     epsFilter.setCagrThreshold(newThreshold);
                     log.info("Adjusted EPS CAGR threshold for {} to{}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof RoicFilter roicFilter) {
-                List<Object> reports = new ArrayList<>();
-                reports.addAll(tslaIncome);
-                reports.addAll(tslaBalance);
-                metric = roicFilter.calculateAverageRoic(BENCHMARK_SYMBOL, reports);
+                metric = roicFilter.calculateAverageRoic(BENCHMARK_SYMBOL, tslaReports);
                 if (metric >= 0 && metric <= roicFilter.getRoicThreshold()) {
                     double newThreshold = metric - EPSILON;
                     roicFilter.setRoicThreshold(newThreshold);
                     log.info("Adjusted ROIC threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof DebtToEquityFilter debtFilter) {
-                metric = debtFilter.calculateRatio(BENCHMARK_SYMBOL, tslaBalance);
+                metric = debtFilter.calculateRatio(BENCHMARK_SYMBOL, tslaReports.getBalanceSheets());
                 if (metric >= 0 && metric >= debtFilter.getDebtToEquityThreshold()) {
                     double newThreshold = metric + EPSILON;
                     debtFilter.setDebtToEquityThreshold(newThreshold);
                     log.info("Adjusted Debt-to-Equity threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof FreeCashFlowYieldFilter fcfFilter) {
-                List<Object> reports = new ArrayList<>();
-                reports.addAll(tslaCashFlow);
-                reports.addAll(tslaBalance);
-                reports.add(tslaAsset);
-                metric = fcfFilter.calculateFcfYield(BENCHMARK_SYMBOL, reports);
+                metric = fcfFilter.calculateFcfYield(BENCHMARK_SYMBOL, tslaReports);
                 if (metric >= 0 && metric <= fcfFilter.getFcfYieldThreshold()) {
                     double newThreshold = metric - EPSILON;
                     fcfFilter.setFcfYieldThreshold(newThreshold);
                     log.info("Adjusted FCF Yield threshold for {} to {}", BENCHMARK_SYMBOL, newThreshold);
                 }
             } else if (filter instanceof OperatingMarginFilter marginFilter) {
-                metric = marginFilter.calculateAverageMargin(BENCHMARK_SYMBOL, tslaIncome);
+                metric = marginFilter.calculateAverageMargin(BENCHMARK_SYMBOL, tslaReports.getIncomeStatements());
                 if (metric >= 0 && metric <= marginFilter.getMarginThreshold()) {
                     double newThreshold = metric - EPSILON;
                     marginFilter.setMarginThreshold(newThreshold);

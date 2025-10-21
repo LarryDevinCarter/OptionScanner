@@ -1,8 +1,7 @@
 package com.larrydevincarter.optionscanner.services;
 
-import com.larrydevincarter.optionscanner.dtos.SoldOptionDTO;
+import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDTO;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface ReportService {

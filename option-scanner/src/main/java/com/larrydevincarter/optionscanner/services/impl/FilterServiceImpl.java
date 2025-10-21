@@ -1,6 +1,7 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.*;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.FilterService;
 import com.larrydevincarter.optionscanner.services.filters.*;
@@ -58,7 +59,7 @@ public class FilterServiceImpl implements FilterService {
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
 
-        FinancialFilter<IncomeStatement> revenueFilter = new RevenueGrowthFilter(
+        FinancialFilter revenueFilter = new RevenueGrowthFilter(
                 cagrThreshold >= 0 ? cagrThreshold : defaultCagrThreshold,
                 years > 0 ? years : defaultYears
         );
@@ -68,7 +69,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithEpsGrowth(double cagrThreshold, int years) {
-        FinancialFilter<Earnings> epsFilter = new EpsGrowthFilter(
+        FinancialFilter epsFilter = new EpsGrowthFilter(
                 cagrThreshold >= 0 ? cagrThreshold : defaultEpsCagrThreshold,
                 years > 0 ? years : defaultEpsYears
         );
@@ -77,7 +78,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithRoic(double roicThreshold, int years, double defaultTaxRate) {
-        FinancialFilter<Object> roicFilter = new RoicFilter(
+        FinancialFilter roicFilter = new RoicFilter(
                 roicThreshold >= 0 ? roicThreshold : defaultRoicThreshold,
                 years > 0 ? years : defaultRoicYears,
                 defaultTaxRate >= 0 ? defaultTaxRate : this.defaultTaxRate
@@ -87,7 +88,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithDebtToEquity(double debtToEquityThreshold) {
-        FinancialFilter<BalanceSheet> debtToEquityFilter = new DebtToEquityFilter(
+        FinancialFilter debtToEquityFilter = new DebtToEquityFilter(
                 debtToEquityThreshold >= 0 ? debtToEquityThreshold : defaultDebtToEquityThreshold
         );
         return getFilteredSymbols(List.of(debtToEquityFilter));
@@ -95,7 +96,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithFcfYield(double fcfYieldThreshold) {
-        FinancialFilter<Object> fcfYieldFilter = new FreeCashFlowYieldFilter(
+        FinancialFilter fcfYieldFilter = new FreeCashFlowYieldFilter(
                 fcfYieldThreshold >= 0 ? fcfYieldThreshold : defaultFcfYieldThreshold
         );
         return getFilteredSymbols(List.of(fcfYieldFilter));
@@ -103,14 +104,14 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getSymbolsWithOperatingMargin(double marginThreshold, int years) {
-        FinancialFilter<IncomeStatement> operatingMarginFilter = new OperatingMarginFilter(
+        FinancialFilter operatingMarginFilter = new OperatingMarginFilter(
                 marginThreshold >= 0 ? marginThreshold : operatingMarginThreshold,  years >= 0 ? years : operatingMarginYears
         );
         return getFilteredSymbols(List.of(operatingMarginFilter));
     }
 
     @Override
-    public List<String> getFilteredSymbols(List<FinancialFilter<?>> filters) {
+    public List<String> getFilteredSymbols(List<FinancialFilter> filters) {
 
         List<String> activeTradableSymbols = assetRepository.findActiveTradableSymbols();
         log.info("Found {} active and tradable assets", activeTradableSymbols.size());
@@ -144,42 +145,9 @@ public class FilterServiceImpl implements FilterService {
             List<BalanceSheet> symbolBalance = balanceBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<CashFlow> symbolCashFlow = cashFlowBySymbol.getOrDefault(symbol, Collections.emptyList());
             List<Asset> symbolAsset = assetBySymbol.getOrDefault(symbol, Collections.emptyList());
-            List<Object> combinedReports = new ArrayList<>();
-            combinedReports.addAll(symbolIncome);
-            combinedReports.addAll(symbolBalance);
-            combinedReports.addAll(symbolCashFlow);
-            combinedReports.addAll(symbolAsset);
+            FinancialReports reports = new FinancialReports(symbolIncome, symbolEarnings, symbolBalance, symbolCashFlow, symbolAsset);
 
-            return filters.stream().allMatch(filter -> {
-
-                if (filter instanceof RevenueGrowthFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<IncomeStatement> incomeFilter = (FinancialFilter<IncomeStatement>) filter;
-                    return incomeFilter.appliesTo(symbol, symbolIncome);
-                } else if (filter instanceof EpsGrowthFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<Earnings> incomeFilter = (FinancialFilter<Earnings>) filter;
-                    return incomeFilter.appliesTo(symbol, symbolEarnings);
-                } else if (filter instanceof RoicFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<Object> roicFilter = (FinancialFilter<Object>) filter;
-                    return roicFilter.appliesTo(symbol, combinedReports);
-                } else if (filter instanceof DebtToEquityFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<BalanceSheet> debtToEquityFilter = (FinancialFilter<BalanceSheet>) filter;
-                    return debtToEquityFilter.appliesTo(symbol, symbolBalance);
-                } else if (filter instanceof FreeCashFlowYieldFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<Object> fcfYieldFilter = (FinancialFilter<Object>) filter;
-                    return fcfYieldFilter.appliesTo(symbol, combinedReports);
-                } else if (filter instanceof OperatingMarginFilter) {
-                    @SuppressWarnings("unchecked")
-                    FinancialFilter<IncomeStatement> operatingMarginFilter = (FinancialFilter<IncomeStatement>) filter;
-                    return operatingMarginFilter.appliesTo(symbol, symbolIncome);
-                }
-                log.warn("Unknown filter type: {}. Skipping.", filter.getClass().getName());
-                return true;
-            });
+            return filters.stream().allMatch(filter -> filter.appliesTo(symbol, reports));
         }).toList();
 
         log.info("Filtered to {} symbols with {} filters", filteredSymbols.size(), filters.size());

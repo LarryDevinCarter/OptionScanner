@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.repositories;
 
-import com.larrydevincarter.optionscanner.entities.Asset;
+import com.larrydevincarter.optionscanner.models.entities.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

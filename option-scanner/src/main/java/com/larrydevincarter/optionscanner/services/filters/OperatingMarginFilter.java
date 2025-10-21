@@ -1,6 +1,7 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +11,14 @@ import java.util.List;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class OperatingMarginFilter implements FinancialFilter<IncomeStatement> {
+public class OperatingMarginFilter implements FinancialFilter {
 
     private double marginThreshold;
     private int years;
 
     @Override
-    public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
-        double averageMargin = calculateAverageMargin(symbol, statements);
+    public boolean appliesTo(String symbol, FinancialReports reports) {
+        double averageMargin = calculateAverageMargin(symbol, reports.getIncomeStatements());
         if (averageMargin < 0) {
             return false;
         }

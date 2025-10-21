@@ -1,0 +1,75 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-08-20T05:18:15.427849500
+Total Options: 71
+
+These are tier 1 options:
+Underlying: TSM | Expiration: 22-Aug-25 | Strike: 230.00 | Previous Close: 1.95 | Adjusted PE: 0.51 | Yield: 0.28%
+Underlying: TSM | Expiration: 22-Aug-25 | Strike: 232.50 | Previous Close: 2.93 | Adjusted PE: 0.52 | Yield: 0.42%
+Underlying: TSM | Expiration: 29-Aug-25 | Strike: 232.50 | Previous Close: 4.82 | Adjusted PE: 0.52 | Yield: 0.26%
+Underlying: COP | Expiration: 22-Aug-25 | Strike: 93.00 | Previous Close: 0.86 | Adjusted PE: 5.13 | Yield: 0.31%
+Underlying: SMLR | Expiration: 19-Sep-25 | Strike: 31.00 | Previous Close: 1.77 | Adjusted PE: 5.41 | Yield: 0.26%
+Underlying: ACMR | Expiration: 19-Sep-25 | Strike: 25.00 | Previous Close: 1.42 | Adjusted PE: 5.68 | Yield: 0.26%
+Underlying: REGN | Expiration: 22-Aug-25 | Strike: 565.00 | Previous Close: 5.00 | Adjusted PE: 6.25 | Yield: 0.29%
+Underlying: REGN | Expiration: 29-Aug-25 | Strike: 565.00 | Previous Close: 11.10 | Adjusted PE: 6.25 | Yield: 0.25%
+Underlying: REGN | Expiration: 22-Aug-25 | Strike: 570.00 | Previous Close: 4.70 | Adjusted PE: 6.31 | Yield: 0.27%
+Underlying: UTHR | Expiration: 19-Sep-25 | Strike: 280.00 | Previous Close: 15.30 | Adjusted PE: 7.06 | Yield: 0.25%
+Underlying: ON | Expiration: 22-Aug-25 | Strike: 48.00 | Previous Close: 0.42 | Adjusted PE: 7.21 | Yield: 0.29%
+Underlying: ON | Expiration: 29-Aug-25 | Strike: 48.00 | Previous Close: 0.91 | Adjusted PE: 7.21 | Yield: 0.23%
+Underlying: ON | Expiration: 22-Aug-25 | Strike: 48.50 | Previous Close: 0.58 | Adjusted PE: 7.29 | Yield: 0.39%
+Underlying: UTHR | Expiration: 19-Sep-25 | Strike: 290.00 | Previous Close: 19.32 | Adjusted PE: 7.32 | Yield: 0.30%
+Underlying: ALKS | Expiration: 19-Sep-25 | Strike: 28.00 | Previous Close: 1.50 | Adjusted PE: 7.34 | Yield: 0.24%
+Underlying: ON | Expiration: 22-Aug-25 | Strike: 49.00 | Previous Close: 0.65 | Adjusted PE: 7.36 | Yield: 0.44%
+Underlying: ON | Expiration: 29-Aug-25 | Strike: 49.00 | Previous Close: 1.21 | Adjusted PE: 7.36 | Yield: 0.31%
+Underlying: ON | Expiration: 22-Aug-25 | Strike: 49.50 | Previous Close: 0.81 | Adjusted PE: 7.44 | Yield: 0.54%
+Underlying: ON | Expiration: 29-Aug-25 | Strike: 49.50 | Previous Close: 1.14 | Adjusted PE: 7.44 | Yield: 0.29%
+Underlying: ACLS | Expiration: 19-Sep-25 | Strike: 80.00 | Previous Close: 4.50 | Adjusted PE: 8.21 | Yield: 0.26%
+Underlying: NEM | Expiration: 22-Aug-25 | Strike: 67.00 | Previous Close: 0.66 | Adjusted PE: 11.07 | Yield: 0.32%
+Underlying: AMAT | Expiration: 22-Aug-25 | Strike: 160.00 | Previous Close: 1.27 | Adjusted PE: 11.50 | Yield: 0.26%
+Underlying: ALGN | Expiration: 22-Aug-25 | Strike: 141.00 | Previous Close: 1.00 | Adjusted PE: 11.73 | Yield: 0.23%
+Underlying: ALGN | Expiration: 22-Aug-25 | Strike: 142.00 | Previous Close: 1.35 | Adjusted PE: 11.82 | Yield: 0.32%
+Underlying: ALGN | Expiration: 22-Aug-25 | Strike: 143.00 | Previous Close: 1.50 | Adjusted PE: 11.90 | Yield: 0.35%
+Underlying: GOOGL | Expiration: 22-Aug-25 | Strike: 197.50 | Previous Close: 1.40 | Adjusted PE: 12.17 | Yield: 0.24%
+Underlying: GOOGL | Expiration: 22-Aug-25 | Strike: 200.00 | Previous Close: 2.20 | Adjusted PE: 12.33 | Yield: 0.37%
+Underlying: GOOG | Expiration: 22-Aug-25 | Strike: 200.00 | Previous Close: 1.89 | Adjusted PE: 12.33 | Yield: 0.31%
+Underlying: GOOGL | Expiration: 29-Aug-25 | Strike: 200.00 | Previous Close: 4.11 | Adjusted PE: 12.33 | Yield: 0.26%
+Underlying: GOOG | Expiration: 29-Aug-25 | Strike: 200.00 | Previous Close: 3.75 | Adjusted PE: 12.33 | Yield: 0.23%
+Underlying: META | Expiration: 22-Aug-25 | Strike: 745.00 | Previous Close: 5.60 | Adjusted PE: 13.57 | Yield: 0.25%
+Underlying: META | Expiration: 22-Aug-25 | Strike: 747.50 | Previous Close: 6.55 | Adjusted PE: 13.62 | Yield: 0.29%
+Underlying: META | Expiration: 22-Aug-25 | Strike: 750.00 | Previous Close: 7.52 | Adjusted PE: 13.66 | Yield: 0.33%
+Underlying: SNPS | Expiration: 22-Aug-25 | Strike: 610.00 | Previous Close: 6.32 | Adjusted PE: 21.29 | Yield: 0.35%
+Underlying: SNPS | Expiration: 29-Aug-25 | Strike: 610.00 | Previous Close: 11.95 | Adjusted PE: 21.29 | Yield: 0.25%
+Underlying: SNPS | Expiration: 22-Aug-25 | Strike: 612.50 | Previous Close: 6.87 | Adjusted PE: 21.37 | Yield: 0.37%
+Underlying: ISRG | Expiration: 22-Aug-25 | Strike: 475.00 | Previous Close: 3.56 | Adjusted PE: 37.55 | Yield: 0.25%
+Underlying: NVDA | Expiration: 29-Aug-25 | Strike: 167.50 | Previous Close: 3.38 | Adjusted PE: 46.67 | Yield: 0.25%
+Underlying: NVDA | Expiration: 29-Aug-25 | Strike: 170.00 | Previous Close: 4.20 | Adjusted PE: 47.36 | Yield: 0.31%
+Underlying: NVDA | Expiration: 05-Sep-25 | Strike: 170.00 | Previous Close: 4.94 | Adjusted PE: 47.36 | Yield: 0.24%
+Underlying: NVDA | Expiration: 29-Aug-25 | Strike: 172.50 | Previous Close: 5.15 | Adjusted PE: 48.06 | Yield: 0.37%
+Underlying: NVDA | Expiration: 05-Sep-25 | Strike: 172.50 | Previous Close: 5.85 | Adjusted PE: 48.06 | Yield: 0.28%
+Underlying: NVDA | Expiration: 22-Aug-25 | Strike: 172.50 | Previous Close: 1.37 | Adjusted PE: 48.06 | Yield: 0.26%
+Underlying: NVDA | Expiration: 29-Aug-25 | Strike: 175.00 | Previous Close: 6.26 | Adjusted PE: 48.76 | Yield: 0.45%
+Underlying: NVDA | Expiration: 22-Aug-25 | Strike: 175.00 | Previous Close: 2.25 | Adjusted PE: 48.76 | Yield: 0.43%
+Underlying: NVDA | Expiration: 05-Sep-25 | Strike: 175.00 | Previous Close: 7.05 | Adjusted PE: 48.76 | Yield: 0.34%
+Underlying: NVDA | Expiration: 12-Sep-25 | Strike: 175.00 | Previous Close: 7.75 | Adjusted PE: 48.76 | Yield: 0.26%
+Underlying: TSLA | Expiration: 22-Aug-25 | Strike: 320.00 | Previous Close: 2.37 | Adjusted PE: 48.91 | Yield: 0.25%
+Underlying: TSLA | Expiration: 22-Aug-25 | Strike: 322.50 | Previous Close: 3.00 | Adjusted PE: 49.29 | Yield: 0.31%
+Underlying: TSLA | Expiration: 29-Aug-25 | Strike: 322.50 | Previous Close: 6.50 | Adjusted PE: 49.29 | Yield: 0.25%
+Underlying: TSLA | Expiration: 22-Aug-25 | Strike: 325.00 | Previous Close: 3.85 | Adjusted PE: 49.67 | Yield: 0.39%
+Underlying: TSLA | Expiration: 29-Aug-25 | Strike: 325.00 | Previous Close: 7.46 | Adjusted PE: 49.67 | Yield: 0.29%
+Underlying: TSLA | Expiration: 05-Sep-25 | Strike: 325.00 | Previous Close: 9.80 | Adjusted PE: 49.67 | Yield: 0.25%
+Underlying: TSLA | Expiration: 22-Aug-25 | Strike: 327.50 | Previous Close: 4.90 | Adjusted PE: 50.05 | Yield: 0.50%
+Underlying: TSLA | Expiration: 29-Aug-25 | Strike: 327.50 | Previous Close: 8.55 | Adjusted PE: 50.05 | Yield: 0.33%
+Underlying: TSLA | Expiration: 05-Sep-25 | Strike: 327.50 | Previous Close: 10.92 | Adjusted PE: 50.05 | Yield: 0.28%
+These are tier 2 options:
+Underlying: TSM | Expiration: 29-Aug-25 | Strike: 230.00 | Previous Close: 4.05 | Adjusted PE: 0.51 | Yield: 0.22%
+Underlying: TSM | Expiration: 05-Sep-25 | Strike: 232.50 | Previous Close: 5.92 | Adjusted PE: 0.52 | Yield: 0.21%
+Underlying: COP | Expiration: 22-Aug-25 | Strike: 92.00 | Previous Close: 0.54 | Adjusted PE: 5.07 | Yield: 0.19%
+Underlying: COP | Expiration: 29-Aug-25 | Strike: 93.00 | Previous Close: 1.56 | Adjusted PE: 5.13 | Yield: 0.21%
+Underlying: SMLR | Expiration: 19-Sep-25 | Strike: 30.00 | Previous Close: 1.40 | Adjusted PE: 5.23 | Yield: 0.21%
+Underlying: ACMR | Expiration: 17-Oct-25 | Strike: 25.00 | Previous Close: 2.05 | Adjusted PE: 5.68 | Yield: 0.19%
+Underlying: REGN | Expiration: 22-Aug-25 | Strike: 557.50 | Previous Close: 3.60 | Adjusted PE: 6.17 | Yield: 0.22%
+Underlying: REGN | Expiration: 22-Aug-25 | Strike: 560.00 | Previous Close: 3.50 | Adjusted PE: 6.20 | Yield: 0.21%
+Underlying: UTHR | Expiration: 19-Sep-25 | Strike: 270.00 | Previous Close: 11.80 | Adjusted PE: 6.81 | Yield: 0.20%
+Underlying: ON | Expiration: 05-Sep-25 | Strike: 48.00 | Previous Close: 1.23 | Adjusted PE: 7.21 | Yield: 0.21%
+Underlying: ON | Expiration: 29-Aug-25 | Strike: 48.50 | Previous Close: 0.80 | Adjusted PE: 7.29 | Yield: 0.20%
+Underlying: UTHR | Expiration: 17-Oct-25 | Strike: 300.00 | Previous Close: 26.35 | Adjusted PE: 7.57 | Yield: 0.21%
+Underlying: XOM | Expiration: 22-Aug-25 | Strike: 107.00 | Previous Close: 0.74 | Adjusted PE: 7.80 | Yield: 0.23%

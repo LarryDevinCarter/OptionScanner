@@ -1,0 +1,60 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-08-14T08:08:32.155394700
+Total Options: 56
+
+These are tier 1 options:
+Underlying: CPRX | Expiration: 15-Aug-25 | Strike: 20.00 | Previous Close: 0.22 | Adjusted PE: 14.11 | Yield: 0.53%
+Underlying: ISSC | Expiration: 15-Aug-25 | Strike: 15.00 | Previous Close: 0.11 | Adjusted PE: 22.23 | Yield: 0.33%
+Underlying: ISSC | Expiration: 15-Aug-25 | Strike: 17.50 | Previous Close: 0.35 | Adjusted PE: 25.94 | Yield: 0.97%
+These are tier 2 options:
+Underlying: ISSC | Expiration: 19-Sep-25 | Strike: 17.50 | Previous Close: 0.93 | Adjusted PE: 25.94 | Yield: 0.20%
+These are tier 3 options:
+Underlying: INMD | Expiration: 15-Aug-25 | Strike: 14.00 | Previous Close: 0.06 | Adjusted PE: 5.78 | Yield: 0.18%
+Underlying: MAMA | Expiration: 19-Sep-25 | Strike: 7.50 | Previous Close: 0.39 | Adjusted PE: 31.92 | Yield: 0.20%
+These are tier 4 options:
+Underlying: STLA | Expiration: 15-Aug-25 | Strike: 9.50 | Previous Close: 0.06 | Adjusted PE: 1.27 | Yield: 0.26%
+Underlying: STLA | Expiration: 22-Aug-25 | Strike: 9.50 | Previous Close: 0.16 | Adjusted PE: 1.27 | Yield: 0.23%
+Underlying: STLA | Expiration: 12-Sep-25 | Strike: 9.50 | Previous Close: 0.34 | Adjusted PE: 1.27 | Yield: 0.17%
+Underlying: STLA | Expiration: 26-Sep-25 | Strike: 9.50 | Previous Close: 0.44 | Adjusted PE: 1.27 | Yield: 0.15%
+Underlying: HAL | Expiration: 15-Aug-25 | Strike: 14.00 | Previous Close: 0.24 | Adjusted PE: 2.83 | Yield: 0.82%
+Underlying: SSTK | Expiration: 15-Aug-25 | Strike: 20.00 | Previous Close: 1.05 | Adjusted PE: 4.16 | Yield: 2.60%
+Underlying: SSTK | Expiration: 19-Sep-25 | Strike: 20.00 | Previous Close: 1.35 | Adjusted PE: 4.16 | Yield: 0.26%
+Underlying: SSTK | Expiration: 19-Dec-25 | Strike: 20.00 | Previous Close: 2.70 | Adjusted PE: 4.16 | Yield: 0.15%
+Underlying: CPRX | Expiration: 19-Sep-25 | Strike: 20.00 | Previous Close: 0.75 | Adjusted PE: 14.11 | Yield: 0.14%
+Underlying: ISSC | Expiration: 17-Oct-25 | Strike: 17.50 | Previous Close: 1.06 | Adjusted PE: 25.94 | Yield: 0.13%
+These are tier 5 options:
+Underlying: CAAS | Expiration: 15-Aug-25 | Strike: 2.50 | Previous Close: 0.05 | Adjusted PE: 0.74 | Yield: 0.80%
+Underlying: STLA | Expiration: 05-Sep-25 | Strike: 9.00 | Previous Close: 0.16 | Adjusted PE: 1.20 | Yield: 0.10%
+Underlying: STLA | Expiration: 29-Aug-25 | Strike: 9.00 | Previous Close: 0.12 | Adjusted PE: 1.20 | Yield: 0.10%
+Underlying: STLA | Expiration: 19-Sep-25 | Strike: 9.00 | Previous Close: 0.24 | Adjusted PE: 1.20 | Yield: 0.10%
+Underlying: STLA | Expiration: 26-Sep-25 | Strike: 9.00 | Previous Close: 0.26 | Adjusted PE: 1.20 | Yield: 0.09%
+Underlying: HP | Expiration: 15-Aug-25 | Strike: 17.50 | Previous Close: 0.35 | Adjusted PE: 1.97 | Yield: 0.97%
+Underlying: HP | Expiration: 19-Sep-25 | Strike: 17.50 | Previous Close: 1.15 | Adjusted PE: 1.97 | Yield: 0.25%
+Underlying: HP | Expiration: 19-Dec-25 | Strike: 17.50 | Previous Close: 2.20 | Adjusted PE: 1.97 | Yield: 0.14%
+Underlying: HAL | Expiration: 15-Aug-25 | Strike: 13.00 | Previous Close: 0.04 | Adjusted PE: 2.63 | Yield: 0.12%
+Underlying: SSTK | Expiration: 20-Feb-26 | Strike: 15.00 | Previous Close: 1.80 | Adjusted PE: 3.12 | Yield: 0.09%
+Underlying: MTLS | Expiration: 15-Aug-25 | Strike: 5.00 | Previous Close: 0.05 | Adjusted PE: 3.51 | Yield: 0.40%
+Underlying: MTLS | Expiration: 19-Sep-25 | Strike: 5.00 | Previous Close: 0.23 | Adjusted PE: 3.51 | Yield: 0.17%
+Underlying: SSTK | Expiration: 15-Aug-25 | Strike: 17.50 | Previous Close: 0.05 | Adjusted PE: 3.64 | Yield: 0.11%
+Underlying: SSTK | Expiration: 19-Dec-25 | Strike: 17.50 | Previous Close: 1.60 | Adjusted PE: 3.64 | Yield: 0.10%
+Underlying: HAL | Expiration: 05-Sep-25 | Strike: 19.50 | Previous Close: 0.29 | Adjusted PE: 3.94 | Yield: 0.09%
+Underlying: HAL | Expiration: 22-Aug-25 | Strike: 20.00 | Previous Close: 0.17 | Adjusted PE: 4.04 | Yield: 0.11%
+Underlying: HAL | Expiration: 12-Sep-25 | Strike: 20.00 | Previous Close: 0.49 | Adjusted PE: 4.04 | Yield: 0.11%
+Underlying: HAL | Expiration: 29-Aug-25 | Strike: 20.00 | Previous Close: 0.26 | Adjusted PE: 4.04 | Yield: 0.10%
+Underlying: HAL | Expiration: 05-Sep-25 | Strike: 20.00 | Previous Close: 0.34 | Adjusted PE: 4.04 | Yield: 0.10%
+Underlying: HAL | Expiration: 19-Sep-25 | Strike: 20.00 | Previous Close: 0.52 | Adjusted PE: 4.04 | Yield: 0.10%
+Underlying: RPD | Expiration: 19-Sep-25 | Strike: 19.00 | Previous Close: 0.46 | Adjusted PE: 5.94 | Yield: 0.09%
+Underlying: RPD | Expiration: 19-Sep-25 | Strike: 20.00 | Previous Close: 0.91 | Adjusted PE: 6.25 | Yield: 0.17%
+Underlying: RPD | Expiration: 21-Nov-25 | Strike: 20.00 | Previous Close: 1.65 | Adjusted PE: 6.25 | Yield: 0.12%
+Underlying: RPD | Expiration: 19-Dec-25 | Strike: 20.00 | Previous Close: 1.90 | Adjusted PE: 6.25 | Yield: 0.11%
+Underlying: NRDS | Expiration: 15-Aug-25 | Strike: 10.00 | Previous Close: 0.10 | Adjusted PE: 6.95 | Yield: 0.45%
+Underlying: NRDS | Expiration: 19-Sep-25 | Strike: 10.00 | Previous Close: 0.45 | Adjusted PE: 6.95 | Yield: 0.17%
+Underlying: TZOO | Expiration: 15-Aug-25 | Strike: 10.00 | Previous Close: 0.40 | Adjusted PE: 7.96 | Yield: 1.95%
+Underlying: YALA | Expiration: 17-Oct-25 | Strike: 7.50 | Previous Close: 0.45 | Adjusted PE: 8.30 | Yield: 0.13%
+Underlying: OPRA | Expiration: 19-Sep-25 | Strike: 15.00 | Previous Close: 0.61 | Adjusted PE: 8.93 | Yield: 0.15%
+Underlying: OPRA | Expiration: 16-Jan-26 | Strike: 15.00 | Previous Close: 1.50 | Adjusted PE: 8.93 | Yield: 0.09%
+Underlying: VTSI | Expiration: 15-Aug-25 | Strike: 5.00 | Previous Close: 0.05 | Adjusted PE: 8.98 | Yield: 0.40%
+Underlying: PDFS | Expiration: 19-Sep-25 | Strike: 20.00 | Previous Close: 0.70 | Adjusted PE: 10.44 | Yield: 0.13%
+Underlying: STVN | Expiration: 19-Dec-25 | Strike: 20.00 | Previous Close: 2.00 | Adjusted PE: 11.79 | Yield: 0.11%
+Underlying: DAKT | Expiration: 19-Sep-25 | Strike: 15.00 | Previous Close: 0.42 | Adjusted PE: 14.80 | Yield: 0.11%
+Underlying: LYTS | Expiration: 19-Sep-25 | Strike: 17.50 | Previous Close: 0.45 | Adjusted PE: 15.54 | Yield: 0.10%
