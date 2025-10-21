@@ -1,10 +1,6 @@
 package com.larrydevincarter.optionscanner;
 
-import com.larrydevincarter.optionscanner.dtos.SoldOptionDTO;
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
-import com.larrydevincarter.optionscanner.entities.CashFlow;
-import com.larrydevincarter.optionscanner.entities.Earnings;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDTO;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.services.*;
 import com.larrydevincarter.optionscanner.services.filters.*;
@@ -16,12 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
@@ -122,17 +114,17 @@ public class OptionScannerApplication {
 //		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
-//		List<FinancialFilter<?>> filters = List.of(
-//				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-//				new EpsGrowthFilter(epsCagrThreshold,epsYears),
-//				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
-//				new DebtToEquityFilter(debtToEquityThreshold),
-//				new FreeCashFlowYieldFilter(defaultFcfYieldThreshold),
-//				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
-//		);
-//		List<String> symbols2 = filterService.getFilteredSymbols(filters);
-//		System.out.println(symbols2.size() + " symbols meet filers.");
-//		System.out.println(symbols2);
+		List<FinancialFilter> filters = List.of(
+				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
+				new EpsGrowthFilter(epsCagrThreshold,epsYears),
+				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+				new DebtToEquityFilter(debtToEquityThreshold),
+				new FreeCashFlowYieldFilter(defaultFcfYieldThreshold),
+				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
+		);
+		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+		System.out.println(symbols2.size() + " symbols meet filers.");
+		System.out.println(symbols2);
 
 //		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
 //		assetService.fetchAndStoreStockPrices(errorLog, symbol);
@@ -142,28 +134,52 @@ public class OptionScannerApplication {
 		Double maxStrike = null;
 		reportService.generateReport(maxStrike);
 
-		maxStrike = 4.;
+		maxStrike = 449.40;
 		reportService.generateReport(maxStrike);
 
 		List<SoldOptionDTO> sampleDtos = List.of(
 				new SoldOptionDTO() {{
 					setUnderlyingSymbol("WOLF");
 					setStrikePrice(0.50);
-					setExpirationDate(LocalDate.of(2025, 9, 19));
+					setExpirationDate(LocalDate.of(2026, 1, 16));
 					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 22));
-					setSoldPrice(0.09);
+					setSoldDate(LocalDate.of(2025, 8, 8));
+					setSoldPrice(0.20);
 				}},
 				new SoldOptionDTO() {{
-					setUnderlyingSymbol("KPTI");
+					setUnderlyingSymbol("LITS");
 					setStrikePrice(2.50);
-					setExpirationDate(LocalDate.of(2026, 2, 20));
+					setExpirationDate(LocalDate.of(2025, 12, 19));
 					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 7, 22));
-					setSoldPrice(1.20);
+					setSoldDate(LocalDate.of(2025, 8, 20));
+					setSoldPrice(0.20);
+				}},
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("DCGO");
+					setStrikePrice(1.50);
+					setExpirationDate(LocalDate.of(2025, 11, 21));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 9, 5));
+					setSoldPrice(0.10);
+				}},
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("NPWR");
+					setStrikePrice(1.00);
+					setExpirationDate(LocalDate.of(2027, 1, 15));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 9, 19));
+					setSoldPrice(0.10);
+				}},
+				new SoldOptionDTO() {{
+					setUnderlyingSymbol("CRNT");
+					setStrikePrice(2.00);
+					setExpirationDate(LocalDate.of(2026, 1, 16));
+					setOptionType("put");
+					setSoldDate(LocalDate.of(2025, 9, 19));
+					setSoldPrice(0.10);
 				}}
 		);
-		reportService.generateSoldOptionsReports(sampleDtos);
+//		reportService.generateSoldOptionsReports(sampleDtos);
 	}
 
 }

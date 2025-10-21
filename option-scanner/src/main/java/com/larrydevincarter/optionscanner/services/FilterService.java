@@ -12,5 +12,5 @@ public interface FilterService {
     List<String> getSymbolsWithDebtToEquity(double debtToEquityThreshold);
     List<String> getSymbolsWithFcfYield(double fcfYieldThreshold);
     List<String> getSymbolsWithOperatingMargin(double marginThreshold, int years);
-    List<String> getFilteredSymbols(List<FinancialFilter<?>> filters);
+    List<String> getFilteredSymbols(List<FinancialFilter> filters);
 }

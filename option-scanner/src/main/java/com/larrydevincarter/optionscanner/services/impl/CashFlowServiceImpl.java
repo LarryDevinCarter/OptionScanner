@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.CashFlow;
+import com.larrydevincarter.optionscanner.models.entities.CashFlow;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.CashFlowRepository;
 import com.larrydevincarter.optionscanner.services.CashFlowService;
