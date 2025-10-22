@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Table(name = "earnings",
         uniqueConstraints = @UniqueConstraint(columnNames = {"symbol", "fiscal_date_ending", "report_type"}))
 @Data
-public class Earnings extends BaseFinancialReport {
+public class Earnings extends BaseFinancialReport implements HasFiscalDate{
 
     @NotNull
     @Column(name = "fiscal_date_ending")

@@ -4,6 +4,7 @@ import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.IncomeStatementService;
+import com.larrydevincarter.optionscanner.utils.FinancialReportParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,64 +48,39 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
 
     private List<IncomeStatement> parseReports(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
 
-        Map<String, IncomeStatement> uniqueStatements = new LinkedHashMap<>();
-
-        for (Map<String, String> report : reports) {
-
-            IncomeStatement statement = new IncomeStatement();
-            statement.setSymbol(symbol);
-            LocalDate fiscalDate = LocalDate.parse(report.get("fiscalDateEnding"));
-            statement.setFiscalDateEnding(fiscalDate);
-            statement.setReportType(reportType);
-            statement.setReportedCurrency(report.get("reportedCurrency"));
-            statement.setGrossProfit(parseDouble(report.get("grossProfit"), errorLog));
-            statement.setTotalRevenue(parseDouble(report.get("totalRevenue"), errorLog));
-            statement.setCostOfRevenue(parseDouble(report.get("costOfRevenue"), errorLog));
-            statement.setCostOfGoodsAndServicesSold(parseDouble(report.get("costofGoodsAndServicesSold"), errorLog));
-            statement.setOperatingIncome(parseDouble(report.get("operatingIncome"), errorLog));
-            statement.setSellingGeneralAndAdministrative(parseDouble(report.get("sellingGeneralAndAdministrative"), errorLog));
-            statement.setResearchAndDevelopment(parseDouble(report.get("researchAndDevelopment"), errorLog));
-            statement.setOperatingExpenses(parseDouble(report.get("operatingExpenses"), errorLog));
-            statement.setInvestmentIncomeNet(parseDouble(report.get("investmentIncomeNet"), errorLog));
-            statement.setNetInterestIncome(parseDouble(report.get("netInterestIncome"), errorLog));
-            statement.setInterestIncome(parseDouble(report.get("interestIncome"), errorLog));
-            statement.setInterestExpense(parseDouble(report.get("interestExpense"), errorLog));
-            statement.setNonInterestIncome(parseDouble(report.get("nonInterestIncome"), errorLog));
-            statement.setOtherNonOperatingIncome(parseDouble(report.get("otherNonOperatingIncome"), errorLog));
-            statement.setDepreciation(parseDouble(report.get("depreciation"), errorLog));
-            statement.setDepreciationAndAmortization(parseDouble(report.get("depreciationAndAmortization"), errorLog));
-            statement.setIncomeBeforeTax(parseDouble(report.get("incomeBeforeTax"), errorLog));
-            statement.setIncomeTaxExpense(parseDouble(report.get("incomeTaxExpense"), errorLog));
-            statement.setInterestAndDebtExpense(parseDouble(report.get("interestAndDebtExpense"), errorLog));
-            statement.setNetIncomeFromContinuingOperations(parseDouble(report.get("netIncomeFromContinuingOperations"), errorLog));
-            statement.setComprehensiveIncomeNetOfTax(parseDouble(report.get("comprehensiveIncomeNetOfTax"), errorLog));
-            statement.setEbit(parseDouble(report.get("ebit"), errorLog));
-            statement.setEbitda(parseDouble(report.get("ebitda"), errorLog));
-            statement.setNetIncome(parseDouble(report.get("netIncome"), errorLog));
-            statement.setLastUpdated(LocalDateTime.now());
-            String key = fiscalDate + "|" + reportType;
-
-            if (uniqueStatements.containsKey(key)) {
-                log.warn("Duplicate income statement report in API response for {} - {} ({})", symbol, fiscalDate, reportType);
-                errorLog.add("Duplicate income statement report in API response: " + symbol + " - " + fiscalDate + " (" + reportType + ")");
-            }
-            uniqueStatements.put(key, statement);
-        }
-        return new ArrayList<>(uniqueStatements.values());
-    }
-
-    private Double parseDouble(String value, List<String> errorLog) {
-        if (value == null || "None".equals(value)) {
-            return null;
-        }
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            String errorMsg = "Failed to parse value as Double: " + value;
-            log.warn("{}", errorMsg);
-            errorLog.add(errorMsg);
-            return null;
-        }
+        return FinancialReportParser.parseReportsWithFiscalDate(reports, symbol, reportType, errorLog, report -> {
+            IncomeStatement stmt = new IncomeStatement();
+            stmt.setSymbol(symbol);
+            stmt.setFiscalDateEnding(LocalDate.parse(report.get("fiscalDateEnding")));
+            stmt.setReportType(reportType);
+            stmt.setReportedCurrency(report.get("reportedCurrency"));
+            stmt.setGrossProfit(FinancialReportParser.parseDouble(report.get("grossProfit"), errorLog));
+            stmt.setTotalRevenue(FinancialReportParser.parseDouble(report.get("totalRevenue"), errorLog));
+            stmt.setCostOfRevenue(FinancialReportParser.parseDouble(report.get("costOfRevenue"), errorLog));
+            stmt.setCostOfGoodsAndServicesSold(FinancialReportParser.parseDouble(report.get("costofGoodsAndServicesSold"), errorLog));
+            stmt.setOperatingIncome(FinancialReportParser.parseDouble(report.get("operatingIncome"), errorLog));
+            stmt.setSellingGeneralAndAdministrative(FinancialReportParser.parseDouble(report.get("sellingGeneralAndAdministrative"), errorLog));
+            stmt.setResearchAndDevelopment(FinancialReportParser.parseDouble(report.get("researchAndDevelopment"), errorLog));
+            stmt.setOperatingExpenses(FinancialReportParser.parseDouble(report.get("operatingExpenses"), errorLog));
+            stmt.setInvestmentIncomeNet(FinancialReportParser.parseDouble(report.get("investmentIncomeNet"), errorLog));
+            stmt.setNetInterestIncome(FinancialReportParser.parseDouble(report.get("netInterestIncome"), errorLog));
+            stmt.setInterestIncome(FinancialReportParser.parseDouble(report.get("interestIncome"), errorLog));
+            stmt.setInterestExpense(FinancialReportParser.parseDouble(report.get("interestExpense"), errorLog));
+            stmt.setNonInterestIncome(FinancialReportParser.parseDouble(report.get("nonInterestIncome"), errorLog));
+            stmt.setOtherNonOperatingIncome(FinancialReportParser.parseDouble(report.get("otherNonOperatingIncome"), errorLog));
+            stmt.setDepreciation(FinancialReportParser.parseDouble(report.get("depreciation"), errorLog));
+            stmt.setDepreciationAndAmortization(FinancialReportParser.parseDouble(report.get("depreciationAndAmortization"), errorLog));
+            stmt.setIncomeBeforeTax(FinancialReportParser.parseDouble(report.get("incomeBeforeTax"), errorLog));
+            stmt.setIncomeTaxExpense(FinancialReportParser.parseDouble(report.get("incomeTaxExpense"), errorLog));
+            stmt.setInterestAndDebtExpense(FinancialReportParser.parseDouble(report.get("interestAndDebtExpense"), errorLog));
+            stmt.setNetIncomeFromContinuingOperations(FinancialReportParser.parseDouble(report.get("netIncomeFromContinuingOperations"), errorLog));
+            stmt.setComprehensiveIncomeNetOfTax(FinancialReportParser.parseDouble(report.get("comprehensiveIncomeNetOfTax"), errorLog));
+            stmt.setEbit(FinancialReportParser.parseDouble(report.get("ebit"), errorLog));
+            stmt.setEbitda(FinancialReportParser.parseDouble(report.get("ebitda"), errorLog));
+            stmt.setNetIncome(FinancialReportParser.parseDouble(report.get("netIncome"), errorLog));
+            stmt.setLastUpdated(LocalDateTime.now());
+            return stmt;
+        });
     }
 
     @Override

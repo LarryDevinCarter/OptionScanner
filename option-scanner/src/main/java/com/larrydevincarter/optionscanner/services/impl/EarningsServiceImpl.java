@@ -5,6 +5,7 @@ import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.EarningsRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.EarningsService;
+import com.larrydevincarter.optionscanner.utils.FinancialReportParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,48 +49,23 @@ public class EarningsServiceImpl implements EarningsService {
 
     private List<Earnings> parseEarnings(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
 
-        Map<String, Earnings> uniqueEarnings = new LinkedHashMap<>();
-
-        for (Map<String, String> report : reports) {
-
+        return FinancialReportParser.parseReportsWithFiscalDate(reports, symbol, reportType, errorLog, report -> {
             Earnings earning = new Earnings();
             earning.setSymbol(symbol);
-            LocalDate fiscalDate = LocalDate.parse(report.get("fiscalDateEnding"));
-            earning.setFiscalDateEnding(fiscalDate);
+            earning.setFiscalDateEnding(LocalDate.parse(report.get("fiscalDateEnding")));
             earning.setReportType(reportType);
-            earning.setReportedEPS(parseDouble(report.get("reportedEPS"), errorLog));
+            earning.setReportedEPS(FinancialReportParser.parseDouble(report.get("reportedEPS"), errorLog));
 
             if ("quarterly".equals(reportType)) {
-
-                earning.setReportedDate(report.get("reportedDate") !=null ? LocalDate.parse(report.get("reportedDate")) : null);
-                earning.setEstimatedEPS(parseDouble(report.get("estimatedEPS"), errorLog));
-                earning.setSurprise(parseDouble(report.get("surprise"), errorLog));
-                earning.setSurprisePercentage(parseDouble(report.get("surprisePercentage"), errorLog));
+                earning.setReportedDate(report.get("reportedDate") != null ?
+                        LocalDate.parse(report.get("reportedDate")) : null);
+                earning.setEstimatedEPS(FinancialReportParser.parseDouble(report.get("estimatedEPS"), errorLog));
+                earning.setSurprise(FinancialReportParser.parseDouble(report.get("surprise"), errorLog));
+                earning.setSurprisePercentage(FinancialReportParser.parseDouble(report.get("surprisePercentage"), errorLog));
             }
             earning.setLastUpdated(LocalDateTime.now());
-            String key = fiscalDate + "|" + reportType;
-
-            if (uniqueEarnings.containsKey(key)) {
-                log.warn("Duplicate earnings report in API response for {} - {} ({})", symbol, fiscalDate, reportType);
-                errorLog.add("Duplicate earnings report in API response: " + symbol + " - " + fiscalDate + " (" + reportType + ")");
-            }
-            uniqueEarnings.put(key, earning);
-        }
-        return new ArrayList<>(uniqueEarnings.values());
-    }
-
-    private Double parseDouble(String value, List<String> errorLog) {
-        if (value ==  null || "None".equals(value)) {
-            return null;
-        }
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            String errorMsg = "Failed to parse to parse value as Double: " + value;
-            log.warn(errorMsg);
-            errorLog.add(errorMsg);
-            return null;
-        }
+            return earning;
+        });
     }
 
     @Override

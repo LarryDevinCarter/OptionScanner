@@ -4,6 +4,7 @@ import com.larrydevincarter.optionscanner.models.entities.CashFlow;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.CashFlowRepository;
 import com.larrydevincarter.optionscanner.services.CashFlowService;
+import com.larrydevincarter.optionscanner.utils.FinancialReportParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,49 +48,17 @@ public class CashFlowServiceImpl implements CashFlowService {
     }
 
     private List<CashFlow> parseReports(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
-        Map<String, CashFlow> uniqueCashFlows = new LinkedHashMap<>();
-
-        for (Map<String, String> report : reports) {
-            CashFlow cashFlow = new CashFlow();
-            cashFlow.setSymbol(symbol);
-            LocalDate fiscalDate;
-            try {
-                fiscalDate = LocalDate.parse(report.get("fiscalDateEnding"));
-            } catch (Exception e) {
-                String errorMsg = "Invalid fiscalDateEnding for symbol " + symbol + ": " + report.get("fiscalDateEnding");
-                log.warn(errorMsg);
-                errorLog.add(errorMsg);
-                continue;
-            }
-            cashFlow.setFiscalDateEnding(fiscalDate);
-            cashFlow.setReportType(reportType);
-            cashFlow.setReportedCurrency(report.get("reportedCurrency"));
-            cashFlow.setOperatingCashflow(parseDouble(report.get("operatingCashflow"), errorLog));
-            cashFlow.setCapitalExpenditures(parseDouble(report.get("capitalExpenditures"), errorLog));
-            cashFlow.setLastUpdated(LocalDateTime.now());
-
-            String key = fiscalDate + "|" + reportType;
-            if (uniqueCashFlows.containsKey(key)) {
-                log.warn("Duplicate cash flow report in API response for {} - {} ({})", symbol, fiscalDate, reportType);
-                errorLog.add("Duplicate cash flow report in API response: " + symbol + " - " + fiscalDate + " (" + reportType + ")");
-            }
-            uniqueCashFlows.put(key, cashFlow);
-        }
-        return new ArrayList<>(uniqueCashFlows.values());
-    }
-
-    private Double parseDouble(String value, List<String> errorLog) {
-        if (value == null || "None".equals(value)) {
-            return null;
-        }
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            String errorMsg = "Failed to parse value as Double: " + value;
-            log.warn(errorMsg);
-            errorLog.add(errorMsg);
-            return null;
-        }
+        return FinancialReportParser.parseReportsWithFiscalDate(reports, symbol, reportType, errorLog, report -> {
+            CashFlow cf = new CashFlow();
+            cf.setSymbol(symbol);
+            cf.setFiscalDateEnding(LocalDate.parse(report.get("fiscalDateEnding")));
+            cf.setReportType(reportType);
+            cf.setReportedCurrency(report.get("reportedCurrency"));
+            cf.setOperatingCashflow(FinancialReportParser.parseDouble(report.get("operatingCashflow"), errorLog));
+            cf.setCapitalExpenditures(FinancialReportParser.parseDouble(report.get("capitalExpenditures"), errorLog));
+            cf.setLastUpdated(LocalDateTime.now());
+            return cf;
+        });
     }
 
     @Override

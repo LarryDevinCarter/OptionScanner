@@ -12,7 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,40 +104,40 @@ public class OptionScannerApplication {
 //		symbols = dividendService.getSymbolsThatHaveDividends(symbols);
 //		System.out.println(symbols.size() + " symbols with dividends being passed to the next round.");
 
-//		LocalDateTime startTime = LocalDateTime.now();
-//		assetService.fetchTradableAssets();
-//		LocalDateTime endTime = LocalDateTime.now();
-//		Duration duration = Duration.between(startTime, endTime);
-//		long hours = duration.toHours();
-//		long minutes = duration.toMinutesPart();
-//		long seconds = duration.toSecondsPart();
-//		long millis = duration.toMillisPart();
-//
-//		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
+		LocalDateTime startTime = LocalDateTime.now();
+		assetService.fetchTradableAssets();
+		LocalDateTime endTime = LocalDateTime.now();
+		Duration duration = Duration.between(startTime, endTime);
+		long hours = duration.toHours();
+		long minutes = duration.toMinutesPart();
+		long seconds = duration.toSecondsPart();
+		long millis = duration.toMillisPart();
+
+		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
-		List<FinancialFilter> filters = List.of(
-				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
-				new EpsGrowthFilter(epsCagrThreshold,epsYears),
-				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
-				new DebtToEquityFilter(debtToEquityThreshold),
-				new FreeCashFlowYieldFilter(defaultFcfYieldThreshold),
-				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
-		);
-		List<String> symbols2 = filterService.getFilteredSymbols(filters);
-		System.out.println(symbols2.size() + " symbols meet filers.");
-		System.out.println(symbols2);
+//		List<FinancialFilter> filters = List.of(
+//				new RevenueGrowthFilter(revenueCagrThreshold,revenueYears),
+//				new EpsGrowthFilter(epsCagrThreshold,epsYears),
+//				new RoicFilter(roicThreshold, roicYears, defaultTaxRate),
+//				new DebtToEquityFilter(debtToEquityThreshold),
+//				new FreeCashFlowYieldFilter(defaultFcfYieldThreshold),
+//				new OperatingMarginFilter(operatingMarginThreshold, operatingMarginYears)
+//		);
+//		List<String> symbols2 = filterService.getFilteredSymbols(filters);
+//		System.out.println(symbols2.size() + " symbols meet filers.");
+//		System.out.println(symbols2);
 
 //		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
 //		assetService.fetchAndStoreStockPrices(errorLog, symbol);
 //		assetService.fetchAndStoreOptions(errorLog, symbol);
 //		assetService.writeErrorReport();
 
-		Double maxStrike = null;
-		reportService.generateReport(maxStrike);
-
-		maxStrike = 400.00;
-		reportService.generateReport(maxStrike);
+//		Double maxStrike = null;
+//		reportService.generateReport(maxStrike);
+//
+//		maxStrike = 400.00;
+//		reportService.generateReport(maxStrike);
 
 		List<SoldOptionDTO> sampleDtos = List.of(
 				new SoldOptionDTO() {{
