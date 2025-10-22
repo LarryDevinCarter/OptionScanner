@@ -117,6 +117,6 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
 
     @Override
     public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return balanceSheetRepository.findSymbolsThatHaveStatements(symbols);
+        return balanceSheetRepository.findSymbolsWithData(symbols);
     }
 }

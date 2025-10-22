@@ -1,24 +1,26 @@
 package com.larrydevincarter.optionscanner.models.entities;
 
+import com.larrydevincarter.optionscanner.models.entities.base.BaseFinancialReport;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
+/**
+ * Entity representing a dividend payment for a stock, capturing key dates and amount.
+ * Used to track dividend-related data, sourced from Alpha Vantage.
+ */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "dividends",
         uniqueConstraints = @UniqueConstraint(columnNames = {"symbol", "ex_dividend_date"}))
 @Data
-public class Dividend {
+public class Dividend extends BaseFinancialReport {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "symbol", nullable = false)
-    private String symbol;
-
-    @Column(name = "ex_dividend_date", nullable = false)
+    @NotNull
+    @Column(name = "ex_dividend_date")
     private LocalDate exDividendDate;
 
     @Column(name = "declaration_date")
@@ -30,13 +32,7 @@ public class Dividend {
     @Column(name = "payment_date")
     private LocalDate paymentDate;
 
-    @Column(name = "amount", nullable = false)
+    @NotNull
+    @Column(name = "amount")
     private Double amount;
-
-    @Column(name = "last_updated", nullable = false)
-    private LocalDateTime lastUpdated;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "symbol", referencedColumnName = "symbol", insertable = false, updatable = false)
-    private Asset asset;
 }
