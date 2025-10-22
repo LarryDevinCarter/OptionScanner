@@ -1,28 +1,30 @@
 package com.larrydevincarter.optionscanner.models.entities;
 
+import com.larrydevincarter.optionscanner.models.entities.base.BaseFinancialReport;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+/**
+ * Entity representing a company's cash flow statement, capturing cash inflows and outflows
+ * for a fiscal period. Used to assess financial health, sourced from Alpha Vantage.
+ */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "cash_flows",
         uniqueConstraints = @UniqueConstraint(columnNames = {"symbol", "fiscal_date_ending", "report_type"}))
 @Data
-public class CashFlow {
+public class CashFlow extends BaseFinancialReport {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "symbol", nullable = false)
-    private String symbol;
-
-    @Column(name = "fiscal_date_ending", nullable = false)
+    @NotNull
+    @Column(name = "fiscal_date_ending")
     private LocalDate fiscalDateEnding;
 
-    @Column(name = "report_type", nullable = false)
+    @NotNull
+    @Column(name = "report_type")
     private String reportType;
 
     @Column(name = "reported_currency")
@@ -33,11 +35,4 @@ public class CashFlow {
 
     @Column(name = "capital_expenditures")
     private Double capitalExpenditures;
-
-    @Column(name = "last_updated", nullable = false)
-    private LocalDateTime lastUpdated;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "symbol", referencedColumnName = "symbol", insertable = false, updatable = false)
-    private Asset asset;
 }

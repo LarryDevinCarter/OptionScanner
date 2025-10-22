@@ -1,0 +1,7 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-08-05T13:01:45.910301400
+Total Errors: 3
+
+Non-unique result for symbol TSLA: Query did not return a unique result: 19 results were returned
+Non-unique result for symbol TSM: Query did not return a unique result: 20 results were returned
+Non-unique result for symbol WOLF: Query did not return a unique result: 20 results were returned

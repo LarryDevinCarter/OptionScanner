@@ -93,6 +93,6 @@ public class DividendServiceImpl implements DividendService {
 
     @Override
     public List<String> getSymbolsThatHaveDividends(List<String> symbols) {
-        return dividendRepository.findSymbolsThatHaveDividends(symbols);
+        return dividendRepository.findSymbolsWithData(symbols);
     }
 }

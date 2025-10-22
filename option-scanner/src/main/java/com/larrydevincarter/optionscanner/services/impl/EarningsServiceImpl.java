@@ -100,6 +100,6 @@ public class EarningsServiceImpl implements EarningsService {
 
     @Override
     public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return earningsRepository.findSymbolsThatHaveStatements(symbols);
+        return earningsRepository.findSymbolsWithData(symbols);
     }
 }
