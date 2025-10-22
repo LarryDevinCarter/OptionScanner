@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;

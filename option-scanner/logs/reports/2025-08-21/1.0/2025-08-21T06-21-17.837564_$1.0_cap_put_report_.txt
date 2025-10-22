@@ -1,0 +1,31 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-08-21T06:21:17.838564
+Total Options: 27
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: WOLF | Expiration: 16-Jan-26 | Strike: 0.50 | Previous Close: 0.20 | Adjusted PE: 0.04 | Yield: 0.37%
+Underlying: WOLF | Expiration: 21-Nov-25 | Strike: 0.50 | Previous Close: 0.13 | Adjusted PE: 0.04 | Yield: 0.36%
+Underlying: WOLF | Expiration: 17-Oct-25 | Strike: 0.50 | Previous Close: 0.07 | Adjusted PE: 0.04 | Yield: 0.29%
+Underlying: WOLF | Expiration: 19-Dec-25 | Strike: 0.50 | Previous Close: 0.13 | Adjusted PE: 0.04 | Yield: 0.28%
+Underlying: WOLF | Expiration: 18-Jun-26 | Strike: 0.50 | Previous Close: 0.30 | Adjusted PE: 0.04 | Yield: 0.28%
+Underlying: WOLF | Expiration: 18-Sep-26 | Strike: 0.50 | Previous Close: 0.30 | Adjusted PE: 0.04 | Yield: 0.21%
+Underlying: WOLF | Expiration: 15-Jan-27 | Strike: 0.50 | Previous Close: 0.30 | Adjusted PE: 0.04 | Yield: 0.16%
+Underlying: WOLF | Expiration: 17-Dec-27 | Strike: 0.50 | Previous Close: 0.35 | Adjusted PE: 0.04 | Yield: 0.12%
+Underlying: WOLF | Expiration: 19-Sep-25 | Strike: 0.50 | Previous Close: 0.02 | Adjusted PE: 0.04 | Yield: 0.10%
+Underlying: WOLF | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.35 | Adjusted PE: 0.08 | Yield: 0.83%
+Underlying: WOLF | Expiration: 26-Sep-25 | Strike: 1.00 | Previous Close: 0.21 | Adjusted PE: 0.08 | Yield: 0.77%
+Underlying: WOLF | Expiration: 19-Sep-25 | Strike: 1.00 | Previous Close: 0.16 | Adjusted PE: 0.08 | Yield: 0.71%
+Underlying: WOLF | Expiration: 12-Sep-25 | Strike: 1.00 | Previous Close: 0.12 | Adjusted PE: 0.08 | Yield: 0.69%
+Underlying: WOLF | Expiration: 21-Nov-25 | Strike: 1.00 | Previous Close: 0.41 | Adjusted PE: 0.08 | Yield: 0.61%
+Underlying: WOLF | Expiration: 19-Dec-25 | Strike: 1.00 | Previous Close: 0.50 | Adjusted PE: 0.08 | Yield: 0.58%
+Underlying: WOLF | Expiration: 05-Sep-25 | Strike: 1.00 | Previous Close: 0.06 | Adjusted PE: 0.08 | Yield: 0.46%
+Underlying: WOLF | Expiration: 18-Jun-26 | Strike: 1.00 | Previous Close: 0.70 | Adjusted PE: 0.08 | Yield: 0.33%
+Underlying: WOLF | Expiration: 29-Aug-25 | Strike: 1.00 | Previous Close: 0.03 | Adjusted PE: 0.08 | Yield: 0.29%
+Underlying: WOLF | Expiration: 15-Jan-27 | Strike: 1.00 | Previous Close: 0.75 | Adjusted PE: 0.08 | Yield: 0.21%
+Underlying: WOLF | Expiration: 17-Dec-27 | Strike: 1.00 | Previous Close: 0.74 | Adjusted PE: 0.08 | Yield: 0.13%
+Underlying: HRTX | Expiration: 19-Sep-25 | Strike: 1.00 | Previous Close: 0.05 | Adjusted PE: 31.70 | Yield: 0.19%

@@ -1,25 +1,26 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Data
 @AllArgsConstructor
-public class RoicFilter implements FinancialFilter<Object> {
+public class RoicFilter implements FinancialFilter {
 
     private double roicThreshold;
     private int years;
     private double defaultTaxRate;
 
     @Override
-    public boolean appliesTo(String symbol, List<Object> reports) {
+    public boolean appliesTo(String symbol, FinancialReports reports) {
         double averageRoic = calculateAverageRoic(symbol, reports);
         if (averageRoic < 0) {
             return false;
@@ -29,27 +30,21 @@ public class RoicFilter implements FinancialFilter<Object> {
         return averageRoic > roicThreshold;
     }
 
-    public double calculateAverageRoic(String symbol, List<Object> reports) {
-        List<IncomeStatement> incomeStatements = reports.stream()
-                .filter(r -> r instanceof IncomeStatement)
-                .map(r -> (IncomeStatement) r)
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getOperatingIncome() != null && s.getIncomeBeforeTax() != null && s.getIncomeTaxExpense() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+    public double calculateAverageRoic(String symbol, FinancialReports reports) {
+        List<IncomeStatement> incomeStatements = FinancialFilterUtils.getAnnualReports(
+                reports.getIncomeStatements(), years,
+                s -> s.getOperatingIncome() != null && s.getIncomeBeforeTax() != null && s.getIncomeTaxExpense() != null,
+                FinancialFilterUtils.INCOME_DATE_EXTRACTOR
+        );
 
-        List<BalanceSheet> balanceSheets = reports.stream()
-                .filter(r -> r instanceof BalanceSheet)
-                .map(r -> (BalanceSheet) r)
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getTotalShareholderEquity() != null && s.getCashAndShortTermInvestments() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+        List<BalanceSheet> balanceSheets = FinancialFilterUtils.getAnnualReports(
+                reports.getBalanceSheets(), years,
+                s -> s.getTotalShareholderEquity() != null && s.getCashAndShortTermInvestments() != null,
+                FinancialFilterUtils.BALANCE_DATE_EXTRACTOR
+        );
 
         if (incomeStatements.size() < years || balanceSheets.size() < years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double totalRoic = 0.0;
@@ -81,7 +76,7 @@ public class RoicFilter implements FinancialFilter<Object> {
         }
 
         if (validYears == 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         return totalRoic / validYears;

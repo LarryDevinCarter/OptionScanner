@@ -1,7 +1,8 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.Earnings;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -11,14 +12,14 @@ import java.util.List;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class RevenueGrowthFilter implements FinancialFilter<IncomeStatement>{
+public class RevenueGrowthFilter implements FinancialFilter{
 
     private double cagrThreshold;
     private int years;
 
     @Override
-    public boolean appliesTo(String symbol, List<IncomeStatement> statements) {
-        double cagr = calculateCagr(statements);
+    public boolean appliesTo(String symbol, FinancialReports reports) {
+        double cagr = calculateCagr(reports.getIncomeStatements());
         if (cagr < 0) {
             return false;
         }
@@ -27,22 +28,19 @@ public class RevenueGrowthFilter implements FinancialFilter<IncomeStatement>{
     }
 
     public double calculateCagr(List<IncomeStatement> statements) {
-        List<IncomeStatement> sortedStatements = statements.stream()
-                .filter(s -> "annual".equals(s.getReportType()))
-                .filter(s -> s.getTotalRevenue() != null)
-                .sorted((s1, s2) -> s2.getFiscalDateEnding().compareTo(s1.getFiscalDateEnding()))
-                .limit(years)
-                .toList();
+        List<IncomeStatement> sortedStatements = FinancialFilterUtils.getAnnualReports(statements, years,
+                s -> s.getTotalRevenue() != null,
+                FinancialFilterUtils.INCOME_DATE_EXTRACTOR);
 
         if (sortedStatements.size() < years) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double endingRevenue = sortedStatements.getFirst().getTotalRevenue();
         double beginningRevenue = sortedStatements.getLast().getTotalRevenue();
 
         if (beginningRevenue <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
         return (Math.pow(endingRevenue / beginningRevenue, 1.0 / years) - 1) * 100;
     }

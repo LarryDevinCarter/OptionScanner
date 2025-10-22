@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.repositories;
 
-import com.larrydevincarter.optionscanner.entities.CashFlow;
+import com.larrydevincarter.optionscanner.models.entities.CashFlow;
 import com.larrydevincarter.optionscanner.repositories.base.StatementRepository;
 import org.springframework.stereotype.Repository;
 

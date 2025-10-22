@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.repositories.base;
 
-import com.larrydevincarter.optionscanner.entities.base.BaseFinancialReport;
+import com.larrydevincarter.optionscanner.models.entities.base.BaseFinancialReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

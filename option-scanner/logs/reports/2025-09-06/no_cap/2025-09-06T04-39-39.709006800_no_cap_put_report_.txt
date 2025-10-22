@@ -1,0 +1,55 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-09-06T04:39:39.709006800
+Total Options: 51
+
+These are tier 1 options:
+Underlying: TSM | Expiration: 12-Sep-25 | Strike: 242.50 | Previous Close: 3.50 | Adjusted PE: 0.54 | Yield: 0.29%
+Underlying: TSM | Expiration: 19-Sep-25 | Strike: 242.50 | Previous Close: 5.60 | Adjusted PE: 0.54 | Yield: 0.23%
+Underlying: SMLR | Expiration: 19-Sep-25 | Strike: 27.00 | Previous Close: 0.70 | Adjusted PE: 4.71 | Yield: 0.26%
+Underlying: SMLR | Expiration: 17-Oct-25 | Strike: 28.00 | Previous Close: 2.35 | Adjusted PE: 4.88 | Yield: 0.28%
+Underlying: PLAB | Expiration: 19-Sep-25 | Strike: 22.50 | Previous Close: 0.65 | Adjusted PE: 5.05 | Yield: 0.28%
+Underlying: ACMR | Expiration: 19-Sep-25 | Strike: 27.00 | Previous Close: 1.27 | Adjusted PE: 6.13 | Yield: 0.47%
+Underlying: REGN | Expiration: 12-Sep-25 | Strike: 562.50 | Previous Close: 7.00 | Adjusted PE: 6.22 | Yield: 0.25%
+Underlying: REGN | Expiration: 12-Sep-25 | Strike: 565.00 | Previous Close: 7.86 | Adjusted PE: 6.25 | Yield: 0.28%
+Underlying: REGN | Expiration: 12-Sep-25 | Strike: 567.50 | Previous Close: 8.22 | Adjusted PE: 6.28 | Yield: 0.29%
+Underlying: REGN | Expiration: 12-Sep-25 | Strike: 570.00 | Previous Close: 9.22 | Adjusted PE: 6.31 | Yield: 0.32%
+Underlying: REGN | Expiration: 12-Sep-25 | Strike: 572.50 | Previous Close: 10.20 | Adjusted PE: 6.34 | Yield: 0.36%
+Underlying: ALKS | Expiration: 19-Sep-25 | Strike: 27.00 | Previous Close: 0.94 | Adjusted PE: 7.07 | Yield: 0.34%
+Underlying: ON | Expiration: 12-Sep-25 | Strike: 48.00 | Previous Close: 0.75 | Adjusted PE: 7.21 | Yield: 0.31%
+Underlying: ON | Expiration: 19-Sep-25 | Strike: 48.00 | Previous Close: 1.18 | Adjusted PE: 7.21 | Yield: 0.24%
+Underlying: ON | Expiration: 12-Sep-25 | Strike: 49.00 | Previous Close: 1.09 | Adjusted PE: 7.36 | Yield: 0.44%
+Underlying: ON | Expiration: 19-Sep-25 | Strike: 49.00 | Previous Close: 1.45 | Adjusted PE: 7.36 | Yield: 0.29%
+Underlying: ON | Expiration: 03-Oct-25 | Strike: 49.00 | Previous Close: 2.31 | Adjusted PE: 7.36 | Yield: 0.24%
+Underlying: ON | Expiration: 26-Sep-25 | Strike: 49.00 | Previous Close: 1.70 | Adjusted PE: 7.36 | Yield: 0.23%
+Underlying: ALKS | Expiration: 19-Sep-25 | Strike: 29.00 | Previous Close: 2.50 | Adjusted PE: 7.60 | Yield: 0.86%
+Underlying: ACLS | Expiration: 19-Sep-25 | Strike: 80.00 | Previous Close: 2.53 | Adjusted PE: 8.21 | Yield: 0.32%
+Underlying: ALGN | Expiration: 19-Sep-25 | Strike: 136.00 | Previous Close: 3.40 | Adjusted PE: 11.32 | Yield: 0.25%
+Underlying: ALGN | Expiration: 12-Sep-25 | Strike: 137.00 | Previous Close: 3.30 | Adjusted PE: 11.40 | Yield: 0.48%
+Underlying: ALGN | Expiration: 12-Sep-25 | Strike: 138.00 | Previous Close: 2.95 | Adjusted PE: 11.48 | Yield: 0.43%
+Underlying: ALGN | Expiration: 12-Sep-25 | Strike: 139.00 | Previous Close: 3.90 | Adjusted PE: 11.57 | Yield: 0.56%
+Underlying: ALGN | Expiration: 19-Sep-25 | Strike: 139.00 | Previous Close: 4.60 | Adjusted PE: 11.57 | Yield: 0.33%
+Underlying: AMAT | Expiration: 12-Sep-25 | Strike: 162.50 | Previous Close: 2.38 | Adjusted PE: 11.68 | Yield: 0.29%
+Underlying: AMAT | Expiration: 19-Sep-25 | Strike: 162.50 | Previous Close: 3.90 | Adjusted PE: 11.68 | Yield: 0.24%
+Underlying: NEM | Expiration: 12-Sep-25 | Strike: 76.00 | Previous Close: 1.26 | Adjusted PE: 12.56 | Yield: 0.33%
+Underlying: NEM | Expiration: 19-Sep-25 | Strike: 76.00 | Previous Close: 1.88 | Adjusted PE: 12.56 | Yield: 0.25%
+Underlying: META | Expiration: 12-Sep-25 | Strike: 750.00 | Previous Close: 8.75 | Adjusted PE: 13.66 | Yield: 0.23%
+Underlying: GOOGL | Expiration: 12-Sep-25 | Strike: 235.00 | Previous Close: 3.25 | Adjusted PE: 14.48 | Yield: 0.28%
+Underlying: GOOG | Expiration: 12-Sep-25 | Strike: 235.00 | Previous Close: 3.15 | Adjusted PE: 14.48 | Yield: 0.27%
+Underlying: MPWR | Expiration: 19-Sep-25 | Strike: 860.00 | Previous Close: 28.10 | Adjusted PE: 18.60 | Yield: 0.33%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 570.00 | Previous Close: 7.70 | Adjusted PE: 19.89 | Yield: 0.27%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 575.00 | Previous Close: 10.70 | Adjusted PE: 20.06 | Yield: 0.37%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 580.00 | Previous Close: 13.12 | Adjusted PE: 20.24 | Yield: 0.45%
+Underlying: SNPS | Expiration: 19-Sep-25 | Strike: 580.00 | Previous Close: 13.50 | Adjusted PE: 20.24 | Yield: 0.23%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 582.50 | Previous Close: 13.51 | Adjusted PE: 20.33 | Yield: 0.46%
+Underlying: LRN | Expiration: 19-Sep-25 | Strike: 160.00 | Previous Close: 4.50 | Adjusted PE: 20.34 | Yield: 0.28%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 585.00 | Previous Close: 13.70 | Adjusted PE: 20.41 | Yield: 0.47%
+Underlying: SNPS | Expiration: 19-Sep-25 | Strike: 585.00 | Previous Close: 16.17 | Adjusted PE: 20.41 | Yield: 0.28%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 590.00 | Previous Close: 15.74 | Adjusted PE: 20.59 | Yield: 0.53%
+Underlying: SNPS | Expiration: 19-Sep-25 | Strike: 590.00 | Previous Close: 18.23 | Adjusted PE: 20.59 | Yield: 0.31%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 592.50 | Previous Close: 16.30 | Adjusted PE: 20.68 | Yield: 0.55%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 595.00 | Previous Close: 17.20 | Adjusted PE: 20.76 | Yield: 0.58%
+Underlying: SNPS | Expiration: 19-Sep-25 | Strike: 595.00 | Previous Close: 20.75 | Adjusted PE: 20.76 | Yield: 0.35%
+Underlying: SNPS | Expiration: 12-Sep-25 | Strike: 597.50 | Previous Close: 19.69 | Adjusted PE: 20.85 | Yield: 0.66%
+Underlying: NVMI | Expiration: 19-Sep-25 | Strike: 250.00 | Previous Close: 5.83 | Adjusted PE: 25.81 | Yield: 0.23%
+Underlying: INTU | Expiration: 12-Sep-25 | Strike: 672.50 | Previous Close: 7.87 | Adjusted PE: 27.50 | Yield: 0.23%
+Underlying: CDNS | Expiration: 12-Sep-25 | Strike: 347.50 | Previous Close: 5.90 | Adjusted PE: 34.64 | Yield: 0.34%

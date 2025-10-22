@@ -1,6 +1,9 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.*;
+import com.larrydevincarter.optionscanner.models.entities.Asset;
+import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.models.entities.CashFlow;
+import com.larrydevincarter.optionscanner.models.entities.IncomeStatement;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;

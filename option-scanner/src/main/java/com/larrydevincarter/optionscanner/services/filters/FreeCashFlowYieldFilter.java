@@ -1,8 +1,10 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.Asset;
-import com.larrydevincarter.optionscanner.entities.BalanceSheet;
-import com.larrydevincarter.optionscanner.entities.CashFlow;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
+import com.larrydevincarter.optionscanner.models.entities.Asset;
+import com.larrydevincarter.optionscanner.models.entities.BalanceSheet;
+import com.larrydevincarter.optionscanner.models.entities.CashFlow;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +14,12 @@ import java.util.List;
 @Slf4j
 @Data
 @AllArgsConstructor
-public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
+public class FreeCashFlowYieldFilter implements FinancialFilter {
 
     private double fcfYieldThreshold;
 
     @Override
-    public boolean appliesTo(String symbol, List<Object> reports) {
+    public boolean appliesTo(String symbol, FinancialReports reports) {
         double fcfYield = calculateFcfYield(symbol, reports);
         if (fcfYield < 0) {
             return false;
@@ -26,31 +28,23 @@ public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
         return fcfYield > fcfYieldThreshold;
     }
 
-    public double calculateFcfYield(String symbol, List<Object> reports) {
-        List<CashFlow> cashFlows = reports.stream()
-                .filter(r -> r instanceof CashFlow)
-                .map(r -> (CashFlow) r)
-                .filter(c -> "annual".equals(c.getReportType()))
-                .filter(c -> c.getOperatingCashflow() != null && c.getCapitalExpenditures() != null)
-                .sorted((c1, c2) -> c2.getFiscalDateEnding().compareTo(c1.getFiscalDateEnding()))
-                .toList();
+    public double calculateFcfYield(String symbol, FinancialReports reports) {
+        List<CashFlow> cashFlows = FinancialFilterUtils.getAnnualReports(
+                reports.getCashFlows(), 1,
+                c -> c.getOperatingCashflow() != null && c.getCapitalExpenditures() != null,
+                FinancialFilterUtils.CASHFLOW_DATE_EXTRACTOR
+        );
 
-        List<BalanceSheet> balanceSheets = reports.stream()
-                .filter(r -> r instanceof BalanceSheet)
-                .map(r -> (BalanceSheet) r)
-                .filter(b -> "annual".equals(b.getReportType()))
-                .filter(b -> b.getCommonStockSharesOutstanding() != null)
-                .sorted((b1, b2) -> b2.getFiscalDateEnding().compareTo(b1.getFiscalDateEnding()))
-                .toList();
+        List<BalanceSheet> balanceSheets = FinancialFilterUtils.getAnnualReports(
+                reports.getBalanceSheets(), 1,
+                b -> b.getCommonStockSharesOutstanding() != null,
+                FinancialFilterUtils.BALANCE_DATE_EXTRACTOR
+        );
 
-        List<Asset> assets = reports.stream()
-                .filter(r -> r instanceof Asset)
-                .map(r -> (Asset) r)
-                .filter(a -> a.getCurrentPrice() != null)
-                .toList();
+        List<Asset> assets = FinancialFilterUtils.getValidAssets(reports.getAssets());
 
         if (cashFlows.isEmpty() || balanceSheets.isEmpty() || assets.isEmpty()) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         CashFlow latestCashFlow = cashFlows.getFirst();
@@ -58,19 +52,21 @@ public class FreeCashFlowYieldFilter implements FinancialFilter<Object> {
         Asset asset = assets.getFirst();
 
         if (latestCashFlow.getFiscalDateEnding().getYear() != latestBalanceSheet.getFiscalDateEnding().getYear()) {
-            return -1.0;
+            log.warn("Year mismatch for {}: CashFlow={}, BalanceSheet={}",
+                    symbol, latestCashFlow.getFiscalDateEnding().getYear(), latestBalanceSheet.getFiscalDateEnding().getYear());
+            return INVALID_RESULT;
         }
 
         double freeCashFlow = latestCashFlow.getOperatingCashflow() - latestCashFlow.getCapitalExpenditures();
         if (freeCashFlow <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         double sharesOutstanding = latestBalanceSheet.getCommonStockSharesOutstanding();
         double currentPrice = asset.getCurrentPrice();
         double marketCap = currentPrice * sharesOutstanding;
         if (marketCap <= 0) {
-            return -1.0;
+            return INVALID_RESULT;
         }
 
         return (freeCashFlow / marketCap) * 100;

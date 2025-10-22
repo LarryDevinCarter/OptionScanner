@@ -1,0 +1,11 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-09-20T07:13:35.048997500
+Total Options: 7
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: STRO | Expiration: 21-Nov-25 | Strike: 0.50 | Previous Close: 0.15 | Adjusted PE: 1.39 | Yield: 0.62%

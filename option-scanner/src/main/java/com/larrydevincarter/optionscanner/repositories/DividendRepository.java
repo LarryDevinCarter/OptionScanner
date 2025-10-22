@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.repositories;
 
-import com.larrydevincarter.optionscanner.entities.Dividend;
+import com.larrydevincarter.optionscanner.models.entities.Dividend;
 import com.larrydevincarter.optionscanner.repositories.base.BaseFinancialRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

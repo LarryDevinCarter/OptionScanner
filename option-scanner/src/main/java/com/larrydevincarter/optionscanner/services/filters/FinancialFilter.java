@@ -1,12 +1,10 @@
 package com.larrydevincarter.optionscanner.services.filters;
 
-import com.larrydevincarter.optionscanner.entities.Earnings;
-import com.larrydevincarter.optionscanner.entities.IncomeStatement;
 
-import java.util.List;
+import com.larrydevincarter.optionscanner.models.FinancialReports;
 
-public interface FinancialFilter<T> {
-
-    boolean appliesTo(String symbol, List<T> reports);
+public interface FinancialFilter {
+    public static final double INVALID_RESULT = -1.0;
+    boolean appliesTo(String symbol, FinancialReports reports);
     String getName();
 }

@@ -1,0 +1,15 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-09-04T07:00:56.889053600
+Total Options: 11
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+These are tier 4 options:
+These are tier 5 options:
+These are tier 6 options:
+Underlying: SRPT | Expiration: 05-Sep-25 | Strike: 1.00 | Previous Close: 0.05 | Adjusted PE: 0.09 | Yield: 2.00%
+Underlying: ALEC | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.06 | Adjusted PE: 1.42 | Yield: 0.16%
+Underlying: STRO | Expiration: 17-Oct-25 | Strike: 1.00 | Previous Close: 0.85 | Adjusted PE: 2.78 | Yield: 2.63%
+Underlying: GRAB | Expiration: 19-Sep-25 | Strike: 0.50 | Previous Close: 0.05 | Adjusted PE: 5.23 | Yield: 0.67%
+Underlying: GRAB | Expiration: 19-Sep-25 | Strike: 1.00 | Previous Close: 0.20 | Adjusted PE: 10.46 | Yield: 1.58%

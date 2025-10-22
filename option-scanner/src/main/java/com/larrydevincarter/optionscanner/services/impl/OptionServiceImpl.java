@@ -1,7 +1,7 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.Asset;
-import com.larrydevincarter.optionscanner.entities.Option;
+import com.larrydevincarter.optionscanner.models.entities.Asset;
+import com.larrydevincarter.optionscanner.models.entities.Option;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.OptionRepository;
 import com.larrydevincarter.optionscanner.services.OptionService;

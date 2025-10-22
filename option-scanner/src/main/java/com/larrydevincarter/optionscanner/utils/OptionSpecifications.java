@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.utils;
 
-import com.larrydevincarter.optionscanner.entities.Option;
+import com.larrydevincarter.optionscanner.models.entities.Option;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

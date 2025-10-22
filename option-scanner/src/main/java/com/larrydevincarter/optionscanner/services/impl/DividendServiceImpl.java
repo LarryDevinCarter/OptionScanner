@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.entities.Dividend;
+import com.larrydevincarter.optionscanner.models.entities.Dividend;
 import com.larrydevincarter.optionscanner.repositories.DividendRepository;
 import com.larrydevincarter.optionscanner.services.DividendService;
 import lombok.RequiredArgsConstructor;
