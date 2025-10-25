@@ -1,0 +1,7 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-10-25T04:31:10.686324
+Total Errors: 3
+
+Missing latest annual statements for WBI: No annual balance sheet found
+Permanent error (422) for SHOT: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: SHOT"}". Skipping.
+Permanent error (422) for BYON: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: BYON"}". Skipping.

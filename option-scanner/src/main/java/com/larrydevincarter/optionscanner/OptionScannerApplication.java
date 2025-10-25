@@ -104,16 +104,16 @@ public class OptionScannerApplication {
 //		symbols = dividendService.getSymbolsThatHaveDividends(symbols);
 //		System.out.println(symbols.size() + " symbols with dividends being passed to the next round.");
 
-		LocalDateTime startTime = LocalDateTime.now();
-		assetService.fetchTradableAssets();
-		LocalDateTime endTime = LocalDateTime.now();
-		Duration duration = Duration.between(startTime, endTime);
-		long hours = duration.toHours();
-		long minutes = duration.toMinutesPart();
-		long seconds = duration.toSecondsPart();
-		long millis = duration.toMillisPart();
-
-		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
+//		LocalDateTime startTime = LocalDateTime.now();
+//		assetService.fetchTradableAssets();
+//		LocalDateTime endTime = LocalDateTime.now();
+//		Duration duration = Duration.between(startTime, endTime);
+//		long hours = duration.toHours();
+//		long minutes = duration.toMinutesPart();
+//		long seconds = duration.toSecondsPart();
+//		long millis = duration.toMillisPart();
+//
+//		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
 //		List<FinancialFilter> filters = List.of(
@@ -156,21 +156,21 @@ public class OptionScannerApplication {
 					setSoldDate(LocalDate.of(2025, 8, 20));
 					setSoldPrice(0.20);
 				}},
-				new SoldOptionDTO() {{
-					setUnderlyingSymbol("DCGO");
-					setStrikePrice(1.50);
-					setExpirationDate(LocalDate.of(2025, 11, 21));
-					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 9, 5));
-					setSoldPrice(0.10);
-				}},
+//				new SoldOptionDTO() {{
+//					setUnderlyingSymbol("DCGO");
+//					setStrikePrice(1.50);
+//					setExpirationDate(LocalDate.of(2025, 11, 21));
+//					setOptionType("put");
+//					setSoldDate(LocalDate.of(2025, 9, 5));
+//					setSoldPrice(0.10);
+//				}},
 				new SoldOptionDTO() {{
 					setUnderlyingSymbol("NPWR");
 					setStrikePrice(1.00);
 					setExpirationDate(LocalDate.of(2027, 1, 15));
 					setOptionType("put");
 					setSoldDate(LocalDate.of(2025, 9, 19));
-					setSoldPrice(0.10);
+					setSoldPrice(0.30);
 				}},
 				new SoldOptionDTO() {{
 					setUnderlyingSymbol("CRNT");
@@ -181,7 +181,7 @@ public class OptionScannerApplication {
 					setSoldPrice(0.10);
 				}}
 		);
-//		reportService.generateSoldOptionsReports(sampleDtos);
+		reportService.generateSoldOptionsReports(sampleDtos);
 	}
 
 }
