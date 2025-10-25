@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * A filter that evaluates companies based on their average Return on Invested Capital (ROIC).
+ */
 @Slf4j
 @Data
 @AllArgsConstructor
@@ -19,6 +22,13 @@ public class RoicFilter implements FinancialFilter {
     private int years;
     private double defaultTaxRate;
 
+    /**
+     * Checks if the company's average ROIC meets the specified threshold.
+     *
+     * @param symbol  the stock symbol
+     * @param reports the financial reports containing income statements and balance sheets
+     * @return true if the average ROIC exceeds the threshold, false otherwise
+     */
     @Override
     public boolean appliesTo(String symbol, FinancialReports reports) {
         double averageRoic = calculateAverageRoic(symbol, reports);
@@ -30,6 +40,13 @@ public class RoicFilter implements FinancialFilter {
         return averageRoic > roicThreshold;
     }
 
+    /**
+     * Calculates the average ROIC over the specified number of years.
+     *
+     * @param symbol  the stock symbol
+     * @param reports the financial reports containing income statements and balance sheets
+     * @return the average ROIC percentage, or INVALID_RESULT if calculation is not possible
+     */
     public double calculateAverageRoic(String symbol, FinancialReports reports) {
         List<IncomeStatement> incomeStatements = FinancialFilterUtils.getAnnualReports(
                 reports.getIncomeStatements(), years,
@@ -82,6 +99,12 @@ public class RoicFilter implements FinancialFilter {
         return totalRoic / validYears;
     }
 
+    /**
+     * Calculates the invested capital for a given balance sheet.
+     *
+     * @param balance the balance sheet
+     * @return the invested capital (total debt + equity - cash)
+     */
     private static double getInvestedCapital(BalanceSheet balance) {
         double totalDebt = (balance.getShortLongTermDebtTotal() != null)
                 ? balance.getShortLongTermDebtTotal()
@@ -95,6 +118,11 @@ public class RoicFilter implements FinancialFilter {
         return totalDebt + equity - cash;
     }
 
+    /**
+     * Returns the name of the filter.
+     *
+     * @return the filter name, "ROIC"
+     */
     @Override
     public String getName() {
         return "ROIC";

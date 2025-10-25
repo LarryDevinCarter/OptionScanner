@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * A filter that evaluates companies based on their free cash flow yield.
+ */
 @Slf4j
 @Data
 @AllArgsConstructor
@@ -18,6 +21,13 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
 
     private double fcfYieldThreshold;
 
+    /**
+     * Checks if the company's free cash flow yield meets the specified threshold.
+     *
+     * @param symbol  the stock symbol
+     * @param reports the financial reports containing cash flows, balance sheets, and assets
+     * @return true if the yield exceeds the threshold, false otherwise
+     */
     @Override
     public boolean appliesTo(String symbol, FinancialReports reports) {
         double fcfYield = calculateFcfYield(symbol, reports);
@@ -28,6 +38,13 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
         return fcfYield > fcfYieldThreshold;
     }
 
+    /**
+     * Calculates the free cash flow yield for the most recent financial data.
+     *
+     * @param symbol  the stock symbol
+     * @param reports the financial reports containing cash flows, balance sheets, and assets
+     * @return the free cash flow yield percentage, or INVALID_RESULT if calculation is not possible
+     */
     public double calculateFcfYield(String symbol, FinancialReports reports) {
         List<CashFlow> cashFlows = FinancialFilterUtils.getAnnualReports(
                 reports.getCashFlows(), 1,
@@ -72,6 +89,11 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
         return (freeCashFlow / marketCap) * 100;
     }
 
+    /**
+     * Returns the name of the filter.
+     *
+     * @return the filter name, "Free Cash Flow Yield"
+     */
     @Override
     public String getName() {
         return "Free Cash Flow Yield";
