@@ -2,7 +2,9 @@ package com.larrydevincarter.optionscanner.repositories;
 
 import com.larrydevincarter.optionscanner.models.entities.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -49,5 +51,12 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
     @Query("SELECT a FROM Asset a WHERE a.symbol IN :symbols")
     List<Asset> findBySymbols(List<String> symbols);
 
-
+    /**
+     * Deletes an asset by its symbol.
+     *
+     * @param symbol the symbol of the asset to delete
+     */
+    @Modifying
+    @Query("DELETE FROM Asset a WHERE a.symbol = :symbol")
+    void deleteBySymbol(@Param("symbol") String symbol);
 }

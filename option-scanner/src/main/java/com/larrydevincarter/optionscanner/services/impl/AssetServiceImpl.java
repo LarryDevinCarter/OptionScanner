@@ -253,11 +253,31 @@ public class AssetServiceImpl implements AssetService {
 
     @Transactional
     private void deleteAssetAndRelatedRecords(String symbol, Asset asset) {
-        earningsRepository.deleteBySymbol(symbol);
-        incomeStatementRepository.deleteBySymbol(symbol);
-        balanceSheetRepository.deleteBySymbol(symbol);
-        optionRepository.deleteByUnderlyingSymbol(symbol);
-        assetRepository.delete(asset);
+        try {
+            log.debug("Deleting related records for symbol {}", symbol);
+
+            earningsRepository.deleteBySymbol(symbol);
+            log.debug("Deleted earnings for symbol {}", symbol);
+
+            incomeStatementRepository.deleteBySymbol(symbol);
+            log.debug("Deleted income statements for symbol {}", symbol);
+
+            balanceSheetRepository.deleteBySymbol(symbol);
+            log.debug("Deleted balance sheets for symbol {}", symbol);
+
+            cashFlowRepository.deleteBySymbol(symbol);
+            log.debug("Deleted cash flows for symbol {}", symbol);
+
+            optionRepository.deleteByUnderlyingSymbol(symbol);
+            log.debug("Deleted options for symbol {}", symbol);
+
+            assetRepository.deleteBySymbol(symbol);
+            log.debug("Deleted asset for symbol {}", symbol);
+        } catch (Exception e) {
+            log.error("Failed to delete records for symbol {}: {}", symbol, e.getMessage());
+            errorLog.add("Failed to delete records for symbol " + symbol + ": " + e.getMessage());
+            throw new RuntimeException("Deletion failed for symbol " + symbol, e);
+        }
     }
 
     public void writeErrorReport() {
