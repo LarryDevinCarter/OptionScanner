@@ -6,6 +6,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Model class aggregating various financial reports for a company, including income statements,
+ * earnings, balance sheets, cash flows, and assets.
+ */
 @AllArgsConstructor
 @Data
 public class FinancialReports {

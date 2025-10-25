@@ -6,6 +6,10 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing an options contract, capturing details like strike price, expiration, and type.
+ * Links to an underlying asset for stock option analysis, sourced from Alpaca.
+ */
 @Entity
 @Data
 @Table(name = "options",

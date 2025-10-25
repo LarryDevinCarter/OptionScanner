@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object representing a sold options contract, capturing key details like strike price,
+ * expiration date, and sale information.
+ */
 @Data
 public class SoldOptionDTO {
     @NotNull
