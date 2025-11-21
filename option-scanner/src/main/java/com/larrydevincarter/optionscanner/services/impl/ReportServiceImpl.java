@@ -208,6 +208,68 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    @Override
+    public void generateCoveredCallsReport(String symbol, Double dollarCostAverage) {
+        String upperSymbol = symbol.toUpperCase();
+
+        List<Option> calls = optionRepository
+                .findByUnderlyingSymbolAndOptionTypeOrderByYieldDesc(upperSymbol, "call");
+
+        List<Option> meaningfulCalls = calls.stream()
+                .filter(option -> option.getYield() != null && option.getYield() >= 0.001) // >= 0.10% annualized
+                .toList();
+
+        // Create reports directory for today (same as your main report)
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        File reportsDir = new File("logs/reports/" + today + "/covered_calls");
+        if (!reportsDir.exists()) {
+            reportsDir.mkdirs();
+        }
+
+        String filename = reportsDir.getPath() + "/" + upperSymbol +
+                (dollarCostAverage != null ? "_DCA_" + String.format("%.2f", dollarCostAverage) : "") +
+                ".txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+
+            writer.write("These are covered call options for owned stock: " + upperSymbol + "\n");
+            if (dollarCostAverage != null) {
+                writer.write("Dollar Cost Average (Basis): $" + String.format("%.2f", dollarCostAverage) + "\n");
+            }
+            writer.write("Generated on: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\n");
+
+            if (meaningfulCalls.isEmpty()) {
+                writer.write("No profitable covered calls found above your cost basis at this time.\n");
+                log.info("No covered calls found for {}", upperSymbol);
+                return;
+            }
+
+            // Exact same header format as your main put report
+            writer.write(String.format("%-10s | %-12s | %-8s | %-12s | %s%n",
+                    "Underlying", "Expiration", "Strike", "Previous Close", "Yield"));
+            writer.write("-".repeat(80) + "\n");
+
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MMM-yy");
+
+            for (Option call : meaningfulCalls) {
+                String line = String.format("%-10s | %12s | %8.2f | %12.2f | %6.3f",
+                        call.getUnderlyingSymbol(),
+                        call.getExpirationDate().format(fmt).toUpperCase(),
+                        call.getStrike(),
+                        call.getPreviousClose() != null ? call.getPreviousClose() : 0.00,
+                        call.getYield() != null ? call.getYield() : 0.000
+                );
+                writer.write(line + "\n");
+            }
+
+            writer.write("\nTotal covered calls found: " + meaningfulCalls.size() + "\n");
+            log.info("Covered calls report generated: {}", filename);
+
+        } catch (IOException e) {
+            log.error("Failed to generate covered calls report for {}: {}", upperSymbol, e.getMessage());
+        }
+    }
+
     private void generateSoldOptionReport(SoldOptionDTO dto) {
         List<LocalDate> tradingDays = getTradingDays(dto.getSoldDate(), dto.getExpirationDate());
         int totalTradingDays = tradingDays.size();

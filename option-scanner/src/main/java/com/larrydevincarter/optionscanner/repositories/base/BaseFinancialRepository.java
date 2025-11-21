@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public interface BaseFinancialRepository<T extends BaseFinancialReport> extends 
      * @param symbol the symbol to delete records for
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM #{#entityName} e WHERE e.symbol = :symbol")
     void deleteBySymbol(@Param("symbol") String symbol);
 

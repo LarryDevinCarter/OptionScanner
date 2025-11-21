@@ -1,0 +1,7 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-11-13T05:18:37.252249200
+Total Errors: 3
+
+Missing latest annual statements for BRR: No annual income statement found
+Missing latest annual statements for VWAV: No annual income statement found
+Missing latest annual statements for ETHM: No annual income statement found

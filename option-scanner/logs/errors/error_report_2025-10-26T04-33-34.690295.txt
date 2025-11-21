@@ -1,0 +1,6 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-10-26T04:33:34.692297100
+Total Errors: 2
+
+Attempt 1 failed for GINN: I/O error on GET request for "https://www.alphavantage.co/query": Connection timed out: connect
+Missing latest annual statements for WBI: No annual balance sheet found

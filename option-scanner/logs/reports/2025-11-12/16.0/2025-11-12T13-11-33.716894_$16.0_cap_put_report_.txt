@@ -1,0 +1,76 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-11-12T13:11:33.717894100
+Total Options: 72
+
+These are tier 1 options:
+These are tier 2 options:
+These are tier 3 options:
+Underlying: ISSC | Expiration: 16-Jan-26 | Strike: 7.50 | Previous Close: 0.56 | Adjusted PE: 11.12 | Yield: 0.16%
+Underlying: MAMA | Expiration: 21-Nov-25 | Strike: 10.00 | Previous Close: 0.25 | Adjusted PE: 42.56 | Yield: 0.30%
+Underlying: MAMA | Expiration: 19-Dec-25 | Strike: 10.00 | Previous Close: 0.65 | Adjusted PE: 42.56 | Yield: 0.24%
+Underlying: MAMA | Expiration: 16-Jan-26 | Strike: 10.00 | Previous Close: 0.77 | Adjusted PE: 42.56 | Yield: 0.17%
+These are tier 4 options:
+Underlying: STLA | Expiration: 21-Nov-25 | Strike: 3.00 | Previous Close: 0.05 | Adjusted PE: 0.40 | Yield: 0.17%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 4.00 | Previous Close: 0.04 | Adjusted PE: 0.53 | Yield: 0.25%
+Underlying: STLA | Expiration: 21-Nov-25 | Strike: 4.00 | Previous Close: 0.07 | Adjusted PE: 0.53 | Yield: 0.19%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 4.50 | Previous Close: 0.05 | Adjusted PE: 0.60 | Yield: 0.30%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 5.00 | Previous Close: 0.05 | Adjusted PE: 0.67 | Yield: 0.27%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 10.00 | Previous Close: 0.05 | Adjusted PE: 1.33 | Yield: 0.13%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 10.50 | Previous Close: 0.10 | Adjusted PE: 1.40 | Yield: 0.29%
+Underlying: STLA | Expiration: 28-Nov-25 | Strike: 10.50 | Previous Close: 0.30 | Adjusted PE: 1.40 | Yield: 0.23%
+Underlying: STLA | Expiration: 21-Nov-25 | Strike: 10.50 | Previous Close: 0.20 | Adjusted PE: 1.40 | Yield: 0.23%
+Underlying: STLA | Expiration: 26-Dec-25 | Strike: 10.50 | Previous Close: 0.45 | Adjusted PE: 1.40 | Yield: 0.14%
+Underlying: HAL | Expiration: 14-Nov-25 | Strike: 15.00 | Previous Close: 1.00 | Adjusted PE: 3.03 | Yield: 2.20%
+Underlying: OPFI | Expiration: 21-Nov-25 | Strike: 9.75 | Previous Close: 0.30 | Adjusted PE: 4.74 | Yield: 0.37%
+These are tier 5 options:
+Underlying: UMC | Expiration: 16-Jan-26 | Strike: 7.00 | Previous Close: 0.30 | Adjusted PE: 0.12 | Yield: 0.09%
+Underlying: STLA | Expiration: 28-Nov-25 | Strike: 3.00 | Previous Close: 0.05 | Adjusted PE: 0.40 | Yield: 0.11%
+Underlying: STLA | Expiration: 28-Nov-25 | Strike: 4.00 | Previous Close: 0.07 | Adjusted PE: 0.53 | Yield: 0.13%
+Underlying: STLA | Expiration: 14-Nov-25 | Strike: 9.50 | Previous Close: 0.04 | Adjusted PE: 1.27 | Yield: 0.11%
+Underlying: STLA | Expiration: 05-Dec-25 | Strike: 10.00 | Previous Close: 0.21 | Adjusted PE: 1.33 | Yield: 0.12%
+Underlying: STLA | Expiration: 28-Nov-25 | Strike: 10.00 | Previous Close: 0.15 | Adjusted PE: 1.33 | Yield: 0.12%
+Underlying: STLA | Expiration: 21-Nov-25 | Strike: 10.00 | Previous Close: 0.10 | Adjusted PE: 1.33 | Yield: 0.11%
+Underlying: STLA | Expiration: 16-Jan-26 | Strike: 10.00 | Previous Close: 0.50 | Adjusted PE: 1.33 | Yield: 0.11%
+Underlying: STLA | Expiration: 19-Dec-25 | Strike: 10.00 | Previous Close: 0.30 | Adjusted PE: 1.33 | Yield: 0.11%
+Underlying: CRNT | Expiration: 21-Nov-25 | Strike: 2.00 | Previous Close: 0.10 | Adjusted PE: 2.34 | Yield: 0.56%
+Underlying: CRNT | Expiration: 20-Feb-26 | Strike: 2.00 | Previous Close: 0.22 | Adjusted PE: 2.34 | Yield: 0.15%
+Underlying: CRNT | Expiration: 16-Jan-26 | Strike: 2.00 | Previous Close: 0.13 | Adjusted PE: 2.34 | Yield: 0.13%
+Underlying: RPD | Expiration: 21-Nov-25 | Strike: 13.00 | Previous Close: 0.13 | Adjusted PE: 4.06 | Yield: 0.12%
+Underlying: RPD | Expiration: 20-Mar-26 | Strike: 14.00 | Previous Close: 1.80 | Adjusted PE: 4.38 | Yield: 0.15%
+Underlying: HLIT | Expiration: 16-Jan-26 | Strike: 7.50 | Previous Close: 0.38 | Adjusted PE: 5.20 | Yield: 0.11%
+Underlying: INMD | Expiration: 21-Nov-25 | Strike: 14.00 | Previous Close: 0.15 | Adjusted PE: 5.78 | Yield: 0.13%
+Underlying: INMD | Expiration: 16-Jan-26 | Strike: 14.00 | Previous Close: 0.59 | Adjusted PE: 5.78 | Yield: 0.09%
+Underlying: INMD | Expiration: 19-Dec-25 | Strike: 14.00 | Previous Close: 0.35 | Adjusted PE: 5.78 | Yield: 0.09%
+Underlying: HLIT | Expiration: 21-Nov-25 | Strike: 10.00 | Previous Close: 0.20 | Adjusted PE: 6.94 | Yield: 0.24%
+Underlying: HLIT | Expiration: 16-Jan-26 | Strike: 10.00 | Previous Close: 0.83 | Adjusted PE: 6.94 | Yield: 0.18%
+Underlying: OPRA | Expiration: 16-Jan-26 | Strike: 12.50 | Previous Close: 0.70 | Adjusted PE: 7.44 | Yield: 0.12%
+Underlying: OPRA | Expiration: 21-Nov-25 | Strike: 13.00 | Previous Close: 0.20 | Adjusted PE: 7.74 | Yield: 0.18%
+Underlying: OPRA | Expiration: 19-Dec-25 | Strike: 13.00 | Previous Close: 0.51 | Adjusted PE: 7.74 | Yield: 0.14%
+These are tier 6 options:
+Underlying: TAK | Expiration: 21-Nov-25 | Strike: 7.50 | Previous Close: 0.06 | Adjusted PE: 0.02 | Yield: 0.08%
+Underlying: TAK | Expiration: 21-Nov-25 | Strike: 10.00 | Previous Close: 0.06 | Adjusted PE: 0.03 | Yield: 0.06%
+Underlying: UMC | Expiration: 21-Nov-25 | Strike: 6.00 | Previous Close: 0.05 | Adjusted PE: 0.10 | Yield: 0.08%
+Underlying: YRD | Expiration: 21-Nov-25 | Strike: 5.00 | Previous Close: 0.25 | Adjusted PE: 0.11 | Yield: 0.60%
+Underlying: CSIQ | Expiration: 14-Nov-25 | Strike: 4.00 | Previous Close: 0.05 | Adjusted PE: 0.13 | Yield: 0.33%
+Underlying: YMM | Expiration: 18-Jun-26 | Strike: 12.50 | Previous Close: 1.55 | Adjusted PE: 0.16 | Yield: 0.08%
+Underlying: CSIQ | Expiration: 14-Nov-25 | Strike: 5.00 | Previous Close: 0.10 | Adjusted PE: 0.17 | Yield: 0.60%
+Underlying: NOTE | Expiration: 19-Dec-25 | Strike: 0.50 | Previous Close: 0.25 | Adjusted PE: 0.18 | Yield: 1.78%
+Underlying: NOTE | Expiration: 16-Jan-26 | Strike: 0.50 | Previous Close: 0.40 | Adjusted PE: 0.18 | Yield: 1.73%
+Underlying: NOTE | Expiration: 17-Apr-26 | Strike: 0.50 | Previous Close: 0.45 | Adjusted PE: 0.18 | Yield: 0.82%
+Underlying: CSIQ | Expiration: 14-Nov-25 | Strike: 6.00 | Previous Close: 0.32 | Adjusted PE: 0.20 | Yield: 1.72%
+Underlying: DAN | Expiration: 21-Nov-25 | Strike: 1.00 | Previous Close: 0.06 | Adjusted PE: 0.26 | Yield: 0.63%
+Underlying: SOGP | Expiration: 21-Nov-25 | Strike: 9.02 | Previous Close: 0.25 | Adjusted PE: 0.26 | Yield: 0.33%
+Underlying: VNET | Expiration: 21-Nov-25 | Strike: 6.00 | Previous Close: 0.05 | Adjusted PE: 0.31 | Yield: 0.08%
+Underlying: VNET | Expiration: 15-May-26 | Strike: 6.00 | Previous Close: 0.50 | Adjusted PE: 0.31 | Yield: 0.06%
+Underlying: CSIQ | Expiration: 21-Nov-25 | Strike: 10.00 | Previous Close: 0.10 | Adjusted PE: 0.33 | Yield: 0.11%
+Underlying: CSIQ | Expiration: 21-Nov-25 | Strike: 10.50 | Previous Close: 0.10 | Adjusted PE: 0.35 | Yield: 0.11%
+Underlying: CSIQ | Expiration: 17-Apr-26 | Strike: 11.00 | Previous Close: 0.82 | Adjusted PE: 0.36 | Yield: 0.07%
+Underlying: NOTE | Expiration: 19-Dec-25 | Strike: 1.00 | Previous Close: 0.85 | Adjusted PE: 0.36 | Yield: 3.11%
+Underlying: NOTE | Expiration: 16-Jan-26 | Strike: 1.00 | Previous Close: 0.85 | Adjusted PE: 0.36 | Yield: 1.87%
+Underlying: NOTE | Expiration: 17-Apr-26 | Strike: 1.00 | Previous Close: 0.90 | Adjusted PE: 0.36 | Yield: 0.83%
+Underlying: VNET | Expiration: 20-Mar-26 | Strike: 7.00 | Previous Close: 0.76 | Adjusted PE: 0.37 | Yield: 0.12%
+Underlying: VNET | Expiration: 21-Nov-25 | Strike: 7.00 | Previous Close: 0.05 | Adjusted PE: 0.37 | Yield: 0.07%
+Underlying: CSIQ | Expiration: 21-Nov-25 | Strike: 11.50 | Previous Close: 0.10 | Adjusted PE: 0.38 | Yield: 0.10%
+Underlying: CSIQ | Expiration: 15-May-26 | Strike: 12.00 | Previous Close: 1.18 | Adjusted PE: 0.40 | Yield: 0.08%
+Underlying: CSIQ | Expiration: 17-Apr-26 | Strike: 12.00 | Previous Close: 0.82 | Adjusted PE: 0.40 | Yield: 0.06%
+Underlying: LI | Expiration: 14-Nov-25 | Strike: 10.00 | Previous Close: 0.35 | Adjusted PE: 0.40 | Yield: 1.13%

@@ -1,10 +1,12 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
+import com.larrydevincarter.optionscanner.models.dtos.OwnedAssetDTO;
 import com.larrydevincarter.optionscanner.models.entities.Asset;
 import com.larrydevincarter.optionscanner.models.entities.Option;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.OptionRepository;
 import com.larrydevincarter.optionscanner.services.OptionService;
+import com.larrydevincarter.optionscanner.services.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,7 @@ public class OptionServiceImpl implements OptionService {
     private final OptionRepository optionRepository;
     private final AssetRepository assetRepository;
     private final RestTemplate restTemplate;
+    private final ReportService reportService;
 
     @Value("${alpaca.api.key}")
     private String alpacaApiKey;
@@ -178,6 +181,138 @@ public class OptionServiceImpl implements OptionService {
             log.error("Failed to process options for symbol {}: {}", symbol, e.getMessage());
             errorLog.add("Failed to process options for " + symbol + ": " + e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public void fetchCoveredCallOptions(OwnedAssetDTO dto) {
+        String symbol = dto.getSymbol().toUpperCase();
+        Double dca = dto.getDollarCostAverage();
+
+        Optional<Asset> assetOpt = assetRepository.findBySymbol(symbol);
+        if (assetOpt.isEmpty()) {
+            log.warn("Cannot fetch covered calls – asset not found in database: {}", symbol);
+            return;
+        }
+        Asset asset = assetOpt.get();
+
+        Double currentPrice = asset.getCurrentPrice();
+        if (currentPrice == null) {
+            log.warn("Cannot fetch covered calls for {} – current price is null", symbol);
+            return;
+        }
+
+        // Delete old covered calls for this underlying (we only keep fresh data)
+        optionRepository.deleteByUnderlyingSymbolAndOptionType(symbol, "call");
+
+        LocalDate today = LocalDate.now();
+
+        // We'll reuse the same trading-day logic you already have
+        Set<LocalDate> tradingDays = fetchTradingCalendar(); // helper below
+        LocalDate previousTradingDay = tradingDays.stream()
+                .filter(d -> d.isBefore(today))
+                .max(Comparator.naturalOrder())
+                .orElse(today.minusDays(1));
+
+        List<Option> callsToSave = new ArrayList<>();
+        String pageToken = null;
+        String baseUrl = alpacaBaseUrl + "/v2/options/contracts"
+                + "?underlying_symbols=" + symbol
+                + "&type=call"
+                + "&expiration_date_gte=" + today
+                + "&strike_price_gte=" + String.format("%.2f", dca)
+                + "&limit=1000";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("APCA-API-KEY-ID", alpacaApiKey);
+        headers.set("APCA-API-SECRET-KEY", apiSecret);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        do {
+            String url = baseUrl + (pageToken != null ? "&page_token=" + pageToken : "");
+            Map<String, Object> response = null;
+
+            try {
+                response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
+            } catch (Exception e) {
+                log.error("Failed to fetch call contracts page for {}: {}", symbol, e.getMessage());
+                break;
+            }
+
+            if (response == null) break;
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> contracts = (List<Map<String, Object>>) response.get("option_contracts");
+            if (contracts == null || contracts.isEmpty()) break;
+
+            for (Map<String, Object> contract : contracts) {
+                String closePriceStr = (String) contract.get("close_price");
+                String closeDateStr = (String) contract.get("close_price_date");
+
+                Double closePrice = (closePriceStr != null && !closePriceStr.isEmpty())
+                        ? Double.parseDouble(closePriceStr) : null;
+                LocalDate closeDate = (closeDateStr != null && !closeDateStr.isEmpty())
+                        ? LocalDate.parse(closeDateStr) : null;
+
+                boolean tradedPreviousDay = closeDate != null
+                        && closeDate.equals(previousTradingDay)
+                        && closePrice != null && closePrice > 0;
+
+                if (!tradedPreviousDay) continue;
+
+                Option call = new Option();
+                call.setId((String) contract.get("id"));
+                call.setSymbol((String) contract.get("symbol"));
+                call.setUnderlyingSymbol(symbol);
+                call.setExpirationDate(LocalDate.parse((String) contract.get("expiration_date")));
+                call.setStrike(Double.valueOf((String) contract.get("strike_price")));
+                call.setOptionType("call");
+                call.setPreviousClose(closePrice);
+                call.setTradedPreviousDay(true);
+
+                // Yield calculation identical to puts (annualized premium yield)
+                int tradingDaysRemaining = calculateTradingDays(today, call.getExpirationDate(), tradingDays);
+                if (tradingDaysRemaining > 0 && closePrice > 0.01) {
+                    double rawYield = ((closePrice - 0.01) / dto.getDollarCostAverage() / tradingDaysRemaining) * 100;
+                    call.setYield(Math.round(rawYield * 1000.0) / 1000.0);
+                }
+
+                call.setLastUpdated(LocalDateTime.now());
+                callsToSave.add(call);
+            }
+
+            pageToken = (String) response.get("next_page_token");
+        } while (pageToken != null);
+
+        if (!callsToSave.isEmpty()) {
+            optionRepository.saveAll(callsToSave);
+            log.info("Stored {} covered call options for owned asset {}", callsToSave.size(), symbol);
+            reportService.generateCoveredCallsReport(symbol, dca);
+        } else {
+            log.info("No qualifying covered call options found for {}", symbol);
+        }
+    }
+
+    // Helper – extract duplicate calendar fetch into a reusable private method
+    private Set<LocalDate> fetchTradingCalendar() {
+        Set<LocalDate> days = new HashSet<>();
+        try {
+            String url = alpacaBaseUrl + "/v2/calendar?start=" + LocalDate.now().minusDays(30)
+                    + "&end=" + LocalDate.now().plusYears(4);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("APCA-API-KEY-ID", alpacaApiKey);
+            headers.set("APCA-API-SECRET-KEY", apiSecret);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            List<Map<String, Object>> resp = restTemplate.exchange(url, HttpMethod.GET, entity, List.class).getBody();
+            if (resp != null) {
+                for (Map<String, Object> d : resp) {
+                    days.add(LocalDate.parse((String) d.get("date")));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Could not fetch trading calendar for covered calls: {}", e.getMessage());
+        }
+        return days;
     }
 
     private int calculateTradingDays(LocalDate start, LocalDate end, Set<LocalDate> tradingDays) {

@@ -9,4 +9,6 @@ public interface ReportService {
     void generateReport(Double strikeMax);
 
     void generateSoldOptionsReports(List<SoldOptionDTO> dtos);
+
+    void generateCoveredCallsReport(String symbol, Double dollarCostAverage);
 }

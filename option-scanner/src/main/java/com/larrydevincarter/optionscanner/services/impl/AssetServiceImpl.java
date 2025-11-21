@@ -35,6 +35,7 @@ import java.util.*;
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
+    private final DividendRepository dividendRepository;
     private final EarningsRepository earningsRepository;
     private final IncomeStatementRepository incomeStatementRepository;
     private final BalanceSheetRepository balanceSheetRepository;
@@ -75,6 +76,7 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public void fetchTradableAssets() {
 
+        errorLog.clear();
         LocalDateTime pullStartTime = LocalDateTime.now();
         log.info("Starting fetching tradable assets");
 
@@ -152,6 +154,11 @@ public class AssetServiceImpl implements AssetService {
         List<Asset> staleAssets = assetRepository.findActiveStaleAssets(pullStartTime);
 
         for (Asset staleAsset : staleAssets) {
+
+            //TODO: Remove before merge
+//            if (!testSymbols.contains(staleAsset.getSymbol())) {
+//                continue;
+//            }
             try {
 
                 String url = alpacaBaseUrl + "/v2/assets/" + staleAsset.getId();
@@ -191,8 +198,11 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
+        //TODO: uncomment after testing
         List<String> symbols = assetRepository.findActiveTradableSymbols();
         symbols = fetchAndStoreIncomeStatements(errorLog, symbols);
+        //TODO: comment after testing
+//        List<String> symbols = fetchAndStoreIncomeStatements(errorLog, new ArrayList<>(testSymbols));
 
         try {
             Thread.sleep(DELAY_MS);
@@ -251,7 +261,6 @@ public class AssetServiceImpl implements AssetService {
         reportService.generateReport(null);
     }
 
-    @Transactional
     private void deleteAssetAndRelatedRecords(String symbol, Asset asset) {
         try {
             log.debug("Deleting related records for symbol {}", symbol);
@@ -270,6 +279,9 @@ public class AssetServiceImpl implements AssetService {
 
             optionRepository.deleteByUnderlyingSymbol(symbol);
             log.debug("Deleted options for symbol {}", symbol);
+
+            dividendRepository.deleteBySymbol(symbol);
+            log.debug("Deleted dividends for symbol {}", symbol);
 
             assetRepository.deleteBySymbol(symbol);
             log.debug("Deleted asset for symbol {}", symbol);
@@ -308,7 +320,6 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public List<String> fetchAndStoreIncomeStatements(List<String> errorLog, List<String> symbols) {
 
-        errorLog.clear();
         List<String> symbolsNeedingUpdate = incomeStatementService.getSymbolsNeedingUpdate(symbols);
         log.info("Number of Symbols to update INCOME_STATEMENTS for: {}", symbolsNeedingUpdate.size());
         int callCount = 0;

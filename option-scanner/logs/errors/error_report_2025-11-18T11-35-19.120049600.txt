@@ -1,0 +1,218 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2025-11-18T11:35:19.124037500
+Total Errors: 214
+
+Attempt 1 failed for AAAU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAAU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAAU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAAU. Skipping.
+Failed to fetch income statement for symbol: AAAU after 3 attempts.
+Attempt 1 failed for AAPB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPB. Skipping.
+Failed to fetch income statement for symbol: AAPB after 3 attempts.
+Attempt 1 failed for AAPD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPD. Skipping.
+Failed to fetch income statement for symbol: AAPD after 3 attempts.
+Attempt 1 failed for AAPU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPU. Skipping.
+Failed to fetch income statement for symbol: AAPU after 3 attempts.
+Attempt 1 failed for AAPW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPW. Skipping.
+Failed to fetch income statement for symbol: AAPW after 3 attempts.
+Attempt 1 failed for AAPX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPX. Skipping.
+Failed to fetch income statement for symbol: AAPX after 3 attempts.
+Attempt 1 failed for AAPY: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAPY: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for AAPY: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for AAPY. Skipping.
+Failed to fetch income statement for symbol: AAPY after 3 attempts.
+Attempt 1 failed for AAXJ: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for AAXJ: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for ARBK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ARBK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for ARBK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for ARBK. Skipping.
+Failed to fetch income statement for symbol: ARBK after 3 attempts.
+Attempt 1 failed for ARCX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ARCX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for ARCX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for ARCX. Skipping.
+Failed to fetch income statement for symbol: ARCX after 3 attempts.
+Attempt 1 failed for ARDT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ARDT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for ARDT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for ARDT. Skipping.
+Failed to fetch income statement for symbol: ARDT after 3 attempts.
+Attempt 1 failed for ARGT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ARGT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for CGDV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for DFE: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for EPOL: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for GOP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for VCEB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for RVP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for RVP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for RVP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for RVP. Skipping.
+Failed to fetch earnings for symbol: RVP after 3 attempts.
+Attempt 1 failed for SBEV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SBEV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SBEV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SBEV. Skipping.
+Failed to fetch earnings for symbol: SBEV after 3 attempts.
+Attempt 1 failed for SBLX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SBLX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SBLX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SBLX. Skipping.
+Failed to fetch earnings for symbol: SBLX after 3 attempts.
+Attempt 1 failed for SGBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SGBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SGBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SGBX. Skipping.
+Failed to fetch earnings for symbol: SGBX after 3 attempts.
+Attempt 1 failed for SIEB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SIEB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SIEB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SIEB. Skipping.
+Failed to fetch earnings for symbol: SIEB after 3 attempts.
+Attempt 1 failed for SJT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SJT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SJT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SJT. Skipping.
+Failed to fetch earnings for symbol: SJT after 3 attempts.
+Attempt 1 failed for SLAI: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SLAI: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SLAI: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SLAI. Skipping.
+Failed to fetch earnings for symbol: SLAI after 3 attempts.
+Attempt 1 failed for SOGP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SOGP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SOGP: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SOGP. Skipping.
+Failed to fetch earnings for symbol: SOGP after 3 attempts.
+Attempt 1 failed for SQFT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SQFT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SQFT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SQFT. Skipping.
+Failed to fetch earnings for symbol: SQFT after 3 attempts.
+Attempt 1 failed for STEX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for STEX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for STEX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for STEX. Skipping.
+Failed to fetch earnings for symbol: STEX after 3 attempts.
+Attempt 1 failed for STKH: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for STKH: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for STKH: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for STKH. Skipping.
+Failed to fetch earnings for symbol: STKH after 3 attempts.
+Attempt 1 failed for STRD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for STRD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for STRD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for STRD. Skipping.
+Failed to fetch earnings for symbol: STRD after 3 attempts.
+Attempt 1 failed for STSS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for STSS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for STSS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for STSS. Skipping.
+Failed to fetch earnings for symbol: STSS after 3 attempts.
+Attempt 1 failed for SUIG: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SUIG: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SUIG: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SUIG. Skipping.
+Failed to fetch earnings for symbol: SUIG after 3 attempts.
+Attempt 1 failed for SYBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for SYBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for SYBX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for SYBX. Skipping.
+Failed to fetch earnings for symbol: SYBX after 3 attempts.
+Attempt 1 failed for TCRT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TCRT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TCRT: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TCRT. Skipping.
+Failed to fetch earnings for symbol: TCRT after 3 attempts.
+Attempt 1 failed for TE: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TE: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TE: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TE. Skipping.
+Failed to fetch earnings for symbol: TE after 3 attempts.
+Attempt 1 failed for TIC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TIC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TIC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TIC. Skipping.
+Failed to fetch earnings for symbol: TIC after 3 attempts.
+Attempt 1 failed for TONX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TONX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TONX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TONX. Skipping.
+Failed to fetch earnings for symbol: TONX after 3 attempts.
+Attempt 1 failed for TRAW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TRAW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TRAW: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TRAW. Skipping.
+Failed to fetch earnings for symbol: TRAW after 3 attempts.
+Attempt 1 failed for TRIB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for TRIB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for TRIB: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for TRIB. Skipping.
+Failed to fetch earnings for symbol: TRIB after 3 attempts.
+Attempt 1 failed for UAVS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for UAVS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for UAVS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for UAVS. Skipping.
+Failed to fetch earnings for symbol: UAVS after 3 attempts.
+Attempt 1 failed for UXIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for UXIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for UXIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for UXIN. Skipping.
+Failed to fetch earnings for symbol: UXIN after 3 attempts.
+Attempt 1 failed for VHC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for VHC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for VHC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for VHC. Skipping.
+Failed to fetch earnings for symbol: VHC after 3 attempts.
+Attempt 1 failed for VWAV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for VWAV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for VWAV: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for VWAV. Skipping.
+Failed to fetch earnings for symbol: VWAV after 3 attempts.
+Attempt 1 failed for WLAC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for WLAC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for WLAC: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for WLAC. Skipping.
+Failed to fetch earnings for symbol: WLAC after 3 attempts.
+Attempt 1 failed for YQ: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for YQ: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for YQ: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for YQ. Skipping.
+Failed to fetch earnings for symbol: YQ after 3 attempts.
+Attempt 1 failed for ZK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ZK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for ZK: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for ZK. Skipping.
+Failed to fetch earnings for symbol: ZK after 3 attempts.
+Attempt 1 failed for ZKIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for ZKIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 3 failed for ZKIN: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Max retries reached for ZKIN. Skipping.
+Failed to fetch earnings for symbol: ZKIN after 3 attempts.
+Attempt 1 failed for ALGM: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for EH: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 2 failed for EH: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for LU: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for THR: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for SSD: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Attempt 1 failed for ATS: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Missing latest annual statements for BRR: No annual cash flow found
+Attempt 1 failed for CDTX: 500 Internal Server Error on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 500 INTERNAL_SERVER_ERROR)
+Missing latest annual statements for ETHM: No annual income statement found
