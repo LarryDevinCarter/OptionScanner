@@ -786,24 +786,6 @@ public class AssetServiceImpl implements AssetService {
         log.info("Completed fetching put options");
     }
 
-    private int calculateTradingDays(LocalDate start, LocalDate end, Set<LocalDate> tradingDays) {
-        if (start.isAfter(end)) return 0;
-        int count = 0;
-        LocalDate current = start;
-        while (!current.isAfter(end)) {
-            if (tradingDays.isEmpty()) {
-                DayOfWeek day = current.getDayOfWeek();
-                if (day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY) {
-                    count++;
-                }
-            } else if (tradingDays.contains(current)) {
-                count++;
-            }
-            current = current.plusDays(1);
-        }
-        return count;
-    }
-
     private void computeAndStoreAdjustedMetrics(Asset asset, List<String> errorLog) {
         try {
             IncomeStatement latestIncome = incomeStatementRepository
