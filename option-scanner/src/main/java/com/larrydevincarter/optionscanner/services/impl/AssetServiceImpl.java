@@ -226,6 +226,7 @@ public class AssetServiceImpl implements AssetService {
         reportService.generateReport(null);
     }
 
+    @Transactional
     private void deleteAssetAndRelatedRecords(String symbol, Asset asset) {
         try {
             log.debug("Deleting related records for symbol {}", symbol);
