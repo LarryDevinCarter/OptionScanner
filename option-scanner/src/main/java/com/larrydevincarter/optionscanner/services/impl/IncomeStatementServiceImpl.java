@@ -27,7 +27,7 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
 
     @Override
     @Transactional
-    public void processIncomeStatements(String symbol, Map<String, Object> response, List<String> errorLog) {
+    public void processReport(String symbol, Map<String, Object> response, List<String> errorLog) {
 
         incomeStatementRepository.deleteBySymbol(symbol);
         log.info("Deleted existing income statements for symbol: {}", symbol);
@@ -90,8 +90,18 @@ public class IncomeStatementServiceImpl implements IncomeStatementService {
     }
 
     @Override
-    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
+    public List<String> getSymbolsThatHaveData(List<String> symbols) {
         return incomeStatementRepository.findSymbolsWithData(symbols);
+    }
+
+    @Override
+    public String getFunctionName() {
+        return "INCOME_STATEMENT";
+    }
+
+    @Override
+    public String getReportDisplayName() {
+        return "income statements";
     }
 
 }

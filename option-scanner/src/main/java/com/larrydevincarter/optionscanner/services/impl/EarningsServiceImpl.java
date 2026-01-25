@@ -26,7 +26,7 @@ public class EarningsServiceImpl implements EarningsService {
 
     @Override
     @Transactional
-    public void processEarnings(String symbol, Map<String, Object> response, List<String> errorLog) {
+    public void processReport(String symbol, Map<String, Object> response, List<String> errorLog) {
 
         earningsRepository.deleteBySymbol(symbol);
         earningsRepository.flush();
@@ -75,7 +75,17 @@ public class EarningsServiceImpl implements EarningsService {
     }
 
     @Override
-    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
+    public List<String> getSymbolsThatHaveData(List<String> symbols) {
         return earningsRepository.findSymbolsWithData(symbols);
+    }
+
+    @Override
+    public String getFunctionName() {
+        return "EARNINGS";
+    }
+
+    @Override
+    public String getReportDisplayName() {
+        return "earnings";
     }
 }

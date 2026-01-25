@@ -1,0 +1,10 @@
+These are covered call options for owned stock: DCGO
+Dollar Cost Average (Basis): $1.50
+Generated on: 2025-11-25 06:57:20
+
+Underlying | Expiration   | Strike   | Previous Close | Yield
+--------------------------------------------------------------------------------
+DCGO       |    15-MAY-26 |     1.50 |         0.10 |  0.051
+DCGO       |    15-MAY-26 |     5.00 |         0.05 |  0.023
+
+Total covered calls found: 2

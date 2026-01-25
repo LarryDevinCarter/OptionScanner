@@ -66,11 +66,9 @@ public class AssetServiceImpl implements AssetService {
 
     private final List<String> errorLog = new ArrayList<>();
     private static final long DELAY_MS = 60_000;
-    private static final int CALLS_PER_MINUTE = 75;
+    private static final long DELAY_BETWEEN_CALLS_MS = 800;
+    private static final long DELAY_BETWEEN_CALLS_MS_ALPACA = 300;
     private static final int MAX_RETRIES = 3;
-
-    private static final int ALPACA_CALLS_PER_MINUTE = 190;
-    private static final int BATCH_SIZE = 1000;
 
     @Scheduled(cron = "0 0 2 * * ?", zone = "America/Chicago")
     @Override
@@ -81,7 +79,7 @@ public class AssetServiceImpl implements AssetService {
         log.info("Starting fetching tradable assets");
 
         //TODO: Remove before merge
-//        Set<String> testSymbols = new HashSet<>(Arrays.asList("TSLA", "TSM", "WOLF"));
+//        Set<String> testSymbols = new HashSet<>(Arrays.asList("TSLA", "TSM", "WOLF", "META"));
 
         try {
 
@@ -149,6 +147,8 @@ public class AssetServiceImpl implements AssetService {
         } catch (Exception e) {
             log.error("Failed to fetch tradable assets: {}", e.getMessage());
             errorLog.add("Failed to fetch tradable assets: " + e.getMessage());
+            writeErrorReport();
+            //TODO: Implement retry logic
             return;
         }
         List<Asset> staleAssets = assetRepository.findActiveStaleAssets(pullStartTime);
@@ -198,64 +198,29 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Checked {} stale active assets", staleAssets.size());
+
         //TODO: uncomment after testing
         List<String> symbols = assetRepository.findActiveTradableSymbols();
-        symbols = fetchAndStoreIncomeStatements(errorLog, symbols);
+        symbols = fetchAndStoreFinancialReport(symbols, incomeStatementService);
         //TODO: comment after testing
-//        List<String> symbols = fetchAndStoreIncomeStatements(errorLog, new ArrayList<>(testSymbols));
+//        List<String> symbols = fetchAndStoreFinancialReport(new ArrayList<>(testSymbols), incomeStatementService);
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching income statement to fetching earnings: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        symbols = fetchAndStoreEarnings(errorLog, symbols);
+        sleepBetweenStages();
+        symbols = fetchAndStoreFinancialReport(symbols, earningsService);
+        sleepBetweenStages();
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching earnings to fetching balance sheets: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        symbols = fetchAndStoreBalanceSheets(errorLog, symbols);
+        symbols = fetchAndStoreFinancialReport(symbols, balanceSheetService);
+        sleepBetweenStages();
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching balance sheets to fetching cash flows: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        symbols = fetchAndStoreCashFlows(errorLog, symbols);
+        symbols = fetchAndStoreFinancialReport(symbols, cashFlowService);
+        sleepBetweenStages();
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching balance sheets to fetching cash flows: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        fetchAndStoreDividends(errorLog, symbols);
+        symbols = fetchAndStoreFinancialReport(symbols, dividendService);
+        sleepBetweenStages();
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching dividends to fetching stock prices: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
         fetchAndStoreStockPrices(errorLog, symbols);
+        sleepBetweenStages();
 
-        try {
-            Thread.sleep(DELAY_MS);
-        } catch (InterruptedException e) {
-            log.error("Interrupted during rate limit delay: {}", e.getMessage());
-            errorLog.add("Interrupted during rate limit delay while transitioning from fetching stock prices to fetching options: " + e.getMessage());
-            Thread.currentThread().interrupt();
-        }
         fetchAndStoreOptions(errorLog, symbols);
         writeErrorReport();
         reportService.generateReport(null);
@@ -322,24 +287,10 @@ public class AssetServiceImpl implements AssetService {
 
         List<String> symbolsNeedingUpdate = incomeStatementService.getSymbolsNeedingUpdate(symbols);
         log.info("Number of Symbols to update INCOME_STATEMENTS for: {}", symbolsNeedingUpdate.size());
-        int callCount = 0;
         log.info("Starting fetching income statements");
 
         for (String symbol : symbolsNeedingUpdate) {
 
-            if (callCount >= CALLS_PER_MINUTE) {
-
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
             String url = String.format("%s/query?function=INCOME_STATEMENT&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
@@ -348,7 +299,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
 
@@ -385,7 +342,7 @@ public class AssetServiceImpl implements AssetService {
             }
             if (responseBody != null) {
                 try {
-                    incomeStatementService.processIncomeStatements(symbol, responseBody, errorLog);
+                    incomeStatementService.processReport(symbol, responseBody, errorLog);
                 } catch (Exception e) {
                     log.error("Failed to process income statements for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process income statements for " + symbol + ": " + e.getMessage());
@@ -395,7 +352,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching income statements");
-        return incomeStatementService.getSymbolsThatHaveStatements(symbols);
+        return incomeStatementService.getSymbolsThatHaveData(symbols);
     }
 
     @Override
@@ -403,22 +360,8 @@ public class AssetServiceImpl implements AssetService {
 
         List<String> symbolsNeedingUpdate = earningsService.getSymbolsNeedingUpdate(symbols);
         log.info("Fetching earnings for {} symbols with updated income statements", symbolsNeedingUpdate.size());
-        int callCount = 0;
 
         for (String symbol : symbolsNeedingUpdate) {
-            if (callCount >= CALLS_PER_MINUTE) {
-
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
 
             String url = String.format("%s/query?function=EARNINGS&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
@@ -428,7 +371,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
                     attempt++;
@@ -464,7 +413,7 @@ public class AssetServiceImpl implements AssetService {
             }
             if (responseBody != null) {
                 try {
-                    earningsService.processEarnings(symbol, responseBody, errorLog);
+                    earningsService.processReport(symbol, responseBody, errorLog);
                 } catch (Exception e) {
                     log.error("Failed to process earnings for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process earnings for symbol " + symbol + ": " + e.getMessage());
@@ -474,7 +423,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching and storing earnings for all symbols");
-        return earningsRepository.findSymbolsWithData(symbols);
+        return earningsService.getSymbolsThatHaveData(symbols);
     }
 
     @Override
@@ -482,24 +431,10 @@ public class AssetServiceImpl implements AssetService {
 
         List<String> symbolsNeedingUpdate = balanceSheetService.getSymbolsNeedingUpdate(symbols);
         log.info("Number of Symbols to update BALANCE_SHEETS for: {}", symbolsNeedingUpdate.size());
-        int callCount = 0;
         log.info("Starting fetching balance sheets");
 
         for (String symbol : symbolsNeedingUpdate) {
 
-            if (callCount >= CALLS_PER_MINUTE) {
-
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
             String url = String.format("%s/query?function=BALANCE_SHEET&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
@@ -508,7 +443,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
 
@@ -545,7 +486,7 @@ public class AssetServiceImpl implements AssetService {
             }
             if (responseBody != null) {
                 try {
-                    balanceSheetService.processBalanceSheets(symbol, responseBody, errorLog);
+                    balanceSheetService.processReport(symbol, responseBody, errorLog);
                 } catch (Exception e) {
                     log.error("Failed to process balance sheets for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process balance sheets for " + symbol + ": " + e.getMessage());
@@ -555,7 +496,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching balance sheets");
-        return balanceSheetRepository.findSymbolsWithData(symbols);
+        return balanceSheetService.getSymbolsThatHaveData(symbols);
     }
 
     @Override
@@ -563,24 +504,9 @@ public class AssetServiceImpl implements AssetService {
 
         List<String> symbolsNeedingUpdate = cashFlowService.getSymbolsNeedingUpdate(symbols);
         log.info("Number of Symbols to update CASH_FLOWS for: {}", symbolsNeedingUpdate.size());
-        int callCount = 0;
         log.info("Starting fetching cash flows");
 
         for (String symbol : symbolsNeedingUpdate) {
-
-            if (callCount >= CALLS_PER_MINUTE) {
-
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
             String url = String.format("%s/query?function=CASH_FLOW&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
             int attempt = 0;
@@ -589,7 +515,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
 
@@ -626,7 +558,7 @@ public class AssetServiceImpl implements AssetService {
             }
             if (responseBody != null) {
                 try {
-                    cashFlowService.processCashFlows(symbol, responseBody, errorLog);
+                    cashFlowService.processReport(symbol, responseBody, errorLog);
                 } catch (Exception e) {
                     log.error("Failed to process cash flows for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process cash flows for " + symbol + ": " + e.getMessage());
@@ -636,7 +568,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching cash flows");
-        return cashFlowService.getSymbolsThatHaveStatements(symbols);
+        return cashFlowService.getSymbolsThatHaveData(symbols);
     }
 
     @Override
@@ -644,21 +576,9 @@ public class AssetServiceImpl implements AssetService {
 
         List<String> symbolsNeedingUpdate = dividendService.getSymbolsNeedingUpdate(symbols);
         log.info("Number of Symbols to update DIVIDENDS for: {}", symbolsNeedingUpdate.size());
-        int callCount = 0;
         log.info("Starting fetching dividends");
 
         for (String symbol : symbolsNeedingUpdate) {
-            if (callCount >= CALLS_PER_MINUTE) {
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
 
             String url = String.format("%s/query?function=DIVIDENDS&symbol=%s&apikey=%s", alphavantageBaseUrl, symbol, alphavantageApiKey);
             Map<String, Object> responseBody = null;
@@ -668,7 +588,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + symbol + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
                     attempt++;
@@ -705,7 +631,7 @@ public class AssetServiceImpl implements AssetService {
 
             if (responseBody != null) {
                 try {
-                    dividendService.processDividends(symbol, responseBody, errorLog);
+                    dividendService.processReport(symbol, responseBody, errorLog);
                 } catch (Exception e) {
                     log.error("Failed to process dividends for symbol {}: {}", symbol, e.getMessage());
                     errorLog.add("Failed to process dividends for " + symbol + ": " + e.getMessage());
@@ -715,7 +641,7 @@ public class AssetServiceImpl implements AssetService {
             }
         }
         log.info("Completed fetching dividends");
-        return dividendService.getSymbolsThatHaveDividends(symbols);
+        return dividendService.getSymbolsThatHaveData(symbols);
     }
 
     @Override
@@ -723,20 +649,8 @@ public class AssetServiceImpl implements AssetService {
 
         List<Asset> assets = assetRepository.findBySymbols(symbols);
         log.info("Fetching stock prices for {} active, tradable assets", assets.size());
-        int callCount = 0;
 
         for (Asset asset : assets) {
-            if (callCount >= CALLS_PER_MINUTE) {
-                log.info("Hit rate limit (75 calls/minute). Pausing for 1 minute...");
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for symbol " + asset.getSymbol() + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
 
             String url = String.format("%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s",
                     alphavantageBaseUrl, asset.getSymbol(), alphavantageApiKey);
@@ -746,7 +660,13 @@ public class AssetServiceImpl implements AssetService {
             while (attempt < MAX_RETRIES) {
                 try {
                     responseBody = restTemplate.getForObject(url, Map.class);
-                    callCount++;
+                    try {
+                        Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                        errorLog.add("Interrupted during rate limit delay for symbol " + asset.getSymbol() + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
                     break;
                 } catch (ResourceAccessException | HttpServerErrorException e) {
                     attempt++;
@@ -771,8 +691,9 @@ public class AssetServiceImpl implements AssetService {
                 }
             }
 
+            Map<String, String> quote = new HashMap<>();
             if (responseBody != null && responseBody.containsKey("Global Quote")) {
-                Map<String, String> quote = (Map<String, String>) responseBody.get("Global Quote");
+                quote = (Map<String, String>) responseBody.get("Global Quote");
                 String priceStr = quote.get("05. price");
                 if (priceStr != null && !priceStr.trim().isEmpty()) {
                     try {
@@ -796,8 +717,8 @@ public class AssetServiceImpl implements AssetService {
                     log.info("Marked asset {} as inactive due to missing or empty price", asset.getSymbol());
                 }
             } else {
-                log.error("Failed to fetch stock price for symbol {}", asset.getSymbol());
-                errorLog.add("Failed to fetch stock price for symbol: " + asset.getSymbol());
+                log.error("Missing or empty price for symbol {}: full quote = {}", asset.getSymbol(), quote);
+                errorLog.add("Missing or empty price for symbol: " + asset.getSymbol() + " | Quote: " + quote);
                 asset.setStatus("inactive");
                 asset.setLastUpdated(LocalDateTime.now());
                 assetRepository.save(asset);
@@ -851,22 +772,15 @@ public class AssetServiceImpl implements AssetService {
             return;
         }
 
-        int callCount = 0;
-
         for (Asset asset : assets) {
-            if (callCount >= ALPACA_CALLS_PER_MINUTE) {
-                log.info("Hit Alpaca rate limit ({} calls/minute). Pausing for 1 minute...", ALPACA_CALLS_PER_MINUTE);
-                try {
-                    Thread.sleep(DELAY_MS);
-                } catch (InterruptedException e) {
-                    log.error("Interrupted during rate limit delay: {}", e.getMessage());
-                    errorLog.add("Interrupted during rate limit delay for asset " + asset.getSymbol() + ": " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-                callCount = 0;
-            }
             optionService.processOptionsForSymbol(asset.getSymbol(), errorLog, tradingDays, previousTradingDay);
-            callCount++;
+            try {
+                Thread.sleep(DELAY_BETWEEN_CALLS_MS_ALPACA);
+            } catch (InterruptedException e) {
+                log.error("Interrupted during rate limit delay: {}", e.getMessage());
+                errorLog.add("Interrupted during rate limit delay for asset " + asset.getSymbol() + ": " + e.getMessage());
+                Thread.currentThread().interrupt();
+            }
         }
         log.info("Completed fetching put options");
     }
@@ -931,5 +845,103 @@ public class AssetServiceImpl implements AssetService {
         asset.setLastPriceUpdated(LocalDateTime.now());
         assetRepository.save(asset);
         return price;
+    }
+
+    private Map<String, Object> fetchAlphaVantageReport(
+            String symbol, String functionName, List<String> errorLog) {
+
+        String url = String.format("%s/query?function=%s&symbol=%s&apikey=%s",
+                alphavantageBaseUrl, functionName, symbol, alphavantageApiKey);
+
+        Map<String, Object> responseBody = null;
+        int attempt = 0;
+        boolean hasLongPaused = false;
+
+        while (attempt < MAX_RETRIES) {
+            try {
+                responseBody = restTemplate.getForObject(url, Map.class);
+
+                try {
+                    Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+                } catch (InterruptedException e) {
+                    log.error("Interrupted during rate limit delay for {}: {}", symbol, e.getMessage());
+                    errorLog.add("Interrupted during rate limit delay for " + symbol + ": " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+                break;
+
+            } catch (ResourceAccessException | HttpServerErrorException e) {
+                attempt++;
+                String errorMsg = String.format("Attempt %d failed for %s (%s): %s%s",
+                        attempt, symbol, functionName, e.getMessage(),
+                        (e instanceof HttpServerErrorException) ? " (HTTP " + ((HttpServerErrorException) e).getStatusCode() + ")" : "");
+
+                log.warn(errorMsg);
+                errorLog.add(errorMsg);
+
+                if (attempt == MAX_RETRIES) {
+                    errorLog.add("Max retries reached for " + symbol + " (" + functionName + "). Skipping.");
+                    break;
+                }
+
+                long pauseDuration = DELAY_MS / 2;
+                if (!hasLongPaused && e instanceof HttpServerErrorException &&
+                        ((HttpServerErrorException) e).getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+                    pauseDuration = 30 * 60 * 1000L; // 30 minutes
+                    log.info("Detected 503 for {}. Pausing 30 minutes...", symbol);
+                    errorLog.add("Detected 503 for " + symbol + ". Pausing 30 minutes.");
+                    hasLongPaused = true;
+                }
+
+                try {
+                    Thread.sleep(pauseDuration);
+                } catch (InterruptedException ie) {
+                    log.error("Interrupted during retry delay: {}", ie.getMessage());
+                    errorLog.add("Interrupted during retry delay for " + symbol + ": " + ie.getMessage());
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+        return responseBody;
+    }
+
+    private List<String> fetchAndStoreFinancialReport(
+            List<String> symbols,
+            AlphaVantageReportService service) {
+
+        List<String> needingUpdate = service.getSymbolsNeedingUpdate(symbols);
+        String reportName = service.getReportDisplayName();
+
+        log.info("Number of symbols to update {}: {}", reportName.toUpperCase(), needingUpdate.size());
+
+        for (String symbol : needingUpdate) {
+            Map<String, Object> responseBody = fetchAlphaVantageReport(
+                    symbol, service.getFunctionName(), errorLog);
+
+            if (responseBody != null) {
+                try {
+                    service.processReport(symbol, responseBody, errorLog);
+                } catch (Exception e) {
+                    log.error("Failed to process {} for symbol {}: {}", reportName, symbol, e.getMessage());
+                    errorLog.add("Failed to process " + reportName + " for " + symbol + ": " + e.getMessage());
+                }
+            } else {
+                errorLog.add("Failed to fetch " + reportName + " for symbol: " + symbol + " after " + MAX_RETRIES + " attempts.");
+            }
+        }
+
+        log.info("Completed fetching {}", reportName);
+        return service.getSymbolsThatHaveData(symbols);
+    }
+
+    private void sleepBetweenStages() {
+        try {
+            Thread.sleep(DELAY_BETWEEN_CALLS_MS);
+        } catch (InterruptedException e) {
+            log.error("Interrupted during stage transition delay: {}", e.getMessage());
+            errorLog.add("Interrupted during stage transition delay: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        }
     }
 }

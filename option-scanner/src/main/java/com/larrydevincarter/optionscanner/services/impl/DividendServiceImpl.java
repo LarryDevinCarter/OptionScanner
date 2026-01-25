@@ -25,7 +25,7 @@ public class DividendServiceImpl implements DividendService {
 
     @Override
     @Transactional
-    public void processDividends(String symbol, Map<String, Object> response, List<String> errorLog) {
+    public void processReport(String symbol, Map<String, Object> response, List<String> errorLog) {
 
         dividendRepository.deleteBySymbol(symbol);
         log.info("Deleted existing dividends for symbol: {}", symbol);
@@ -39,6 +39,21 @@ public class DividendServiceImpl implements DividendService {
         log.info("Stored {} dividends for symbol: {}", dividends.size(), symbol);
     }
 
+    @Override
+    public List<String> getSymbolsThatHaveData(List<String> symbols) {
+        return dividendRepository.findSymbolsWithData(symbols);
+    }
+
+    @Override
+    public String getFunctionName() {
+        return "DIVIDENDS";
+    }
+
+    @Override
+    public String getReportDisplayName() {
+        return "dividends";
+    }
+
     private List<Dividend> parseDividends(List<Map<String, String>> dividendData, String symbol, List<String> errorLog) {
         return FinancialReportParser.parseDividends(dividendData, symbol, errorLog);
     }
@@ -47,10 +62,5 @@ public class DividendServiceImpl implements DividendService {
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
         LocalDate date = LocalDate.now().minusDays(120);
         return dividendRepository.findSymbolsNeedingUpdate(date, symbols);
-    }
-
-    @Override
-    public List<String> getSymbolsThatHaveDividends(List<String> symbols) {
-        return dividendRepository.findSymbolsWithData(symbols);
     }
 }

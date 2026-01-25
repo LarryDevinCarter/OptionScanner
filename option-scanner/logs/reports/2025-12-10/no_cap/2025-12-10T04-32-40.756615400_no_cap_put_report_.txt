@@ -1,0 +1,95 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-12-10T04:32:40.772618200
+Total Options: 91
+
+These are tier 1 options:
+Underlying: COP | Expiration: 12-Dec-25 | Strike: 93.00 | Previous Close: 0.82 | Adjusted PE: 5.13 | Yield: 0.29%
+Underlying: ACMR | Expiration: 19-Dec-25 | Strike: 35.00 | Previous Close: 0.70 | Adjusted PE: 7.95 | Yield: 0.25%
+Underlying: ACMR | Expiration: 19-Dec-25 | Strike: 36.00 | Previous Close: 1.20 | Adjusted PE: 8.18 | Yield: 0.41%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 37.00 | Previous Close: 3.16 | Adjusted PE: 8.41 | Yield: 0.33%
+Underlying: XOM | Expiration: 12-Dec-25 | Strike: 118.00 | Previous Close: 0.87 | Adjusted PE: 8.60 | Yield: 0.24%
+Underlying: CRUS | Expiration: 19-Dec-25 | Strike: 125.00 | Previous Close: 3.80 | Adjusted PE: 8.69 | Yield: 0.38%
+Underlying: META | Expiration: 12-Dec-25 | Strike: 652.50 | Previous Close: 5.30 | Adjusted PE: 11.89 | Yield: 0.27%
+Underlying: META | Expiration: 12-Dec-25 | Strike: 655.00 | Previous Close: 6.28 | Adjusted PE: 11.93 | Yield: 0.32%
+Underlying: POWL | Expiration: 19-Dec-25 | Strike: 330.00 | Previous Close: 8.50 | Adjusted PE: 19.60 | Yield: 0.32%
+Underlying: POWL | Expiration: 19-Dec-25 | Strike: 340.00 | Previous Close: 11.00 | Adjusted PE: 20.19 | Yield: 0.40%
+Underlying: NVMI | Expiration: 19-Dec-25 | Strike: 330.00 | Previous Close: 8.32 | Adjusted PE: 34.08 | Yield: 0.32%
+Underlying: ISRG | Expiration: 12-Dec-25 | Strike: 557.50 | Previous Close: 4.00 | Adjusted PE: 44.07 | Yield: 0.24%
+These are tier 2 options:
+Underlying: NTES | Expiration: 19-Dec-25 | Strike: 135.00 | Previous Close: 2.45 | Adjusted PE: 1.76 | Yield: 0.23%
+Underlying: COP | Expiration: 19-Dec-25 | Strike: 93.00 | Previous Close: 1.61 | Adjusted PE: 5.13 | Yield: 0.22%
+Underlying: REGN | Expiration: 19-Dec-25 | Strike: 690.00 | Previous Close: 11.00 | Adjusted PE: 7.64 | Yield: 0.20%
+Underlying: ACMR | Expiration: 19-Dec-25 | Strike: 34.00 | Previous Close: 0.60 | Adjusted PE: 7.72 | Yield: 0.22%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 34.00 | Previous Close: 1.73 | Adjusted PE: 7.72 | Yield: 0.20%
+Underlying: META | Expiration: 12-Dec-25 | Strike: 650.00 | Previous Close: 4.33 | Adjusted PE: 11.84 | Yield: 0.22%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 652.50 | Previous Close: 10.77 | Adjusted PE: 11.89 | Yield: 0.21%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 655.00 | Previous Close: 11.80 | Adjusted PE: 11.93 | Yield: 0.23%
+Underlying: POWL | Expiration: 20-Feb-26 | Strike: 320.00 | Previous Close: 29.80 | Adjusted PE: 19.00 | Yield: 0.19%
+Underlying: VEEV | Expiration: 19-Dec-25 | Strike: 230.00 | Previous Close: 3.50 | Adjusted PE: 26.62 | Yield: 0.19%
+These are tier 3 options:
+Underlying: COP | Expiration: 19-Dec-25 | Strike: 92.50 | Previous Close: 1.37 | Adjusted PE: 5.10 | Yield: 0.18%
+Underlying: COP | Expiration: 02-Jan-26 | Strike: 93.00 | Previous Close: 2.42 | Adjusted PE: 5.13 | Yield: 0.16%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 33.00 | Previous Close: 1.45 | Adjusted PE: 7.50 | Yield: 0.17%
+Underlying: ACLS | Expiration: 19-Dec-25 | Strike: 85.00 | Previous Close: 1.25 | Adjusted PE: 8.72 | Yield: 0.18%
+Underlying: META | Expiration: 12-Dec-25 | Strike: 647.50 | Previous Close: 3.50 | Adjusted PE: 11.80 | Yield: 0.18%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 650.00 | Previous Close: 9.36 | Adjusted PE: 11.84 | Yield: 0.18%
+Underlying: META | Expiration: 26-Dec-25 | Strike: 652.50 | Previous Close: 12.65 | Adjusted PE: 11.89 | Yield: 0.16%
+Underlying: META | Expiration: 26-Dec-25 | Strike: 655.00 | Previous Close: 13.95 | Adjusted PE: 11.93 | Yield: 0.18%
+Underlying: META | Expiration: 02-Jan-26 | Strike: 655.00 | Previous Close: 16.74 | Adjusted PE: 11.93 | Yield: 0.16%
+Underlying: ISRG | Expiration: 12-Dec-25 | Strike: 552.50 | Previous Close: 2.98 | Adjusted PE: 43.68 | Yield: 0.18%
+Underlying: ISRG | Expiration: 12-Dec-25 | Strike: 555.00 | Previous Close: 2.80 | Adjusted PE: 43.88 | Yield: 0.17%
+These are tier 4 options:
+Underlying: NVO | Expiration: 19-Dec-25 | Strike: 45.00 | Previous Close: 0.56 | Adjusted PE: 1.00 | Yield: 0.15%
+Underlying: NVO | Expiration: 26-Dec-25 | Strike: 45.00 | Previous Close: 0.75 | Adjusted PE: 1.00 | Yield: 0.14%
+Underlying: NVO | Expiration: 12-Dec-25 | Strike: 45.00 | Previous Close: 0.19 | Adjusted PE: 1.00 | Yield: 0.13%
+Underlying: NVO | Expiration: 16-Jan-26 | Strike: 45.00 | Previous Close: 1.55 | Adjusted PE: 1.00 | Yield: 0.13%
+Underlying: NVO | Expiration: 12-Dec-25 | Strike: 45.50 | Previous Close: 0.32 | Adjusted PE: 1.01 | Yield: 0.23%
+Underlying: NVO | Expiration: 19-Dec-25 | Strike: 45.50 | Previous Close: 0.70 | Adjusted PE: 1.01 | Yield: 0.19%
+Underlying: NVO | Expiration: 26-Dec-25 | Strike: 45.50 | Previous Close: 0.93 | Adjusted PE: 1.01 | Yield: 0.17%
+Underlying: NVO | Expiration: 12-Dec-25 | Strike: 46.00 | Previous Close: 0.51 | Adjusted PE: 1.02 | Yield: 0.36%
+Underlying: NVO | Expiration: 19-Dec-25 | Strike: 46.00 | Previous Close: 0.95 | Adjusted PE: 1.02 | Yield: 0.26%
+Underlying: NVO | Expiration: 26-Dec-25 | Strike: 46.00 | Previous Close: 1.15 | Adjusted PE: 1.02 | Yield: 0.21%
+Underlying: NVO | Expiration: 02-Jan-26 | Strike: 46.00 | Previous Close: 1.42 | Adjusted PE: 1.02 | Yield: 0.19%
+Underlying: NVO | Expiration: 09-Jan-26 | Strike: 46.00 | Previous Close: 1.66 | Adjusted PE: 1.02 | Yield: 0.17%
+Underlying: NVO | Expiration: 23-Jan-26 | Strike: 46.00 | Previous Close: 2.08 | Adjusted PE: 1.02 | Yield: 0.15%
+Underlying: NTES | Expiration: 16-Jan-26 | Strike: 135.00 | Previous Close: 4.70 | Adjusted PE: 1.76 | Yield: 0.13%
+Underlying: SSTK | Expiration: 15-May-26 | Strike: 17.50 | Previous Close: 2.76 | Adjusted PE: 3.64 | Yield: 0.15%
+Underlying: COP | Expiration: 12-Dec-25 | Strike: 92.00 | Previous Close: 0.45 | Adjusted PE: 5.07 | Yield: 0.16%
+Underlying: COP | Expiration: 19-Dec-25 | Strike: 92.00 | Previous Close: 1.12 | Adjusted PE: 5.07 | Yield: 0.15%
+Underlying: COP | Expiration: 26-Dec-25 | Strike: 93.00 | Previous Close: 1.78 | Adjusted PE: 5.13 | Yield: 0.16%
+Underlying: HAL | Expiration: 12-Dec-25 | Strike: 28.00 | Previous Close: 0.20 | Adjusted PE: 5.66 | Yield: 0.23%
+Underlying: HAL | Expiration: 19-Dec-25 | Strike: 28.00 | Previous Close: 0.39 | Adjusted PE: 5.66 | Yield: 0.17%
+Underlying: HAL | Expiration: 12-Dec-25 | Strike: 28.50 | Previous Close: 0.37 | Adjusted PE: 5.76 | Yield: 0.42%
+Underlying: HAL | Expiration: 19-Dec-25 | Strike: 28.50 | Previous Close: 0.63 | Adjusted PE: 5.76 | Yield: 0.27%
+Underlying: HAL | Expiration: 26-Dec-25 | Strike: 28.50 | Previous Close: 0.76 | Adjusted PE: 5.76 | Yield: 0.22%
+Underlying: HAL | Expiration: 09-Jan-26 | Strike: 28.50 | Previous Close: 0.96 | Adjusted PE: 5.76 | Yield: 0.16%
+Underlying: HAL | Expiration: 23-Jan-26 | Strike: 28.50 | Previous Close: 1.24 | Adjusted PE: 5.76 | Yield: 0.14%
+Underlying: SLB | Expiration: 19-Dec-25 | Strike: 31.50 | Previous Close: 0.38 | Adjusted PE: 6.16 | Yield: 0.15%
+Underlying: DBX | Expiration: 12-Dec-25 | Strike: 28.50 | Previous Close: 0.75 | Adjusted PE: 6.63 | Yield: 0.87%
+Underlying: OC | Expiration: 16-Jan-26 | Strike: 110.00 | Previous Close: 4.60 | Adjusted PE: 6.72 | Yield: 0.16%
+Underlying: DBX | Expiration: 19-Dec-25 | Strike: 29.00 | Previous Close: 0.45 | Adjusted PE: 6.75 | Yield: 0.19%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 31.00 | Previous Close: 1.09 | Adjusted PE: 7.04 | Yield: 0.13%
+Underlying: SLB | Expiration: 19-Dec-25 | Strike: 37.50 | Previous Close: 0.49 | Adjusted PE: 7.34 | Yield: 0.16%
+Underlying: SLB | Expiration: 12-Dec-25 | Strike: 37.50 | Previous Close: 0.18 | Adjusted PE: 7.34 | Yield: 0.15%
+Underlying: SLB | Expiration: 26-Dec-25 | Strike: 37.50 | Previous Close: 0.62 | Adjusted PE: 7.34 | Yield: 0.14%
+Underlying: SLB | Expiration: 12-Dec-25 | Strike: 38.00 | Previous Close: 0.33 | Adjusted PE: 7.44 | Yield: 0.28%
+Underlying: SLB | Expiration: 19-Dec-25 | Strike: 38.00 | Previous Close: 0.69 | Adjusted PE: 7.44 | Yield: 0.22%
+Underlying: SLB | Expiration: 26-Dec-25 | Strike: 38.00 | Previous Close: 0.90 | Adjusted PE: 7.44 | Yield: 0.20%
+Underlying: SLB | Expiration: 23-Jan-26 | Strike: 38.00 | Previous Close: 1.49 | Adjusted PE: 7.44 | Yield: 0.13%
+Underlying: REGN | Expiration: 19-Dec-25 | Strike: 685.00 | Previous Close: 7.60 | Adjusted PE: 7.58 | Yield: 0.14%
+Underlying: REGN | Expiration: 12-Dec-25 | Strike: 690.00 | Previous Close: 2.75 | Adjusted PE: 7.64 | Yield: 0.13%
+Underlying: ACMR | Expiration: 15-May-26 | Strike: 34.00 | Previous Close: 5.00 | Adjusted PE: 7.72 | Yield: 0.14%
+Underlying: LRN | Expiration: 19-Dec-25 | Strike: 60.00 | Previous Close: 0.75 | Adjusted PE: 7.87 | Yield: 0.15%
+Underlying: LRN | Expiration: 16-Jan-26 | Strike: 60.00 | Previous Close: 2.15 | Adjusted PE: 7.87 | Yield: 0.14%
+Underlying: XOM | Expiration: 12-Dec-25 | Strike: 117.00 | Previous Close: 0.52 | Adjusted PE: 8.53 | Yield: 0.15%
+Underlying: XOM | Expiration: 19-Dec-25 | Strike: 118.00 | Previous Close: 1.51 | Adjusted PE: 8.60 | Yield: 0.16%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 642.50 | Previous Close: 6.76 | Adjusted PE: 11.70 | Yield: 0.13%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 645.00 | Previous Close: 7.79 | Adjusted PE: 11.75 | Yield: 0.15%
+Underlying: META | Expiration: 12-Dec-25 | Strike: 645.00 | Previous Close: 2.84 | Adjusted PE: 11.75 | Yield: 0.15%
+Underlying: META | Expiration: 26-Dec-25 | Strike: 645.00 | Previous Close: 10.11 | Adjusted PE: 11.75 | Yield: 0.13%
+Underlying: META | Expiration: 19-Dec-25 | Strike: 647.50 | Previous Close: 8.10 | Adjusted PE: 11.80 | Yield: 0.16%
+Underlying: META | Expiration: 26-Dec-25 | Strike: 647.50 | Previous Close: 10.29 | Adjusted PE: 11.80 | Yield: 0.13%
+Underlying: META | Expiration: 26-Dec-25 | Strike: 650.00 | Previous Close: 12.11 | Adjusted PE: 11.84 | Yield: 0.16%
+Underlying: META | Expiration: 02-Jan-26 | Strike: 650.00 | Previous Close: 13.85 | Adjusted PE: 11.84 | Yield: 0.13%
+Underlying: META | Expiration: 09-Jan-26 | Strike: 655.00 | Previous Close: 19.30 | Adjusted PE: 11.93 | Yield: 0.14%
+Underlying: ENPH | Expiration: 19-Dec-25 | Strike: 29.00 | Previous Close: 0.38 | Adjusted PE: 12.03 | Yield: 0.16%

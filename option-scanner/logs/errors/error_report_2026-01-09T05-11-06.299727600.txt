@@ -1,0 +1,6 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2026-01-09T05:11:06.303718800
+Total Errors: 2
+
+Missing latest annual statements for ETHM: No annual income statement found
+Missing latest annual statements for BRR: No annual cash flow found

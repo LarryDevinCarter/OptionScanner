@@ -21,12 +21,10 @@ import java.util.*;
 public class BalanceSheetServiceImpl implements BalanceSheetService {
 
     private final BalanceSheetRepository balanceSheetRepository;
-    private final AssetRepository assetRepository;
-    private final IncomeStatementRepository incomeStatementRepository;
 
     @Override
     @Transactional
-    public void processBalanceSheets(String symbol, Map<String, Object> response, List<String> errorLog) {
+    public void processReport(String symbol, Map<String, Object> response, List<String> errorLog) {
         balanceSheetRepository.deleteBySymbol(symbol);
         balanceSheetRepository.flush();
         log.info("Deleted existing balance sheets for symbol: {}", symbol);
@@ -47,6 +45,21 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
         balanceSheetRepository.saveAll(balanceSheets);
         balanceSheetRepository.flush();
         log.info("Stored {} balance sheet records for symbol: {}", balanceSheets.size(), symbol);
+    }
+
+    @Override
+    public List<String> getSymbolsThatHaveData(List<String> symbols) {
+        return balanceSheetRepository.findSymbolsWithData(symbols);
+    }
+
+    @Override
+    public String getFunctionName() {
+        return "BALANCE_SHEET";
+    }
+
+    @Override
+    public String getReportDisplayName() {
+        return "balance sheets";
     }
 
     private List<BalanceSheet> parseReports(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
@@ -90,10 +103,5 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
         LocalDate date = LocalDate.now().minusDays(120);
         return balanceSheetRepository.findSymbolsNeedingUpdate(date, symbols);
-    }
-
-    @Override
-    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return balanceSheetRepository.findSymbolsWithData(symbols);
     }
 }

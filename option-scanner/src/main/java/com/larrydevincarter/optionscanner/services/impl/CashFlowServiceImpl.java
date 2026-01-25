@@ -20,11 +20,10 @@ import java.util.*;
 public class CashFlowServiceImpl implements CashFlowService {
 
     private final CashFlowRepository cashFlowRepository;
-    private final AssetRepository assetRepository;
 
     @Override
     @Transactional
-    public void processCashFlows(String symbol, Map<String, Object> response, List<String> errorLog) {
+    public void processReport(String symbol, Map<String, Object> response, List<String> errorLog) {
         cashFlowRepository.deleteBySymbol(symbol);
         cashFlowRepository.flush();
         log.info("Deleted existing cash flows for symbol: {}", symbol);
@@ -47,6 +46,21 @@ public class CashFlowServiceImpl implements CashFlowService {
         log.info("Stored {} cash flow records for symbol: {}", cashFlows.size(), symbol);
     }
 
+    @Override
+    public List<String> getSymbolsThatHaveData(List<String> symbols) {
+        return cashFlowRepository.findSymbolsWithData(symbols);
+    }
+
+    @Override
+    public String getFunctionName() {
+        return "CASH_FLOW";
+    }
+
+    @Override
+    public String getReportDisplayName() {
+        return "cash flows";
+    }
+
     private List<CashFlow> parseReports(List<Map<String, String>> reports, String symbol, String reportType, List<String> errorLog) {
         return FinancialReportParser.parseReportsWithFiscalDate(reports, symbol, reportType, errorLog, report -> {
             CashFlow cf = new CashFlow();
@@ -65,10 +79,5 @@ public class CashFlowServiceImpl implements CashFlowService {
     public List<String> getSymbolsNeedingUpdate(List<String> symbols) {
         LocalDate date = LocalDate.now().minusDays(120);
         return cashFlowRepository.findSymbolsNeedingUpdate(date, symbols);
-    }
-
-    @Override
-    public List<String> getSymbolsThatHaveStatements(List<String> symbols) {
-        return cashFlowRepository.findSymbolsWithData(symbols);
     }
 }

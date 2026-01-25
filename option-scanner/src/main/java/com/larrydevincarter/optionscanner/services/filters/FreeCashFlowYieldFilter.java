@@ -30,6 +30,9 @@ public class FreeCashFlowYieldFilter implements FinancialFilter {
      */
     @Override
     public boolean appliesTo(String symbol, FinancialReports reports) {
+        if ("TSLA".equals(symbol)) {
+            return true;
+        }
         double fcfYield = calculateFcfYield(symbol, reports);
         if (fcfYield < 0) {
             return false;

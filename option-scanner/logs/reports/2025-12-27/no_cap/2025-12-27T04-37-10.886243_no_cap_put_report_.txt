@@ -1,0 +1,63 @@
+Put Option Report - Option Scanner Revenue Data Crunch
+Timestamp: 2025-12-27T04:37:10.887242900
+Total Options: 59
+
+These are tier 1 options:
+Underlying: TSM | Expiration: 02-Jan-26 | Strike: 302.50 | Previous Close: 3.55 | Adjusted PE: 0.68 | Yield: 0.29%
+Underlying: TSM | Expiration: 09-Jan-26 | Strike: 302.50 | Previous Close: 6.35 | Adjusted PE: 0.68 | Yield: 0.23%
+Underlying: TSM | Expiration: 16-Jan-26 | Strike: 302.50 | Previous Close: 9.75 | Adjusted PE: 0.68 | Yield: 0.23%
+Underlying: COP | Expiration: 02-Jan-26 | Strike: 91.00 | Previous Close: 0.86 | Adjusted PE: 5.02 | Yield: 0.23%
+Underlying: ON | Expiration: 02-Jan-26 | Strike: 54.00 | Previous Close: 0.56 | Adjusted PE: 8.11 | Yield: 0.26%
+Underlying: ON | Expiration: 09-Jan-26 | Strike: 54.00 | Previous Close: 1.24 | Adjusted PE: 8.11 | Yield: 0.25%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 37.00 | Previous Close: 1.50 | Adjusted PE: 8.41 | Yield: 0.29%
+Underlying: REGN | Expiration: 02-Jan-26 | Strike: 775.00 | Previous Close: 7.40 | Adjusted PE: 8.58 | Yield: 0.24%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 40.00 | Previous Close: 2.47 | Adjusted PE: 9.09 | Yield: 0.44%
+Underlying: ALGN | Expiration: 02-Jan-26 | Strike: 157.50 | Previous Close: 1.75 | Adjusted PE: 13.11 | Yield: 0.28%
+Underlying: SNPS | Expiration: 02-Jan-26 | Strike: 475.00 | Previous Close: 5.53 | Adjusted PE: 19.27 | Yield: 0.29%
+Underlying: POWL | Expiration: 16-Jan-26 | Strike: 330.00 | Previous Close: 12.60 | Adjusted PE: 19.60 | Yield: 0.27%
+Underlying: CDNS | Expiration: 02-Jan-26 | Strike: 317.50 | Previous Close: 4.30 | Adjusted PE: 31.65 | Yield: 0.34%
+Underlying: CDNS | Expiration: 09-Jan-26 | Strike: 317.50 | Previous Close: 6.83 | Adjusted PE: 31.65 | Yield: 0.24%
+Underlying: ISRG | Expiration: 23-Jan-26 | Strike: 575.00 | Previous Close: 26.08 | Adjusted PE: 45.46 | Yield: 0.25%
+Underlying: NVDA | Expiration: 02-Jan-26 | Strike: 190.00 | Previous Close: 2.48 | Adjusted PE: 52.93 | Yield: 0.33%
+Underlying: NVDA | Expiration: 09-Jan-26 | Strike: 190.00 | Previous Close: 4.20 | Adjusted PE: 52.93 | Yield: 0.25%
+These are tier 2 options:
+Underlying: UMC | Expiration: 16-Jan-26 | Strike: 8.00 | Previous Close: 0.26 | Adjusted PE: 0.13 | Yield: 0.22%
+Underlying: TSM | Expiration: 02-Jan-26 | Strike: 300.00 | Previous Close: 2.55 | Adjusted PE: 0.67 | Yield: 0.21%
+Underlying: TSM | Expiration: 16-Jan-26 | Strike: 300.00 | Previous Close: 8.35 | Adjusted PE: 0.67 | Yield: 0.20%
+Underlying: COP | Expiration: 09-Jan-26 | Strike: 91.00 | Previous Close: 1.67 | Adjusted PE: 5.02 | Yield: 0.20%
+Underlying: ACMR | Expiration: 16-Jan-26 | Strike: 36.00 | Previous Close: 1.05 | Adjusted PE: 8.18 | Yield: 0.21%
+Underlying: ACLS | Expiration: 16-Jan-26 | Strike: 80.00 | Previous Close: 2.17 | Adjusted PE: 8.21 | Yield: 0.19%
+Underlying: REGN | Expiration: 09-Jan-26 | Strike: 780.00 | Previous Close: 15.30 | Adjusted PE: 8.63 | Yield: 0.22%
+Underlying: REGN | Expiration: 16-Jan-26 | Strike: 780.00 | Previous Close: 22.20 | Adjusted PE: 8.63 | Yield: 0.20%
+Underlying: META | Expiration: 02-Jan-26 | Strike: 662.50 | Previous Close: 5.80 | Adjusted PE: 12.07 | Yield: 0.22%
+Underlying: UTHR | Expiration: 16-Jan-26 | Strike: 500.00 | Previous Close: 14.20 | Adjusted PE: 12.61 | Yield: 0.20%
+Underlying: POWL | Expiration: 16-Jan-26 | Strike: 320.00 | Previous Close: 9.37 | Adjusted PE: 19.00 | Yield: 0.21%
+Underlying: POWL | Expiration: 20-Feb-26 | Strike: 320.00 | Previous Close: 24.05 | Adjusted PE: 19.00 | Yield: 0.20%
+Underlying: SNPS | Expiration: 02-Jan-26 | Strike: 470.00 | Previous Close: 3.70 | Adjusted PE: 19.06 | Yield: 0.20%
+Underlying: GOOGL | Expiration: 02-Jan-26 | Strike: 312.50 | Previous Close: 2.78 | Adjusted PE: 19.26 | Yield: 0.22%
+Underlying: SNPS | Expiration: 16-Jan-26 | Strike: 475.00 | Previous Close: 13.70 | Adjusted PE: 19.27 | Yield: 0.21%
+Underlying: INTU | Expiration: 09-Jan-26 | Strike: 672.50 | Previous Close: 11.70 | Adjusted PE: 27.50 | Yield: 0.19%
+Underlying: CDNS | Expiration: 09-Jan-26 | Strike: 315.00 | Previous Close: 5.98 | Adjusted PE: 31.40 | Yield: 0.21%
+Underlying: CDNS | Expiration: 02-Jan-26 | Strike: 315.00 | Previous Close: 2.55 | Adjusted PE: 31.40 | Yield: 0.20%
+Underlying: ISRG | Expiration: 16-Jan-26 | Strike: 575.00 | Previous Close: 17.00 | Adjusted PE: 45.46 | Yield: 0.21%
+Underlying: ISRG | Expiration: 30-Jan-26 | Strike: 575.00 | Previous Close: 25.45 | Adjusted PE: 45.46 | Yield: 0.19%
+Underlying: NVDA | Expiration: 02-Jan-26 | Strike: 187.50 | Previous Close: 1.57 | Adjusted PE: 52.24 | Yield: 0.21%
+Underlying: NVDA | Expiration: 09-Jan-26 | Strike: 187.50 | Previous Close: 3.25 | Adjusted PE: 52.24 | Yield: 0.19%
+Underlying: NVDA | Expiration: 16-Jan-26 | Strike: 190.00 | Previous Close: 5.50 | Adjusted PE: 52.93 | Yield: 0.21%
+These are tier 3 options:
+Underlying: SMLR | Expiration: 20-Feb-26 | Strike: 13.00 | Previous Close: 0.93 | Adjusted PE: 0.44 | Yield: 0.19%
+Underlying: SMLR | Expiration: 16-Jan-26 | Strike: 14.00 | Previous Close: 0.40 | Adjusted PE: 0.47 | Yield: 0.20%
+Underlying: SMLR | Expiration: 16-Jan-26 | Strike: 15.00 | Previous Close: 0.60 | Adjusted PE: 0.51 | Yield: 0.28%
+Underlying: SMLR | Expiration: 16-Jan-26 | Strike: 16.00 | Previous Close: 1.00 | Adjusted PE: 0.54 | Yield: 0.44%
+Underlying: TSM | Expiration: 16-Jan-26 | Strike: 297.50 | Previous Close: 7.50 | Adjusted PE: 0.67 | Yield: 0.18%
+Underlying: TSM | Expiration: 09-Jan-26 | Strike: 300.00 | Previous Close: 5.00 | Adjusted PE: 0.67 | Yield: 0.19%
+Underlying: TSM | Expiration: 23-Jan-26 | Strike: 300.00 | Previous Close: 9.40 | Adjusted PE: 0.67 | Yield: 0.17%
+Underlying: COP | Expiration: 16-Jan-26 | Strike: 91.00 | Previous Close: 2.07 | Adjusted PE: 5.02 | Yield: 0.16%
+Underlying: ON | Expiration: 16-Jan-26 | Strike: 53.00 | Previous Close: 1.34 | Adjusted PE: 7.96 | Yield: 0.18%
+Underlying: ON | Expiration: 09-Jan-26 | Strike: 53.00 | Previous Close: 0.84 | Adjusted PE: 7.96 | Yield: 0.17%
+Underlying: ACMR | Expiration: 20-Feb-26 | Strike: 36.00 | Previous Close: 2.30 | Adjusted PE: 8.18 | Yield: 0.17%
+Underlying: REGN | Expiration: 16-Jan-26 | Strike: 765.00 | Previous Close: 17.10 | Adjusted PE: 8.47 | Yield: 0.16%
+Underlying: REGN | Expiration: 16-Jan-26 | Strike: 770.00 | Previous Close: 18.77 | Adjusted PE: 8.52 | Yield: 0.17%
+Underlying: LRN | Expiration: 16-Jan-26 | Strike: 65.00 | Previous Close: 1.65 | Adjusted PE: 8.53 | Yield: 0.18%
+Underlying: LRN | Expiration: 20-Mar-26 | Strike: 65.00 | Previous Close: 6.00 | Adjusted PE: 8.53 | Yield: 0.16%
+Underlying: XOM | Expiration: 02-Jan-26 | Strike: 119.00 | Previous Close: 0.83 | Adjusted PE: 8.67 | Yield: 0.17%

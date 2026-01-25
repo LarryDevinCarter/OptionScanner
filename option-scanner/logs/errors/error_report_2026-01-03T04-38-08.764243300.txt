@@ -1,0 +1,7 @@
+Error Report - Option Scanner Revenue Data Fetch
+Timestamp: 2026-01-03T04:38:08.768234500
+Total Errors: 3
+
+Missing latest annual statements for ETHM: No annual income statement found
+Missing latest annual statements for BRR: No annual cash flow found
+Missing or empty price for symbol: PNFP

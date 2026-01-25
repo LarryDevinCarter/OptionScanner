@@ -131,12 +131,18 @@ public class OptionScannerApplication {
 //		System.out.println(symbols2.size() + " symbols meet filers.");
 //		System.out.println(symbols2);
 
-//		List<String> symbol = new ArrayList<>(List.of("IGT", "TSLA"));
-//		assetService.fetchAndStoreStockPrices(errorLog, symbol);
-//		assetService.fetchAndStoreOptions(errorLog, symbol);
+//		symbols = incomeStatementService.getSymbolsThatHaveStatements(symbols);
+//		symbols = earningsService.getSymbolsThatHaveStatements(symbols);
+//		symbols = balanceSheetService.getSymbolsThatHaveStatements(symbols);
+//		symbols = cashFlowService.getSymbolsThatHaveStatements(symbols);
+
+
+//		List<String> symbols = new ArrayList<>(List.of("IGT", "TSLA", "TSM"));
+//		assetService.fetchAndStoreStockPrices(errorLog, symbols);
+//		assetService.fetchAndStoreOptions(errorLog, symbols);
 //		assetService.writeErrorReport();
 
-//		Double maxStrike = 16.00;
+//		Double maxStrike = 15.50;
 //		reportService.generateReport(maxStrike);
 //
 //		maxStrike = 400.00;
@@ -144,12 +150,12 @@ public class OptionScannerApplication {
 
 		List<SoldOptionDTO> sampleDtos = List.of(
 				new SoldOptionDTO() {{
-					setUnderlyingSymbol("WOLF");
-					setStrikePrice(0.50);
-					setExpirationDate(LocalDate.of(2026, 1, 16));
+					setUnderlyingSymbol("UMC");
+					setStrikePrice(11.00);
+					setExpirationDate(LocalDate.of(2026, 2, 20));
 					setOptionType("put");
-					setSoldDate(LocalDate.of(2025, 8, 8));
-					setSoldPrice(0.20);
+					setSoldDate(LocalDate.of(2026, 1, 22));
+					setSoldPrice(0.90);
 				}},
 //				new SoldOptionDTO() {{
 //					setUnderlyingSymbol("LITS");
@@ -186,11 +192,11 @@ public class OptionScannerApplication {
 		);
 		reportService.generateSoldOptionsReports(sampleDtos);
 
-		OwnedAssetDTO dto = new OwnedAssetDTO() {{
-			setSymbol("DCGO");
-			setDollarCostAverage(1.50);
-		}};
-		optionService.fetchCoveredCallOptions(dto);
+//		OwnedAssetDTO dto = new OwnedAssetDTO() {{
+//			setSymbol("UMC");
+//			setDollarCostAverage(11.00);
+//		}};
+//		optionService.fetchCoveredCallOptions(dto);
 	}
 
 }

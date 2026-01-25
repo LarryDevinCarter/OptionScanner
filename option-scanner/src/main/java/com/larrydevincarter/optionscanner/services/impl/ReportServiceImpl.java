@@ -396,6 +396,7 @@ public class ReportServiceImpl implements ReportService {
             double metric = -1.0;
             if (filter instanceof RevenueGrowthFilter revenueFilter) {
                 metric = revenueFilter.calculateCagr(tslaReports.getIncomeStatements());
+                log.info("Revenue CAGR for TSLA is {}", metric);
                 if (metric >= 0 && metric <= revenueFilter.getCagrThreshold()) {
                     double newThreshold = metric - EPSILON;
                     revenueFilter.setCagrThreshold(newThreshold);
@@ -403,6 +404,7 @@ public class ReportServiceImpl implements ReportService {
                 }
             } else if (filter instanceof EpsGrowthFilter epsFilter) {
                 metric = epsFilter.calculateCagr(tslaReports.getEarnings());
+                log.info("EPS CAGR for TSLA is {}", metric);
                 if (metric >= 0 && metric <= epsFilter.getCagrThreshold()) {
                     double newThreshold = metric - EPSILON;
                     epsFilter.setCagrThreshold(newThreshold);
@@ -410,6 +412,7 @@ public class ReportServiceImpl implements ReportService {
                 }
             } else if (filter instanceof RoicFilter roicFilter) {
                 metric = roicFilter.calculateAverageRoic(BENCHMARK_SYMBOL, tslaReports);
+                log.info("ROIC for TSLA is {}", metric);
                 if (metric >= 0 && metric <= roicFilter.getRoicThreshold()) {
                     double newThreshold = metric - EPSILON;
                     roicFilter.setRoicThreshold(newThreshold);
@@ -417,6 +420,7 @@ public class ReportServiceImpl implements ReportService {
                 }
             } else if (filter instanceof DebtToEquityFilter debtFilter) {
                 metric = debtFilter.calculateRatio(BENCHMARK_SYMBOL, tslaReports.getBalanceSheets());
+                log.info("Debt-to-Equity for TSLA is {}", metric);
                 if (metric >= 0 && metric >= debtFilter.getDebtToEquityThreshold()) {
                     double newThreshold = metric + EPSILON;
                     debtFilter.setDebtToEquityThreshold(newThreshold);
@@ -424,6 +428,7 @@ public class ReportServiceImpl implements ReportService {
                 }
             } else if (filter instanceof FreeCashFlowYieldFilter fcfFilter) {
                 metric = fcfFilter.calculateFcfYield(BENCHMARK_SYMBOL, tslaReports);
+                log.info("FCF Yield for TSLA is {}", metric);
                 if (metric >= 0 && metric <= fcfFilter.getFcfYieldThreshold()) {
                     double newThreshold = metric - EPSILON;
                     fcfFilter.setFcfYieldThreshold(newThreshold);
@@ -431,6 +436,7 @@ public class ReportServiceImpl implements ReportService {
                 }
             } else if (filter instanceof OperatingMarginFilter marginFilter) {
                 metric = marginFilter.calculateAverageMargin(tslaReports.getIncomeStatements());
+                log.info("Operating Margin for TSLA is {}", metric);
                 if (metric >= 0 && metric <= marginFilter.getMarginThreshold()) {
                     double newThreshold = metric - EPSILON;
                     marginFilter.setMarginThreshold(newThreshold);
