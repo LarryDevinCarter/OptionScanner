@@ -48,6 +48,7 @@ public class AssetServiceImpl implements AssetService {
     private final DividendService dividendService;
     private final OptionService optionService;
     private final ReportService reportService;
+    private final UpdateStatusService updateStatusService;
     private final RestTemplate restTemplate;
 
     @Value("${alpaca.api.key}")
@@ -77,6 +78,8 @@ public class AssetServiceImpl implements AssetService {
         errorLog.clear();
         LocalDateTime pullStartTime = LocalDateTime.now();
         log.info("Starting fetching tradable assets");
+
+        updateStatusService.setUpdating(true);
 
         //TODO: Remove before merge
 //        Set<String> testSymbols = new HashSet<>(Arrays.asList("TSLA", "TSM", "WOLF", "META"));
@@ -222,8 +225,11 @@ public class AssetServiceImpl implements AssetService {
         sleepBetweenStages();
 
         fetchAndStoreOptions(errorLog, symbols);
+        updateStatusService.setUpdating(false);
+        log.info("Database update completed (flag reset)");
         writeErrorReport();
         reportService.generateReport(null);
+
     }
 
     @Transactional
