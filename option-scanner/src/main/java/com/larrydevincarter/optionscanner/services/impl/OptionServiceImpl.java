@@ -293,7 +293,6 @@ public class OptionServiceImpl implements OptionService {
         }
     }
 
-    // Helper – extract duplicate calendar fetch into a reusable private method
     private Set<LocalDate> fetchTradingCalendar() {
         Set<LocalDate> days = new HashSet<>();
         try {

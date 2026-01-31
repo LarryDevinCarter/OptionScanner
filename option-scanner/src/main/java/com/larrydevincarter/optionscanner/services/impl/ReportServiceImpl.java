@@ -252,7 +252,7 @@ public class ReportServiceImpl implements ReportService {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MMM-yy");
 
             for (Option call : meaningfulCalls) {
-                String line = String.format("%-10s | %12s | %8.2f | %12.2f | %6.3f",
+                String line = String.format("%-10s | %12s | %8.2f | %14.2f | %6.2f%%",
                         call.getUnderlyingSymbol(),
                         call.getExpirationDate().format(fmt).toUpperCase(),
                         call.getStrike(),

@@ -142,10 +142,10 @@ public class OptionScannerApplication {
 //		assetService.fetchAndStoreOptions(errorLog, symbols);
 //		assetService.writeErrorReport();
 
-//		Double maxStrike = 15.50;
+//		Double maxStrike = 19.0;
 //		reportService.generateReport(maxStrike);
 //
-//		maxStrike = 400.00;
+//		maxStrike = 445.00;
 //		reportService.generateReport(maxStrike);
 
 		List<SoldOptionDTO> sampleDtos = List.of(
@@ -154,8 +154,8 @@ public class OptionScannerApplication {
 					setStrikePrice(11.00);
 					setExpirationDate(LocalDate.of(2026, 2, 20));
 					setOptionType("put");
-					setSoldDate(LocalDate.of(2026, 1, 22));
-					setSoldPrice(0.90);
+					setSoldDate(LocalDate.of(2026, 1, 28));
+					setSoldPrice(0.75);
 				}},
 //				new SoldOptionDTO() {{
 //					setUnderlyingSymbol("LITS");
@@ -194,7 +194,7 @@ public class OptionScannerApplication {
 
 //		OwnedAssetDTO dto = new OwnedAssetDTO() {{
 //			setSymbol("UMC");
-//			setDollarCostAverage(11.00);
+//			setDollarCostAverage(12.00);
 //		}};
 //		optionService.fetchCoveredCallOptions(dto);
 	}
