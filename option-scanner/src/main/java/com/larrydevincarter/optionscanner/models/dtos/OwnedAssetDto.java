@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class OwnedAssetDTO {
+public class OwnedAssetDto {
 
     @NotBlank(message = "Symbol is required")
     @Size(min = 1, max = 10)

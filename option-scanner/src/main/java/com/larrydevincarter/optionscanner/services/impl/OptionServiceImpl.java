@@ -1,6 +1,6 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
-import com.larrydevincarter.optionscanner.models.dtos.OwnedAssetDTO;
+import com.larrydevincarter.optionscanner.models.dtos.OwnedAssetDto;
 import com.larrydevincarter.optionscanner.models.entities.Asset;
 import com.larrydevincarter.optionscanner.models.entities.Option;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
@@ -185,7 +185,7 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     @Transactional
-    public void fetchCoveredCallOptions(OwnedAssetDTO dto) {
+    public void fetchCoveredCallOptions(OwnedAssetDto dto) {
         String symbol = dto.getSymbol().toUpperCase();
         Double dca = dto.getDollarCostAverage();
 

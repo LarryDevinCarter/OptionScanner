@@ -2,7 +2,6 @@ package com.larrydevincarter.optionscanner.models.dtos;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
@@ -13,7 +12,7 @@ import java.time.LocalDate;
  * expiration date, and sale information.
  */
 @Data
-public class SoldOptionDTO {
+public class SoldOptionDto {
     @NotNull
     private String underlyingSymbol;
     @NotNull

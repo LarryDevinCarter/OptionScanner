@@ -1,7 +1,7 @@
 package com.larrydevincarter.optionscanner.services.impl;
 
 import com.larrydevincarter.optionscanner.models.FinancialReports;
-import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDTO;
+import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDto;
 import com.larrydevincarter.optionscanner.models.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.*;
@@ -202,8 +202,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void generateSoldOptionsReports(List<SoldOptionDTO> dtos) {
-        for (SoldOptionDTO dto : dtos) {
+    public void generateSoldOptionsReports(List<SoldOptionDto> dtos) {
+        for (SoldOptionDto dto : dtos) {
             generateSoldOptionReport(dto);
         }
     }
@@ -270,7 +270,7 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    private void generateSoldOptionReport(SoldOptionDTO dto) {
+    private void generateSoldOptionReport(SoldOptionDto dto) {
         List<LocalDate> tradingDays = getTradingDays(dto.getSoldDate(), dto.getExpirationDate());
         int totalTradingDays = tradingDays.size();
         if (totalTradingDays == 0) {

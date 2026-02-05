@@ -1,10 +1,8 @@
 package com.larrydevincarter.optionscanner;
 
-import com.larrydevincarter.optionscanner.models.dtos.OwnedAssetDTO;
-import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDTO;
+import com.larrydevincarter.optionscanner.models.dtos.SoldOptionDto;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.services.*;
-import com.larrydevincarter.optionscanner.services.filters.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,8 +144,8 @@ public class OptionScannerApplication {
 //		maxStrike = 445.00;
 //		reportService.generateReport(maxStrike);
 
-		List<SoldOptionDTO> sampleDtos = List.of(
-				new SoldOptionDTO() {{
+		List<SoldOptionDto> sampleDtos = List.of(
+				new SoldOptionDto() {{
 					setUnderlyingSymbol("UMC");
 					setStrikePrice(11.00);
 					setExpirationDate(LocalDate.of(2026, 2, 20));
@@ -173,7 +169,7 @@ public class OptionScannerApplication {
 //					setSoldDate(LocalDate.of(2025, 9, 5));
 //					setSoldPrice(0.10);
 //				}},
-				new SoldOptionDTO() {{
+				new SoldOptionDto() {{
 					setUnderlyingSymbol("NPWR");
 					setStrikePrice(1.00);
 					setExpirationDate(LocalDate.of(2027, 1, 15));
