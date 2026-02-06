@@ -183,7 +183,6 @@ public class FilterServiceImpl implements FilterService {
                     return price != null && price <= maxPrice;
                 })
                 .sorted()
-                .limit(dto.getLimit())
                 .collect(Collectors.toList());
     }
 }
