@@ -163,7 +163,7 @@ public class FilterServiceImpl implements FilterService {
         filters.add(new RevenueGrowthFilter(defaultCagrThreshold - adjustment, revenueYears));
         filters.add(new EpsGrowthFilter(epsCagrThreshold - adjustment, epsYears));
         filters.add(new RoicFilter(roicThreshold - adjustment, roicYears, defaultTaxRate));
-        filters.add(new DebtToEquityFilter(debtToEquityThreshold - debtAdjustment));
+        filters.add(new DebtToEquityFilter(debtToEquityThreshold + debtAdjustment));
         filters.add(new FreeCashFlowYieldFilter(fcfYieldThreshold - adjustment));
         filters.add(new OperatingMarginFilter(operatingMarginThreshold - adjustment, operatingMarginYears));
 

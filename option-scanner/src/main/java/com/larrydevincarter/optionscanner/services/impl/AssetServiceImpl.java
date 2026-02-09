@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -381,7 +380,6 @@ public class AssetServiceImpl implements AssetService {
         log.info("Starting fetching put options for {} assets", assets.size());
         LocalDate today = LocalDate.now();
         Set<LocalDate> tradingDays = marketService.getTradingDays();
-
 
         LocalDate previousTradingDay = tradingDays.stream()
                 .filter(d -> d.isBefore(today))

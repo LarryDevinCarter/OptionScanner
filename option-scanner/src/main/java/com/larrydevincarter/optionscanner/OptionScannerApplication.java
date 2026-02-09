@@ -107,16 +107,16 @@ public class OptionScannerApplication {
 //		symbols = dividendService.getSymbolsThatHaveDividends(symbols);
 //		System.out.println(symbols.size() + " symbols with dividends being passed to the next round.");
 
-		LocalDateTime startTime = LocalDateTime.now();
-		assetService.fetchTradableAssets();
-		LocalDateTime endTime = LocalDateTime.now();
-		Duration duration = Duration.between(startTime, endTime);
-		long hours = duration.toHours();
-		long minutes = duration.toMinutesPart();
-		long seconds = duration.toSecondsPart();
-		long millis = duration.toMillisPart();
-
-		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
+//		LocalDateTime startTime = LocalDateTime.now();
+//		assetService.fetchTradableAssets();
+//		LocalDateTime endTime = LocalDateTime.now();
+//		Duration duration = Duration.between(startTime, endTime);
+//		long hours = duration.toHours();
+//		long minutes = duration.toMinutesPart();
+//		long seconds = duration.toSecondsPart();
+//		long millis = duration.toMillisPart();
+//
+//		System.out.println("fetchTradableAssets took " + hours + "h " + minutes + "m " + seconds + "s " + millis + "ms");
 
 
 //		List<FinancialFilter> filters = List.of(

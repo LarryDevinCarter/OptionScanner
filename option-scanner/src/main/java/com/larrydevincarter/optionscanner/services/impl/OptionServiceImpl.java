@@ -5,10 +5,7 @@ import com.larrydevincarter.optionscanner.models.entities.Asset;
 import com.larrydevincarter.optionscanner.models.entities.Option;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.OptionRepository;
-import com.larrydevincarter.optionscanner.services.FilterService;
-import com.larrydevincarter.optionscanner.services.OptionService;
-import com.larrydevincarter.optionscanner.services.ReportService;
-import com.larrydevincarter.optionscanner.services.TastytradeAuthService;
+import com.larrydevincarter.optionscanner.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +30,7 @@ public class OptionServiceImpl implements OptionService {
     private final AssetRepository assetRepository;
     private final RestTemplate restTemplate;
     private final FilterService filterService;
+    private final MarketService marketService;
     private final ReportService reportService;
     private final TastytradeAuthService tastytradeAuthService;
 
@@ -49,8 +47,22 @@ public class OptionServiceImpl implements OptionService {
     private static final long DELAY_MS = 60_000;
     private static final int MAX_RETRIES = 3;
 
+    private record QuoteAndGreeks(
+            Double lastPrice,
+            Double delta
+    ) {}
+
     @Override
     public void fetchAndStoreOptionsForSymbol(String symbol, Set<LocalDate> tradingDays) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate previousTradingDay = tradingDays.stream()
+                .filter(d -> d.isBefore(today))
+                .max(LocalDate::compareTo)
+                .orElse(today.minusDays(1));
+
+        log.debug("Previous trading day determined as: {}", previousTradingDay);
+
         Optional<Asset> optionalAsset = assetRepository.findBySymbol(symbol);
         if (optionalAsset.isEmpty()) {
             log.warn("Asset not found for symbol: {}", symbol);
@@ -114,6 +126,9 @@ public class OptionServiceImpl implements OptionService {
         optionRepository.deleteByUnderlyingSymbolAndOptionType(symbol, "put");
 
         LocalDate now = LocalDate.now();
+
+        List<Option> pendingOptions = new ArrayList<>();
+        List<String> occSymbols = new ArrayList<>();
 
         for (Map<String, Object> expGroup : expirations) {
             String expirationStr = (String) expGroup.get("expiration-date");
@@ -187,26 +202,52 @@ public class OptionServiceImpl implements OptionService {
                 option.setStrike(strikePrice);
                 option.setOptionType("put");
 
-                log.info("Option before fetchQ&G " + option);
-                fetchQuoteAndGreeks(option, token);
-                log.info("Option after fetchQ&G " + option);
+                pendingOptions.add(option);
+                occSymbols.add(putSymbol);
+            }
+        }
+        if (!occSymbols.isEmpty()) {
+            Map<String, QuoteAndGreeks> batchData = fetchBatchQuotesAndGreeks(occSymbols, token, previousTradingDay);
+
+            List<Option> optionsToSave = new ArrayList<>();
+
+            for (Option option : pendingOptions) {
+                String sym = option.getSymbol();
+                QuoteAndGreeks symData = batchData.get(sym);
+
+                if (symData == null || symData.lastPrice() == null || symData.lastPrice() <= 0) {
+                    log.warn("No valid quote data for {} - skipping save", sym);
+                    continue;  // or save with nulls if you prefer
+                }
+
+                option.setPreviousClose(symData.lastPrice());
+                option.setDelta(symData.delta());
+
+                // Add more when you expand the record:
+                // option.setGamma(symData.gamma());
+                // ...
+
                 Double adjustedEps = asset.getAdjustedEarningsPerShare();
                 if (adjustedEps != null && adjustedEps != 0) {
-                    option.setAdjustedPe(strikePrice / adjustedEps);
+                    option.setAdjustedPe(option.getStrike() / adjustedEps);
                 }
-                log.info("Option after adjustedEPS " + option);
 
-                int tradingDaysRemaining = calculateTradingDays(now, expiration, tradingDays);
-                if (option.getPreviousClose() != null && strikePrice > 0 && tradingDaysRemaining > 0) {
+                int tradingDaysRemaining = calculateTradingDays(now, option.getExpirationDate(), tradingDays);
+                if (option.getPreviousClose() != null && option.getStrike() > 0 && tradingDaysRemaining > 0) {
                     double adjustedPremium = option.getPreviousClose() - 0.01;
-                    double dailyYield = (adjustedPremium / strikePrice) * 100.0 / tradingDaysRemaining;
+                    double dailyYield = (adjustedPremium / option.getStrike()) * 100.0 / tradingDaysRemaining;
                     option.setYield(dailyYield);
                 }
 
-                log.info("Option after yield " + option);
                 option.setLastUpdated(LocalDateTime.now());
                 option.setId(UUID.randomUUID().toString());
-                optionRepository.save(option);
+
+                optionsToSave.add(option);
+            }
+
+            if (!optionsToSave.isEmpty()) {
+                optionRepository.saveAll(optionsToSave);
+                log.info("Stored {} put options for {} after batch fetch", optionsToSave.size(), symbol);
             }
         }
 
@@ -214,72 +255,112 @@ public class OptionServiceImpl implements OptionService {
         log.info("Stored {} put options for {}", storedCount, symbol);
     }
 
-    private void fetchQuoteAndGreeks(Option option, String token) {
-        String occSymbol = option.getSymbol();  // Use OCC symbol from option (e.g., "TSLA 260209P00347500")
-        String quoteUrl = tastyBaseUrl + "/market-data/by-type?equity-option=" + occSymbol;
+    private Map<String, QuoteAndGreeks> fetchBatchQuotesAndGreeks(List<String> occSymbols, String token, LocalDate previousTradingDay) {
+        Map<String, QuoteAndGreeks> result = new HashMap<>();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        if (occSymbols.isEmpty()) return result;
 
-        try {
-            ResponseEntity<Map> quoteResp = restTemplate.exchange(quoteUrl, HttpMethod.GET, entity, Map.class);
-            if (!quoteResp.getStatusCode().is2xxSuccessful() || quoteResp.getBody() == null) {
-                log.warn("Failed to fetch quote for {}: status={}", occSymbol, quoteResp.getStatusCode());
-                return;
+        final int batchSize = 80;
+
+        for (int start = 0; start < occSymbols.size(); start += batchSize) {
+            int end = Math.min(start + batchSize, occSymbols.size());
+            List<String> batch = occSymbols.subList(start, end);
+            String commaSeparated = String.join(",", batch);
+
+            String url = tastyBaseUrl + "/market-data/by-type?equity-option=" + commaSeparated;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+            try {
+                ResponseEntity<Map> response = restTemplate.exchange(
+                        url, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+
+                if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                    log.warn("Batch failed for {} symbols: status={}", batch.size(), response.getStatusCode());
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                Map<String, Object> body = response.getBody();
+                @SuppressWarnings("unchecked")
+                Map<String, Object> dataMap = (Map<String, Object>) body.get("data");
+                if (dataMap == null) continue;
+
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> items = (List<Map<String, Object>>) dataMap.get("items");
+                if (items == null || items.isEmpty()) continue;
+
+                for (Map<String, Object> item : items) {
+
+                    String sym = (String) item.get("symbol");
+                    if (sym == null || sym.isBlank()) continue;
+
+                    Double lastPrice         = parseDouble(item.get("last"), sym, "last");
+                    Double prevClose         = parseDouble(item.get("prev-close"), sym, "prev-close");
+                    String prevCloseDateStr  = (String) item.get("prev-close-date");
+
+                    LocalDate prevCloseDate = (prevCloseDateStr != null)
+                            ? LocalDate.parse(prevCloseDateStr)
+                            : null;
+
+                    Double openInterest = parseDouble(item.get("open-interest"), sym, "open-interest");
+                    boolean hasSomeLiquidity = (openInterest == null || openInterest > 0);
+
+                    boolean tradedToday =
+                            (lastPrice != null && lastPrice > 0) &&
+                                    (prevClose != null && prevClose > 0) &&
+                                    !lastPrice.equals(prevClose);
+
+                    boolean tradedLastTradingDay =
+                            (prevClose != null && prevClose > 0) &&
+                                    (prevCloseDate != null) &&
+                                    prevCloseDate.equals(previousTradingDay);
+
+                    if (!tradedToday && !tradedLastTradingDay) {
+                        log.debug("Skipping {} - no recent activity (last={}, prevClose={}, prevDate={})",
+                                sym, lastPrice, prevClose, prevCloseDateStr);
+                        continue;
+                    }
+
+                    if (lastPrice == null || lastPrice <= 0) {
+                        log.debug("Skipping {} - no valid last price", sym);
+                        continue;
+                    }
+
+                    if (!hasSomeLiquidity) {
+                        log.debug("Skipping {} - zero or missing open interest ({})", sym, openInterest);
+                        continue;
+                    }
+
+                    result.put(sym, new QuoteAndGreeks(lastPrice,
+                            parseDouble(item.get("delta"), sym, "delta")
+                    ));
+                }
+
+            } catch (Exception e) {
+                log.warn("Batch fetch failed for {} symbols: {}", batch.size(), e.getMessage());
             }
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> body = quoteResp.getBody();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> data = (Map<String, Object>) body.get("data");
-            if (data == null || data.isEmpty()) {
-                log.debug("No data in quote response for {}", occSymbol);
-                return;
-            }
-
-            // Response structure: data → items → [0] → {quote fields + "greeks": {map}}
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
-            if (items == null || items.isEmpty()) {
-                log.debug("No items in quote data for {}", occSymbol);
-                return;
-            }
-
-            Map<String, Object> quoteData = items.get(0);  // Single symbol → first (only) item
-            if (quoteData == null) return;
-
-            // Parse last-price (use "last-price" or fallback to mark/mid)
-            Object lastPriceObj = quoteData.get("last");
-            double lastPrice = parseDouble(lastPriceObj, occSymbol, "last");
-            option.setPreviousClose(lastPrice);  // Or use "close-price" if you mean prior session close
-
-            // Parse greeks map
-            option.setDelta(parseDouble(quoteData.get("delta"), occSymbol, "delta"));
-            // Add others as needed: gamma, theta, vega, rho, implied-volatility, etc.
-            // e.g., option.setGamma(parseDouble(greeks.get("gamma"), occSymbol, "gamma"));
-
-        } catch (Exception e) {
-            log.warn("Failed to fetch quote/Greeks for {}: {}", occSymbol, e.getMessage());
         }
+
+        return result;
     }
 
-    // Helper to parse potential String/Double/Number
-    private double parseDouble(Object value, String symbol, String field) {
-        if (value == null) return 0.0;
+    private Double parseDouble(Object value, String symbol, String field) {
+        if (value == null) return null;
         try {
             if (value instanceof Number n) {
                 return n.doubleValue();
-            } else if (value instanceof String s) {
+            } else if (value instanceof String s && !s.isBlank()) {
                 return Double.parseDouble(s);
             } else {
-                log.warn("Unexpected type for {} '{}' in {}: {}", field, value, symbol, value.getClass().getName());
-                return 0.0;
+                log.debug("Unexpected type or empty for {} '{}' in {}: {}", field, value, symbol, value.getClass());
+                return null;
             }
         } catch (NumberFormatException e) {
             log.warn("Invalid format for {} '{}' in {}: {}", field, value, symbol, e.getMessage());
-            return 0.0;
+            return null;
         }
     }
 
