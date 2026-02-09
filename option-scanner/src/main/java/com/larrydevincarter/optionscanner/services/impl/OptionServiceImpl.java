@@ -5,15 +5,14 @@ import com.larrydevincarter.optionscanner.models.entities.Asset;
 import com.larrydevincarter.optionscanner.models.entities.Option;
 import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.OptionRepository;
+import com.larrydevincarter.optionscanner.services.FilterService;
 import com.larrydevincarter.optionscanner.services.OptionService;
 import com.larrydevincarter.optionscanner.services.ReportService;
+import com.larrydevincarter.optionscanner.services.TastytradeAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -32,7 +32,9 @@ public class OptionServiceImpl implements OptionService {
     private final OptionRepository optionRepository;
     private final AssetRepository assetRepository;
     private final RestTemplate restTemplate;
+    private final FilterService filterService;
     private final ReportService reportService;
+    private final TastytradeAuthService tastytradeAuthService;
 
     @Value("${alpaca.api.key}")
     private String alpacaApiKey;
@@ -40,10 +42,246 @@ public class OptionServiceImpl implements OptionService {
     private String apiSecret;
     @Value("${alpaca.api.base-url}")
     private String alpacaBaseUrl;
+    @Value("${tastytrade.api.base-url}")
+    private String tastyBaseUrl;
 
     private static final int ALPACA_CALLS_PER_MINUTE = 190;
     private static final long DELAY_MS = 60_000;
     private static final int MAX_RETRIES = 3;
+
+    @Override
+    public void fetchAndStoreOptionsForSymbol(String symbol, Set<LocalDate> tradingDays) {
+        Optional<Asset> optionalAsset = assetRepository.findBySymbol(symbol);
+        if (optionalAsset.isEmpty()) {
+            log.warn("Asset not found for symbol: {}", symbol);
+            return;
+        }
+        Asset asset = optionalAsset.get();
+        Double currentPrice = asset.getCurrentPrice();
+        if (currentPrice == null || currentPrice <= 0) {
+            log.warn("No valid current price for {} - skipping options fetch", symbol);
+            return;
+        }
+
+        int holdStreak = filterService.getCurrentHoldStreak();
+        double remainingLiquidity = filterService.getCurrentRemainingLiquidity();
+        double maxStrike = remainingLiquidity / 100.0;
+        double maxDte = 45 + (holdStreak * 7);
+
+        String token = tastytradeAuthService.getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        String chainUrl = tastyBaseUrl + "/option-chains/" + symbol + "/nested";
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> chainResponse;
+        try {
+            chainResponse = restTemplate.exchange(chainUrl, HttpMethod.GET, entity, Map.class);
+        } catch (Exception e) {
+            log.warn("Exception fetching chain for {}: {}", symbol, e.getMessage());
+            return;
+        }
+
+        if (!chainResponse.getStatusCode().is2xxSuccessful() || chainResponse.getBody() == null) {
+            log.warn("Failed to fetch option chain for {}: status={}", symbol, chainResponse.getStatusCode());
+            return;
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = chainResponse.getBody();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> data = (Map<String, Object>) body.get("data");
+        if (data == null) return;
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
+        if (items == null || items.isEmpty()) {
+            log.info("No option chain data for {}", symbol);
+            return;
+        }
+
+        Map<String, Object> chainItem = items.get(0);
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> expirations = (List<Map<String, Object>>) chainItem.get("expirations");
+        if (expirations == null || expirations.isEmpty()) {
+            log.info("No expirations found in chain for {}", symbol);
+            return;
+        }
+
+        optionRepository.deleteByUnderlyingSymbolAndOptionType(symbol, "put");
+
+        LocalDate now = LocalDate.now();
+
+        for (Map<String, Object> expGroup : expirations) {
+            String expirationStr = (String) expGroup.get("expiration-date");
+            if (expirationStr == null) continue;
+
+            LocalDate expiration;
+            try {
+                expiration = LocalDate.parse(expirationStr);
+            } catch (Exception e) {
+                log.warn("Invalid expiration date {} for {} - skipping", expirationStr, symbol);
+                continue;
+            }
+
+            long calendarDte = ChronoUnit.DAYS.between(now, expiration);
+            if (calendarDte < 0 || calendarDte > maxDte) {
+                continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> strikes = (List<Map<String, Object>>) expGroup.get("strikes");
+            if (strikes == null || strikes.isEmpty()) continue;
+
+            log.info("Strikes " + strikes);
+            for (Map<String, Object> strikeGroup : strikes) {
+                Object strikeObj = strikeGroup.get("strike-price");
+                if (strikeObj == null) continue;
+
+                double strikePrice;
+                try {
+                    if (strikeObj instanceof Number n) {
+                        strikePrice = n.doubleValue();
+                    } else if (strikeObj instanceof String s) {
+                        strikePrice = Double.parseDouble(s);
+                    } else {
+                        log.warn("Unexpected strike-price type: {} - skipping", strikeObj.getClass());
+                        continue;
+                    }
+                } catch (NumberFormatException e) {
+                    log.warn("Invalid strike-price value '{}' for {} - skipping", strikeObj, symbol);
+                    continue;
+                }
+
+                if (strikePrice >= currentPrice || strikePrice >= maxStrike) {
+                    log.info("StrikePrice: {}, currentPrice: {}, maxPrice {}", strikePrice, currentPrice, maxStrike);
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                Object putObj = strikeGroup.get("put");
+                if (putObj == null) continue;
+
+                if (!(putObj instanceof String)) {
+                    log.warn("Unexpected type for 'put' field (expected String): {} - skipping strike {}",
+                            putObj.getClass().getName(), strikePrice);
+                    continue;
+                }
+
+                String putSymbol = (String) putObj;
+                if (putSymbol.isBlank()) continue;
+
+                String streamerSymbol = (String) strikeGroup.get("put-streamer-symbol");
+                if (streamerSymbol == null || streamerSymbol.isBlank()) {
+                    log.warn("Missing put-streamer-symbol for put {} at strike {} - skipping", putSymbol, strikePrice);
+                    continue;
+                }
+
+                Option option = new Option();
+                option.setSymbol(putSymbol);
+                option.setUnderlyingSymbol(symbol);
+                option.setExpirationDate(expiration);
+                option.setStrike(strikePrice);
+                option.setOptionType("put");
+
+                log.info("Option before fetchQ&G " + option);
+                fetchQuoteAndGreeks(option, token);
+                log.info("Option after fetchQ&G " + option);
+                Double adjustedEps = asset.getAdjustedEarningsPerShare();
+                if (adjustedEps != null && adjustedEps != 0) {
+                    option.setAdjustedPe(strikePrice / adjustedEps);
+                }
+                log.info("Option after adjustedEPS " + option);
+
+                int tradingDaysRemaining = calculateTradingDays(now, expiration, tradingDays);
+                if (option.getPreviousClose() != null && strikePrice > 0 && tradingDaysRemaining > 0) {
+                    double adjustedPremium = option.getPreviousClose() - 0.01;
+                    double dailyYield = (adjustedPremium / strikePrice) * 100.0 / tradingDaysRemaining;
+                    option.setYield(dailyYield);
+                }
+
+                log.info("Option after yield " + option);
+                option.setLastUpdated(LocalDateTime.now());
+                option.setId(UUID.randomUUID().toString());
+                optionRepository.save(option);
+            }
+        }
+
+        int storedCount = optionRepository.findByUnderlyingSymbolAndOptionTypeOrderByYieldDesc(symbol, "put").size();
+        log.info("Stored {} put options for {}", storedCount, symbol);
+    }
+
+    private void fetchQuoteAndGreeks(Option option, String token) {
+        String occSymbol = option.getSymbol();  // Use OCC symbol from option (e.g., "TSLA 260209P00347500")
+        String quoteUrl = tastyBaseUrl + "/market-data/by-type?equity-option=" + occSymbol;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Map> quoteResp = restTemplate.exchange(quoteUrl, HttpMethod.GET, entity, Map.class);
+            if (!quoteResp.getStatusCode().is2xxSuccessful() || quoteResp.getBody() == null) {
+                log.warn("Failed to fetch quote for {}: status={}", occSymbol, quoteResp.getStatusCode());
+                return;
+            }
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = quoteResp.getBody();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> data = (Map<String, Object>) body.get("data");
+            if (data == null || data.isEmpty()) {
+                log.debug("No data in quote response for {}", occSymbol);
+                return;
+            }
+
+            // Response structure: data → items → [0] → {quote fields + "greeks": {map}}
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
+            if (items == null || items.isEmpty()) {
+                log.debug("No items in quote data for {}", occSymbol);
+                return;
+            }
+
+            Map<String, Object> quoteData = items.get(0);  // Single symbol → first (only) item
+            if (quoteData == null) return;
+
+            // Parse last-price (use "last-price" or fallback to mark/mid)
+            Object lastPriceObj = quoteData.get("last");
+            double lastPrice = parseDouble(lastPriceObj, occSymbol, "last");
+            option.setPreviousClose(lastPrice);  // Or use "close-price" if you mean prior session close
+
+            // Parse greeks map
+            option.setDelta(parseDouble(quoteData.get("delta"), occSymbol, "delta"));
+            // Add others as needed: gamma, theta, vega, rho, implied-volatility, etc.
+            // e.g., option.setGamma(parseDouble(greeks.get("gamma"), occSymbol, "gamma"));
+
+        } catch (Exception e) {
+            log.warn("Failed to fetch quote/Greeks for {}: {}", occSymbol, e.getMessage());
+        }
+    }
+
+    // Helper to parse potential String/Double/Number
+    private double parseDouble(Object value, String symbol, String field) {
+        if (value == null) return 0.0;
+        try {
+            if (value instanceof Number n) {
+                return n.doubleValue();
+            } else if (value instanceof String s) {
+                return Double.parseDouble(s);
+            } else {
+                log.warn("Unexpected type for {} '{}' in {}: {}", field, value, symbol, value.getClass().getName());
+                return 0.0;
+            }
+        } catch (NumberFormatException e) {
+            log.warn("Invalid format for {} '{}' in {}: {}", field, value, symbol, e.getMessage());
+            return 0.0;
+        }
+    }
 
     @Override
     @Transactional

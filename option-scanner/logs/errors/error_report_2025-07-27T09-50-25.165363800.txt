@@ -1,9 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-07-27T09:50:25.167364400
-Total Errors: 5
-
-Attempt 1 failed for NXRT: 522 <none> on GET request for "https://www.alphavantage.co/query": "error code: 522" (HTTP Status: 522)
-Attempt 1 failed for OPRA: 522 <none> on GET request for "https://www.alphavantage.co/query": "error code: 522" (HTTP Status: 522)
-Attempt 1 failed for PARA: 522 <none> on GET request for "https://www.alphavantage.co/query": "error code: 522" (HTTP Status: 522)
-Attempt 1 failed for TPR: 503 Service Unavailable on GET request for "https://www.alphavantage.co/query": "<!DOCTYPE html><EOL><html><EOL>  <head><EOL>    <meta name="viewport" content="width=device-width, initial-scale=1"><EOL>    <meta charset="utf-8"><EOL>    <title>Application Error</title><EOL>    <style media="screen"><EOL>      html,body,iframe {<EOL>        margin: 0;<EOL>        padding: 0;<EOL>      }<EOL><EOL>      html,body {<EOL>        height: 100%;<EOL>        overflow: hidden;<EOL>      }<EOL><EOL>      iframe {<EOL>        width: 100%;<EOL>        height: 100%;<EOL>        border: 0;<EOL>      }<EOL>    </style><EOL>  </head><EOL>  <body><EOL>    <iframe src="https://www.herokucdn.com/error-pages/application-error.html"></iframe><EOL>  </body><EOL></html>" (HTTP Status: 503 SERVICE_UNAVAILABLE)
-Detected 503 for TPR. Pausing for 30 minutes.

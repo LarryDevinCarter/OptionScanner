@@ -1,7 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-07-20T05:03:15.338214600
-Total Errors: 3
-
-Attempt 1 failed for VSDA: 503 Service Unavailable on GET request for "https://www.alphavantage.co/query": "<!DOCTYPE html><EOL><html><EOL>  <head><EOL>    <meta name="viewport" content="width=device-width, initial-scale=1"><EOL>    <meta charset="utf-8"><EOL>    <title>Application Error</title><EOL>    <style media="screen"><EOL>      html,body,iframe {<EOL>        margin: 0;<EOL>        padding: 0;<EOL>      }<EOL><EOL>      html,body {<EOL>        height: 100%;<EOL>        overflow: hidden;<EOL>      }<EOL><EOL>      iframe {<EOL>        width: 100%;<EOL>        height: 100%;<EOL>        border: 0;<EOL>      }<EOL>    </style><EOL>  </head><EOL>  <body><EOL>    <iframe src="https://www.herokucdn.com/error-pages/application-error.html"></iframe><EOL>  </body><EOL></html>" (HTTP Status: 503 SERVICE_UNAVAILABLE)
-Detected 503 for VSDA. Pausing for 30 minutes.
-Permanent error (422) for SRM: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: SRM"}". Skipping.

@@ -15,4 +15,6 @@ public interface FilterService {
     List<String> getSymbolsWithOperatingMargin(double marginThreshold, int years);
     List<String> getFilteredSymbols(List<FinancialFilter> filters);
     List<String> getStockCandidates(StockCandidatesRequestDto dto);
+    int getCurrentHoldStreak();
+    double getCurrentRemainingLiquidity();
 }

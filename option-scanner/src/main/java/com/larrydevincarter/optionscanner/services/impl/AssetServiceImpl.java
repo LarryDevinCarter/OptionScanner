@@ -46,6 +46,7 @@ public class AssetServiceImpl implements AssetService {
     private final BalanceSheetService balanceSheetService;
     private final CashFlowService cashFlowService;
     private final DividendService dividendService;
+    private final MarketService marketService;
     private final OptionService optionService;
     private final ReportService reportService;
     private final UpdateStatusService updateStatusService;
@@ -218,7 +219,7 @@ public class AssetServiceImpl implements AssetService {
         symbols = fetchAndStoreFinancialReport(symbols, cashFlowService);
         sleepBetweenStages();
 
-        symbols = fetchAndStoreFinancialReport(symbols, dividendService);
+        fetchAndStoreFinancialReport(symbols, dividendService);
         sleepBetweenStages();
 
         fetchAndStoreStockPrices(errorLog, symbols);
@@ -379,32 +380,8 @@ public class AssetServiceImpl implements AssetService {
         List<Asset> assets = assetRepository.findBySymbols(symbols);
         log.info("Starting fetching put options for {} assets", assets.size());
         LocalDate today = LocalDate.now();
-        LocalDate calendarStart = today.minusDays(30);
-        LocalDate maxEnd = LocalDate.of(2029, 12, 31);
+        Set<LocalDate> tradingDays = marketService.getTradingDays();
 
-        Set<LocalDate> tradingDays = new HashSet<>();
-        try {
-            String calendarUrl = alpacaBaseUrl + "/v2/calendar?start=" + calendarStart.toString() + "&end=" + maxEnd.toString();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("APCA-API-KEY-ID", alpacaApiKey);
-            headers.set("APCA-API-SECRET-KEY", apiSecret);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> calendarResponse = restTemplate.exchange(calendarUrl, HttpMethod.GET, entity, List.class).getBody();
-            if (calendarResponse != null) {
-                for (Map<String, Object> day : calendarResponse) {
-                    tradingDays.add(LocalDate.parse((String) day.get("date")));
-                }
-                log.info("Fetched {} trading days from calendar", tradingDays.size());
-            } else {
-                log.warn("Failed to fetch calendar, falling back to no holiday check");
-                errorLog.add("Failed to fetch trading calendar");
-            }
-        } catch (Exception e) {
-            log.error("Error fetching calendar: {}", e.getMessage());
-            errorLog.add("Error fetching trading calendar: " + e.getMessage());
-        }
 
         LocalDate previousTradingDay = tradingDays.stream()
                 .filter(d -> d.isBefore(today))
@@ -470,6 +447,9 @@ public class AssetServiceImpl implements AssetService {
         Double price = Double.parseDouble(priceStr);
         asset.setCurrentPrice(price);
         asset.setLastPriceUpdated(LocalDateTime.now());
+        if (asset.getSharesOutstanding() != null) {
+            asset.setMarketCap(price * asset.getSharesOutstanding());
+        }
         assetRepository.save(asset);
         return price;
     }

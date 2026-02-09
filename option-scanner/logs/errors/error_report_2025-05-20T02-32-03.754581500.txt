@@ -1,9 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-05-20T02:32:03.755582300
-Total Errors: 5
-
-Failed to process earnings for symbol OGI: More than one row with the given identifier was found: OGI, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol SCLX: More than one row with the given identifier was found: SCLX, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol LITM: More than one row with the given identifier was found: LITM, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol SATL: More than one row with the given identifier was found: SATL, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol CMCT: More than one row with the given identifier was found: CMCT, for class: com.larrydevincarter.optionscanner.entities.Asset

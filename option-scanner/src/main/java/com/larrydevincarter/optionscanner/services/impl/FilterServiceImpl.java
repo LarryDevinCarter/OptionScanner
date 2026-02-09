@@ -6,6 +6,7 @@ import com.larrydevincarter.optionscanner.models.entities.*;
 import com.larrydevincarter.optionscanner.repositories.*;
 import com.larrydevincarter.optionscanner.services.FilterService;
 import com.larrydevincarter.optionscanner.services.filters.*;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Data
 public class FilterServiceImpl implements FilterService {
 
     private final AssetRepository assetRepository;
@@ -53,6 +55,9 @@ public class FilterServiceImpl implements FilterService {
     private double operatingMarginThreshold;
     @Value("${operating.margin.years}")
     private int operatingMarginYears;
+
+    private int currentHoldStreak = 0;
+    private double currentRemainingLiquidity = 0.0;
 
     @Override
     public List<String> getSymbolsWithRevenueGrowth(double cagrThreshold, int years) {
@@ -147,10 +152,12 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<String> getStockCandidates(StockCandidatesRequestDto dto) {
-        int holdStreak = dto.getHoldStreak();
-        double adjustment = 0.1 * holdStreak;
-        double debtAdjustment = 0.01 * holdStreak;
-        double mcAdjustment = 0.1 * holdStreak;
+        log.info("dto = " + dto);
+        this.currentHoldStreak = dto.getHoldStreak();
+        this.currentRemainingLiquidity = dto.getRemainingLiquidity();
+        double adjustment = 0.1 * currentHoldStreak;
+        double debtAdjustment = 0.01 * currentHoldStreak;
+        double mcAdjustment = 0.1 * currentHoldStreak;
 
         List<FinancialFilter> filters = new ArrayList<>();
         filters.add(new RevenueGrowthFilter(defaultCagrThreshold - adjustment, revenueYears));
@@ -167,13 +174,16 @@ public class FilterServiceImpl implements FilterService {
         List<String> filteredSymbols = getFilteredSymbols(filters);
 
         Set<String> excluded = new HashSet<>(dto.getExcludedTickers());
+        log.info("excluded = " + excluded);
         filteredSymbols = filteredSymbols.stream()
                 .filter(s -> !excluded.contains(s))
                 .collect(Collectors.toList());
+        log.info("filteredSymbols = " + filteredSymbols);
 
         double maxPrice = dto.getRemainingLiquidity() / 100.0;
 
         List<Asset> assets = assetRepository.findBySymbols(filteredSymbols);
+        log.info("assets = " + assets);
         Map<String, Double> pricesBySymbol = assets.stream()
                 .collect(Collectors.toMap(Asset::getSymbol, Asset::getCurrentPrice));
 

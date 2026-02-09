@@ -1,7 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-05-13T02:49:28.471700500
-Total Errors: 3
-
-Failed to process earnings for symbol SCLX: More than one row with the given identifier was found: SCLX, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol LITM: More than one row with the given identifier was found: LITM, for class: com.larrydevincarter.optionscanner.entities.Asset
-Failed to process earnings for symbol CMCT: More than one row with the given identifier was found: CMCT, for class: com.larrydevincarter.optionscanner.entities.Asset

@@ -5,6 +5,7 @@ import com.larrydevincarter.optionscanner.repositories.AssetRepository;
 import com.larrydevincarter.optionscanner.repositories.BalanceSheetRepository;
 import com.larrydevincarter.optionscanner.repositories.IncomeStatementRepository;
 import com.larrydevincarter.optionscanner.services.BalanceSheetService;
+import com.larrydevincarter.optionscanner.utils.FinancialFilterUtils;
 import com.larrydevincarter.optionscanner.utils.FinancialReportParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.*;
 public class BalanceSheetServiceImpl implements BalanceSheetService {
 
     private final BalanceSheetRepository balanceSheetRepository;
+    private final AssetRepository assetRepository;
 
     @Override
     @Transactional
@@ -29,22 +31,36 @@ public class BalanceSheetServiceImpl implements BalanceSheetService {
         balanceSheetRepository.flush();
         log.info("Deleted existing balance sheets for symbol: {}", symbol);
 
-        List<BalanceSheet> balanceSheets = new ArrayList<>();
+        @SuppressWarnings("unchecked")
         List<Map<String, String>> annualReports = (List<Map<String, String>>) response.get("annualReports");
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> quarterlyReports = (List<Map<String, String>>) response.get("quarterlyReports");
 
+        List<BalanceSheet> balanceSheets = new ArrayList<>();
         if (annualReports != null) {
             balanceSheets.addAll(parseReports(annualReports, symbol, "annual", errorLog));
         }
-
-        List<Map<String, String>> quarterlyReports = (List<Map<String, String>>) response.get("quarterlyReports");
-
         if (quarterlyReports != null) {
             balanceSheets.addAll(parseReports(quarterlyReports, symbol, "quarterly", errorLog));
         }
-
         balanceSheetRepository.saveAll(balanceSheets);
-        balanceSheetRepository.flush();
-        log.info("Stored {} balance sheet records for symbol: {}", balanceSheets.size(), symbol);
+        log.info("Stored {} balance sheets for symbol: {}", balanceSheets.size(), symbol);
+
+        // New: Set sharesOutstanding in Asset from latest annual balance sheet
+        List<BalanceSheet> allBalanceSheets = balanceSheetRepository.findBySymbol(symbol);
+        List<BalanceSheet> annual = FinancialFilterUtils.getAnnualReports(
+                allBalanceSheets,
+                1,
+                s -> s.getCommonStockSharesOutstanding() != null,
+                FinancialFilterUtils.BALANCE_DATE_EXTRACTOR
+        );
+        if (!annual.isEmpty()) {
+            assetRepository.findBySymbol(symbol).ifPresent(asset -> {
+                asset.setSharesOutstanding(annual.get(0).getCommonStockSharesOutstanding());
+                assetRepository.save(asset);
+                log.info("Updated sharesOutstanding for asset: {}", symbol);
+            });
+        }
     }
 
     @Override

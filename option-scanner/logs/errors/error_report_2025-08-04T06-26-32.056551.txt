@@ -1,6 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-08-04T06:26:32.057551400
-Total Errors: 2
-
-Attempt 1 failed for FRT: 503 Service Unavailable on GET request for "https://www.alphavantage.co/query": "<!DOCTYPE html><EOL><html><EOL>  <head><EOL>    <meta name="viewport" content="width=device-width, initial-scale=1"><EOL>    <meta charset="utf-8"><EOL>    <title>Application Error</title><EOL>    <style media="screen"><EOL>      html,body,iframe {<EOL>        margin: 0;<EOL>        padding: 0;<EOL>      }<EOL><EOL>      html,body {<EOL>        height: 100%;<EOL>        overflow: hidden;<EOL>      }<EOL><EOL>      iframe {<EOL>        width: 100%;<EOL>        height: 100%;<EOL>        border: 0;<EOL>      }<EOL>    </style><EOL>  </head><EOL>  <body><EOL>    <iframe src="https://www.herokucdn.com/error-pages/application-error.html"></iframe><EOL>  </body><EOL></html>" (HTTP Status: 503 SERVICE_UNAVAILABLE)
-Permanent error (422) for BIGC: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: BIGC"}". Skipping.

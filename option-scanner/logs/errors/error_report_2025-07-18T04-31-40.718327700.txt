@@ -1,5 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-07-18T04:31:40.725329100
-Total Errors: 1
-
-Permanent error (422) for SRM: 422 Unprocessable Entity on GET request for "https://paper-api.alpaca.markets/v2/options/contracts": "{"code":42210000,"message":"invalid underlying symbols: SRM"}". Skipping.

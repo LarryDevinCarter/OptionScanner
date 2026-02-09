@@ -40,4 +40,8 @@ public class Asset {
     private Double adjustedNetIncome;
     @Column(name = "adjusted_earnings_per_share")
     private Double adjustedEarningsPerShare;
+    @Column(name = "shares_outstanding")
+    private Double sharesOutstanding;
+    @Column(name = "market_cap")
+    private Double marketCap;
 }

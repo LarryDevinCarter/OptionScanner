@@ -1,7 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2026-01-10T04:42:10.355402200
-Total Errors: 3
-
-Missing latest annual statements for ETHM: No annual income statement found
-Missing or empty price for symbol: DRIO
-Missing latest annual statements for BRR: No annual cash flow found

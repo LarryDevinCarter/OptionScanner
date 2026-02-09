@@ -1,7 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-12-31T04:40:51.024847900
-Total Errors: 3
-
-Missing latest annual statements for ETHM: No annual income statement found
-Attempt 1 failed for CTSO: 502 Bad Gateway on GET request for "https://www.alphavantage.co/query": "error code: 500" (HTTP Status: 502 BAD_GATEWAY)
-Missing latest annual statements for BRR: No annual cash flow found

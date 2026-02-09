@@ -1,8 +1,0 @@
-Error Report - Option Scanner Revenue Data Fetch
-Timestamp: 2025-12-27T14:45:09.274880500
-Total Errors: 4
-
-Missing latest annual statements for BRR: No annual cash flow found
-Missing latest annual statements for ETHM: No annual income statement found
-Missing or empty price for symbol: NAVI | Quote: {}
-Skipping options for NAVI: null currentPrice
