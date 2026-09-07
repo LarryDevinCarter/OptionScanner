@@ -63,13 +63,13 @@ Instead of one nightly mega-job that runs 3–4 hours, OptionScanner refreshes i
 optionscanner.refresh.cron=0 0 * * * ?
 optionscanner.refresh.zone=America/Chicago
 # Symbols per tick, oldest lastUpdated first (round-robin by staleness)
-optionscanner.refresh.batch-size=30
+optionscanner.refresh.batch-size=230
 optionscanner.refresh.sync-universe=true
 ```
 
 **Suggested strategy for Larry (free AV tier):**
 
-1. Keep hourly cron + `batch-size` around 25–35.
+1. Keep hourly cron + `batch-size` around 220–230.
 2. Expect a multi-hour / multi-day rolling refresh to cover the full options-capable universe.
 3. Prioritization is automatic: symbols with the oldest `lastUpdated` are refreshed first;
    brand-new symbols start with epoch time so they jump the queue.

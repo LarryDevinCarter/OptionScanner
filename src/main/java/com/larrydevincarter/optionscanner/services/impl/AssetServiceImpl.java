@@ -74,7 +74,7 @@ public class AssetServiceImpl implements AssetService {
     @Value("${alphavantage.delay-ms:2500}")
     private long delayBetweenCallsMs;
 
-    @Value("${optionscanner.refresh.batch-size:30}")
+    @Value("${optionscanner.refresh.batch-size:230}")
     private int refreshBatchSize;
 
     @Value("${optionscanner.refresh.sync-universe:true}")

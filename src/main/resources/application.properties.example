@@ -18,7 +18,7 @@ alphavantage.delay-ms=2500
 # Default: every hour at :00 America/Chicago — each tick refreshes batch-size symbols
 optionscanner.refresh.cron=0 0 * * * ?
 optionscanner.refresh.zone=America/Chicago
-optionscanner.refresh.batch-size=30
+optionscanner.refresh.batch-size=230
 optionscanner.refresh.sync-universe=true
 
 # --- Optional quality-filter thresholds (NOT auto-required for trading-system strategies) ---
