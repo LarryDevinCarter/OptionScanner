@@ -112,3 +112,7 @@ consume raw fundamentals or option data from this engine.
 ## License / author
 
 Larry Devin Carter — data engine for personal / family trading tooling.
+
+## Droplet deploy (coexist with nexstep)
+
+See **[docs/DROPLET-COEXIST.md](docs/DROPLET-COEXIST.md)** for systemd unit, install script, RAM budget on a $6/1 GiB droplet, monitoring, and rollback. Unit + install live under `deploy/`; CI draft is `deploy/ci-deploy.yml` (promote to `.github/workflows/deploy.yml` with `workflow` scope). Secrets stay on the droplet (`/var/www/optionscanner/application.properties`) — never in git.
