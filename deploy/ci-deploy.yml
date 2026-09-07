@@ -1,0 +1,101 @@
+name: Deploy OptionScanner to DigitalOcean
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'deploy/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests --no-transfer-progress -B
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: |
+            target/option-scanner-0.0.1-SNAPSHOT.jar
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: ./artifact
+
+      - name: Debug artifact
+        run: ls -laR ./artifact
+
+      - name: Deploy JAR to Droplet (scp)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./artifact/option-scanner-0.0.1-SNAPSHOT.jar"
+          target: "/tmp/"
+          debug: true
+
+      - name: Deploy and Restart optionscanner on Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "=== Remote debug ==="
+            ls -la /tmp/ | grep -E 'jar|option' || echo "No JAR in /tmp"
+
+            echo "Stopping optionscanner only (nexstep untouched)..."
+            sudo systemctl stop optionscanner.service || true
+
+            echo "Backing up old JAR..."
+            sudo mkdir -p /var/www/optionscanner
+            sudo cp /var/www/optionscanner/option-scanner-0.0.1-SNAPSHOT.jar /var/www/optionscanner/backup.jar 2>/dev/null || true
+
+            echo "Moving new JAR into place..."
+            # scp-action may nest under /tmp/artifact/ depending on strip mode
+            if [ -f /tmp/artifact/option-scanner-0.0.1-SNAPSHOT.jar ]; then
+              sudo mv /tmp/artifact/option-scanner-0.0.1-SNAPSHOT.jar /var/www/optionscanner/
+            elif [ -f /tmp/option-scanner-0.0.1-SNAPSHOT.jar ]; then
+              sudo mv /tmp/option-scanner-0.0.1-SNAPSHOT.jar /var/www/optionscanner/
+            else
+              echo "ERROR: jar not found under /tmp" >&2
+              ls -laR /tmp | head -100
+              exit 1
+            fi
+
+            echo "Setting permissions..."
+            if id deploy &>/dev/null; then
+              sudo chown deploy:deploy /var/www/optionscanner/*.jar
+            fi
+            sudo chmod 644 /var/www/optionscanner/*.jar
+
+            echo "Starting optionscanner.service..."
+            sudo systemctl start optionscanner.service
+
+            echo "Service status:"
+            sudo systemctl status optionscanner.service --no-pager

@@ -1,0 +1,22 @@
+[Unit]
+Description=OptionScanner Spring Boot data engine
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/optionscanner
+# Secrets live on the droplet (not in git):
+#   /var/www/optionscanner/application.properties
+# or SPRING_CONFIG_ADDITIONAL_LOCATION
+Environment=JAVA_OPTS=-Xms128m -Xmx256m
+Environment=SPRING_CONFIG_ADDITIONAL_LOCATION=optional:file:/var/www/optionscanner/
+# Heap flags duplicated on the java line because systemd does not shell-split $JAVA_OPTS
+ExecStart=/usr/bin/java -Xms128m -Xmx256m -jar /var/www/optionscanner/option-scanner-0.0.1-SNAPSHOT.jar
+Restart=on-failure
+RestartSec=10
+MemoryMax=400M
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
