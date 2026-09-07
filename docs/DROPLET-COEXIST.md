@@ -85,4 +85,4 @@ sudo bash deploy/install.sh
 sudo systemctl start optionscanner.service
 ```
 
-GitHub Actions (`.github/workflows/deploy.yml`) builds JDK 21, SCPs the jar, and restarts **only** `optionscanner.service`. Required secrets: `SSH_HOST`, `SSH_USERNAME`, `SSH_PRIVATE_KEY`.
+GitHub Actions (`deploy/ci-deploy.yml` (promote to `.github/workflows/deploy.yml` when the GitHub token has `workflow` scope)) builds JDK 21, SCPs the jar, and restarts **only** `optionscanner.service`. Required secrets: `SSH_HOST`, `SSH_USERNAME`, `SSH_PRIVATE_KEY`.
