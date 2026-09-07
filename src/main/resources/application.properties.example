@@ -1,0 +1,54 @@
+spring.application.name=OptionScanner
+
+server.port=8081
+
+# --- Alpaca ---
+alpaca.api.base-url=https://paper-api.alpaca.markets
+alpaca.api.key=YOUR_ALPACA_API_KEY
+alpaca.api.secret=YOUR_ALPACA_API_SECRET
+alpaca.data.base-url=https://data.alpaca.markets
+
+# --- Alpha Vantage (free tier ~25 calls/min) ---
+alphavantage.api.base-url=https://www.alphavantage.co
+alphavantage.api.key=YOUR_ALPHAVANTAGE_API_KEY
+# >= 2400ms for 25/min; default 2500
+alphavantage.delay-ms=2500
+
+# --- Refresh schedule (droplet-friendly rolling batches) ---
+# Default: every hour at :00 America/Chicago — each tick refreshes batch-size symbols
+optionscanner.refresh.cron=0 0 * * * ?
+optionscanner.refresh.zone=America/Chicago
+optionscanner.refresh.batch-size=40
+optionscanner.refresh.sync-universe=true
+
+# --- Optional quality-filter thresholds (NOT auto-required for trading-system strategies) ---
+eps.growth.cagr.threshold=10.0
+eps.growth.years=5
+debt.to.equity.threshold=1.0
+fcf.yield.threshold=4.0
+operating.margin.threshold=10.0
+operating.margin.years=3
+revenue.growth.cagr.threshold=5.0
+revenue.growth.years=5
+roic.default.tax.rate=0.21
+roic.threshold=12.0
+roic.years=3
+
+logging.level.com.larrydevincarter.optionscanner=INFO
+logging.level.org.hibernate=ERROR
+
+# --- Postgres ---
+spring.datasource.username=postgres
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.url=jdbc:postgresql://localhost:5432/optionscanner
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+
+# --- Tastytrade (optional) ---
+tastytrade.api.base-url=https://api.tastyworks.com
+tastytrade.api.sandbox-url=https://api.cert.tastytrade.com
+tastytrade.oauth.client-id=YOUR_TASTYTRADE_CLIENT_ID
+tastytrade.oauth.client-secret=YOUR_TASTYTRADE_CLIENT_SECRET
+tastytrade.oauth.refresh-token=YOUR_TASTYTRADE_REFRESH_TOKEN
+tastytrade.use-sandbox=false
